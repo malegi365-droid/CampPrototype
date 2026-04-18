@@ -17,3 +17,5 @@ UserSettings/
 # OS
 .DS_Store
 Thumbs.db
+
+.vsconfig
