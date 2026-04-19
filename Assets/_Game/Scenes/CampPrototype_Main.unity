@@ -1340,6 +1340,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd4d235e661802c4e8d26cf80a4d19ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthController
+  threatLossFromDamageMultiplier: 0.3
 --- !u!114 &471520145
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1730,6 +1731,7 @@ MonoBehaviour:
   tank: {fileID: 1632514454}
   followDistance: 3
   moveSpeed: 3.5
+  healThreatMultiplier: 0.5
 --- !u!114 &635801747
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1760,6 +1762,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd4d235e661802c4e8d26cf80a4d19ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthController
+  threatLossFromDamageMultiplier: 0.3
 --- !u!114 &635801749
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2838,6 +2841,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd4d235e661802c4e8d26cf80a4d19ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthController
+  threatLossFromDamageMultiplier: 0.3
 --- !u!114 &1285117777
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3101,6 +3105,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd4d235e661802c4e8d26cf80a4d19ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthController
+  threatLossFromDamageMultiplier: 0.3
 --- !u!114 &1323557061
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3630,6 +3635,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd4d235e661802c4e8d26cf80a4d19ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthController
+  threatLossFromDamageMultiplier: 0.3
 --- !u!114 &1499825905
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4108,6 +4114,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd4d235e661802c4e8d26cf80a4d19ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthController
+  threatLossFromDamageMultiplier: 0.3
 --- !u!114 &1632514459
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4680,6 +4687,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd4d235e661802c4e8d26cf80a4d19ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthController
+  threatLossFromDamageMultiplier: 0.3
 --- !u!114 &1990596567
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4801,6 +4809,8 @@ MonoBehaviour:
   xpToLevel3: 90
   xpToLevel4: 130
   xpToLevel5: 180
+  tankStats: {fileID: 1632514459}
+  healerStats: {fileID: 635801749}
 --- !u!114 &1990596572
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5109,6 +5119,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd4d235e661802c4e8d26cf80a4d19ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthController
+  threatLossFromDamageMultiplier: 0.3
 --- !u!114 &2070995657
 MonoBehaviour:
   m_ObjectHideFlags: 0

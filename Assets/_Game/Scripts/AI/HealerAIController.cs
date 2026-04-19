@@ -8,13 +8,22 @@ public class HealerAIController : MonoBehaviour
     [SerializeField] private float followDistance = 3f;
     [SerializeField] private float moveSpeed = 3.5f;
 
+    [Header("Threat Tuning")]
+    [SerializeField] private float healThreatMultiplier = 0.5f;
+
     private AbilityController abilityController;
     private HealthController selfHealth;
+    private TargetingController playerTargeting;
 
     private void Awake()
     {
         abilityController = GetComponent<AbilityController>();
         selfHealth = GetComponent<HealthController>();
+
+        if (player != null)
+        {
+            playerTargeting = player.GetComponent<TargetingController>();
+        }
     }
 
     private void Update()
@@ -33,7 +42,10 @@ public class HealerAIController : MonoBehaviour
             HealthController tankHealth = tank.GetComponent<HealthController>();
             if (tankHealth != null && !tankHealth.IsDead() && tankHealth.GetHealthPercent() < 0.50f)
             {
-                abilityController.UseRestore(tank);
+                if (abilityController.UseRestore(tank))
+                {
+                    GenerateHealThreat(tank);
+                }
                 return;
             }
         }
@@ -43,15 +55,39 @@ public class HealerAIController : MonoBehaviour
             HealthController playerHealth = player.GetComponent<HealthController>();
             if (playerHealth != null && !playerHealth.IsDead() && playerHealth.GetHealthPercent() < 0.40f)
             {
-                abilityController.UseRestore(player.gameObject);
+                if (abilityController.UseRestore(player.gameObject))
+                {
+                    GenerateHealThreat(player.gameObject);
+                }
                 return;
             }
         }
 
         if (selfHealth != null && selfHealth.GetHealthPercent() < 0.50f)
         {
-            abilityController.UseRestore(gameObject);
+            if (abilityController.UseRestore(gameObject))
+            {
+                GenerateHealThreat(gameObject);
+            }
         }
+    }
+
+    private void GenerateHealThreat(GameObject healedTarget)
+    {
+        if (playerTargeting == null) return;
+
+        Transform currentEnemyTarget = playerTargeting.GetCurrentTarget();
+        if (currentEnemyTarget == null) return;
+
+        ThreatTable enemyThreatTable = currentEnemyTarget.GetComponent<ThreatTable>();
+        if (enemyThreatTable == null) return;
+
+        float healAmount = abilityController.GetLastRestoreHealAmount();
+        float healThreat = healAmount * healThreatMultiplier;
+
+        enemyThreatTable.AddThreat(gameObject, healThreat);
+
+        Debug.Log($"{gameObject.name} generated {healThreat} heal threat on {currentEnemyTarget.name} by healing {healedTarget.name}");
     }
 
     private void FollowPartyAnchor()
@@ -79,5 +115,6 @@ public class HealerAIController : MonoBehaviour
     {
         player = playerTransform;
         tank = tankObject;
+        playerTargeting = player != null ? player.GetComponent<TargetingController>() : null;
     }
 }

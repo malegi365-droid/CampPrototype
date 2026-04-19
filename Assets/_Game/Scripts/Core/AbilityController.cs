@@ -124,4 +124,9 @@ public class AbilityController : MonoBehaviour
     {
         hasFocusBreak = true;
     }
+
+    public float GetLastRestoreHealAmount()
+    {
+        return stats.healPower * 1.5f;
+    }
 }

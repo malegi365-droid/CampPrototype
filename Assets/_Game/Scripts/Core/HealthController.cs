@@ -10,6 +10,9 @@ public class HealthController : MonoBehaviour, IDamageable
     public event Action<HealthController> OnDied;
     public event Action<float, float> OnHealthChanged;
 
+    [Header("Threat Tuning")]
+    [SerializeField] private float threatLossFromDamageMultiplier = 0.2f;
+
     private void Awake()
     {
         stats = GetComponent<UnitStats>();
@@ -22,6 +25,23 @@ public class HealthController : MonoBehaviour, IDamageable
 
         float reducedDamage = Mathf.Max(1f, amount - stats.defense);
         stats.currentHP = Mathf.Max(0f, stats.currentHP - reducedDamage);
+
+        // If the attacker has a ThreatTable, reduce THIS target's threat
+        // in the attacker's threat table based on damage received.
+        //
+        // Example:
+        // Enemy hits Player -> Enemy's threat table reduces Player threat entry.
+        if (sourceStats != null)
+        {
+            ThreatTable attackerThreatTable = sourceStats.GetComponent<ThreatTable>();
+            if (attackerThreatTable != null)
+            {
+                float threatReduction = reducedDamage * threatLossFromDamageMultiplier;
+                attackerThreatTable.ReduceThreat(gameObject, threatReduction);
+
+                Debug.Log($"{sourceStats.gameObject.name} reduced threat on {gameObject.name} by {threatReduction}");
+            }
+        }
 
         OnHealthChanged?.Invoke(stats.currentHP, stats.maxHP);
 
@@ -52,8 +72,6 @@ public class HealthController : MonoBehaviour, IDamageable
 
         Debug.Log($"{gameObject.name} died.");
 
-        // Instead of deactivating the whole object here,
-        // let other systems decide what to do next.
         HideIfEnemy();
     }
 

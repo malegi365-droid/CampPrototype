@@ -8,6 +8,7 @@ public class ThreatTable : MonoBehaviour
     public void AddThreat(GameObject source, float amount)
     {
         if (source == null) return;
+        if (amount <= 0f) return;
 
         if (!threatMap.ContainsKey(source))
         {
@@ -15,6 +16,20 @@ public class ThreatTable : MonoBehaviour
         }
 
         threatMap[source] += amount;
+    }
+
+    public void ReduceThreat(GameObject source, float amount)
+    {
+        if (source == null) return;
+        if (amount <= 0f) return;
+        if (!threatMap.ContainsKey(source)) return;
+
+        threatMap[source] -= amount;
+
+        if (threatMap[source] <= 0f)
+        {
+            threatMap.Remove(source);
+        }
     }
 
     public GameObject GetHighestThreatTarget()
@@ -45,6 +60,14 @@ public class ThreatTable : MonoBehaviour
         }
 
         return bestTarget;
+    }
+
+    public float GetThreatFor(GameObject source)
+    {
+        if (source == null) return 0f;
+        if (!threatMap.ContainsKey(source)) return 0f;
+
+        return threatMap[source];
     }
 
     public void ClearAllThreat()
