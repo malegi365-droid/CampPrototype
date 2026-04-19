@@ -13,11 +13,7 @@ public class HealthController : MonoBehaviour, IDamageable
     private void Awake()
     {
         stats = GetComponent<UnitStats>();
-        stats.currentHP = Mathf.Clamp(stats.currentHP, 0f, stats.maxHP);
-        if (stats.currentHP <= 0f)
-        {
-            stats.currentHP = stats.maxHP;
-        }
+        ResetHealth();
     }
 
     public void TakeDamage(float amount, UnitStats sourceStats = null)
@@ -55,10 +51,53 @@ public class HealthController : MonoBehaviour, IDamageable
         OnDied?.Invoke(this);
 
         Debug.Log($"{gameObject.name} died.");
-        // For prototype:
-        // Option 1: gameObject.SetActive(false);
-        // Option 2: Destroy(gameObject, 1.5f);
-        gameObject.SetActive(false);
+
+        // Instead of deactivating the whole object here,
+        // let other systems decide what to do next.
+        HideIfEnemy();
+    }
+
+    private void HideIfEnemy()
+    {
+        UnitStats unitStats = GetComponent<UnitStats>();
+        if (unitStats != null && unitStats.role == UnitRole.Enemy)
+        {
+            Renderer[] renderers = GetComponentsInChildren<Renderer>();
+            foreach (Renderer r in renderers)
+            {
+                r.enabled = false;
+            }
+
+            Collider[] colliders = GetComponentsInChildren<Collider>();
+            foreach (Collider c in colliders)
+            {
+                c.enabled = false;
+            }
+        }
+        else
+        {
+            gameObject.SetActive(false);
+        }
+    }
+
+    public void ResetHealth()
+    {
+        dead = false;
+        stats.currentHP = stats.maxHP;
+
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        foreach (Renderer r in renderers)
+        {
+            r.enabled = true;
+        }
+
+        Collider[] colliders = GetComponentsInChildren<Collider>();
+        foreach (Collider c in colliders)
+        {
+            c.enabled = true;
+        }
+
+        OnHealthChanged?.Invoke(stats.currentHP, stats.maxHP);
     }
 
     public float GetCurrentHP()
