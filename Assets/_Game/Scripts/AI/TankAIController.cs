@@ -6,19 +6,26 @@ using UnityEngine;
 public class TankAIController : MonoBehaviour
 {
     [SerializeField] private Transform player;
+    [SerializeField] private GameObject healer;
     [SerializeField] private float followDistance = 2f;
     [SerializeField] private float moveSpeed = 4f;
+    [SerializeField] private float awarenessRadius = 25f;
+
+    [Header("Disengage")]
+    [SerializeField] private float maxDistanceFromPlayer = 6f;
 
     private AbilityController abilityController;
     private AutoAttackController autoAttackController;
     private TargetingController playerTargeting;
     private HealthController healthController;
+    private UnitStats myStats;
 
     private void Awake()
     {
         abilityController = GetComponent<AbilityController>();
         autoAttackController = GetComponent<AutoAttackController>();
         healthController = GetComponent<HealthController>();
+        myStats = GetComponent<UnitStats>();
 
         if (player != null)
         {
@@ -34,32 +41,112 @@ public class TankAIController : MonoBehaviour
         if (player == null)
             return;
 
-        Transform playerTarget = playerTargeting != null ? playerTargeting.GetCurrentTarget() : null;
+        float distanceFromPlayer = Vector3.Distance(transform.position, player.position);
 
-        if (playerTarget == null)
+        // If the tank gets too far from the player, break off and return.
+        if (distanceFromPlayer > maxDistanceFromPlayer)
         {
-            FollowPlayer();
+            autoAttackController.SetTarget(null);
+            FollowPlayer(forceFollow: true);
+            return;
+        }
+
+        Transform priorityTarget = GetPriorityTarget();
+
+        if (priorityTarget == null)
+        {
+            FollowPlayer(forceFollow: false);
             autoAttackController.SetTarget(null);
             return;
         }
 
-        autoAttackController.SetTarget(playerTarget);
+        autoAttackController.SetTarget(priorityTarget);
 
-        float distanceToTarget = Vector3.Distance(transform.position, playerTarget.position);
-        float myAttackRange = GetComponent<UnitStats>().attackRange;
-
-        if (distanceToTarget > myAttackRange)
+        float distanceToTarget = Vector3.Distance(transform.position, priorityTarget.position);
+        if (distanceToTarget > myStats.attackRange)
         {
-            MoveToward(playerTarget.position);
+            MoveToward(priorityTarget.position);
         }
 
-        abilityController.UseGuardingStrike(playerTarget);
+        abilityController.UseGuardingStrike(priorityTarget);
     }
 
-    private void FollowPlayer()
+    private Transform GetPriorityTarget()
+    {
+        Transform targetAttackingPlayer = FindEnemyTargeting(player);
+        if (targetAttackingPlayer != null)
+            return targetAttackingPlayer;
+
+        if (healer != null)
+        {
+            Transform targetAttackingHealer = FindEnemyTargeting(healer.transform);
+            if (targetAttackingHealer != null)
+                return targetAttackingHealer;
+        }
+
+        Transform targetAttackingTank = FindEnemyTargeting(transform);
+        if (targetAttackingTank != null)
+            return targetAttackingTank;
+
+        Transform playerSelectedTarget = playerTargeting != null ? playerTargeting.GetCurrentTarget() : null;
+        if (playerSelectedTarget != null && playerSelectedTarget.gameObject.activeInHierarchy)
+        {
+            HealthController targetHealth = playerSelectedTarget.GetComponent<HealthController>();
+            if (targetHealth == null || !targetHealth.IsDead())
+            {
+                return playerSelectedTarget;
+            }
+        }
+
+        return null;
+    }
+
+    private Transform FindEnemyTargeting(Transform partyMember)
+    {
+        if (partyMember == null) return null;
+
+        Collider[] hits = Physics.OverlapSphere(transform.position, awarenessRadius);
+
+        Transform bestEnemy = null;
+        float closestDistance = float.MaxValue;
+
+        foreach (Collider hit in hits)
+        {
+            if (hit.transform == transform)
+                continue;
+
+            UnitStats stats = hit.GetComponent<UnitStats>();
+            AutoAttackController enemyAttack = hit.GetComponent<AutoAttackController>();
+            HealthController enemyHealth = hit.GetComponent<HealthController>();
+
+            if (stats == null || enemyAttack == null || enemyHealth == null)
+                continue;
+
+            if (stats.role != UnitRole.Enemy)
+                continue;
+
+            if (enemyHealth.IsDead())
+                continue;
+
+            Transform enemyTarget = enemyAttack.GetTarget();
+            if (enemyTarget != partyMember)
+                continue;
+
+            float dist = Vector3.Distance(transform.position, hit.transform.position);
+            if (dist < closestDistance)
+            {
+                closestDistance = dist;
+                bestEnemy = hit.transform;
+            }
+        }
+
+        return bestEnemy;
+    }
+
+    private void FollowPlayer(bool forceFollow)
     {
         float distance = Vector3.Distance(transform.position, player.position);
-        if (distance > followDistance)
+        if (forceFollow || distance > followDistance)
         {
             MoveToward(player.position);
         }
@@ -71,9 +158,10 @@ public class TankAIController : MonoBehaviour
         transform.position += dir * moveSpeed * Time.deltaTime;
     }
 
-    public void SetPlayer(Transform playerTransform)
+    public void SetReferences(Transform playerTransform, GameObject healerObject)
     {
         player = playerTransform;
+        healer = healerObject;
         playerTargeting = player != null ? player.GetComponent<TargetingController>() : null;
     }
 }

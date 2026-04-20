@@ -2,22 +2,19 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(HealthController))]
-[RequireComponent(typeof(UnitStats))]
 public class PlayerDeathHandler : MonoBehaviour
 {
     [SerializeField] private float resetDelay = 2f;
 
     private HealthController healthController;
-    private UnitStats stats;
     private bool handlingDeath = false;
 
     private void Awake()
     {
         healthController = GetComponent<HealthController>();
-        stats = GetComponent<UnitStats>();
     }
 
-    private void OnEnable()
+    private void Start()
     {
         if (healthController != null)
         {
@@ -25,7 +22,7 @@ public class PlayerDeathHandler : MonoBehaviour
         }
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
         if (healthController != null)
         {
@@ -38,8 +35,7 @@ public class PlayerDeathHandler : MonoBehaviour
         if (handlingDeath) return;
         handlingDeath = true;
 
-        Debug.Log("Player died. Encounter failed.");
-
+        Debug.Log("Player died. Encounter failed. Reloading scene...");
         Invoke(nameof(ReloadScene), resetDelay);
     }
 

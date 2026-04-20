@@ -129,4 +129,45 @@ public class AbilityController : MonoBehaviour
     {
         return stats.healPower * 1.5f;
     }
+
+    // ---------- UI HELPERS ----------
+    public bool HasHeavyShot()
+    {
+        return hasHeavyShot;
+    }
+
+    public bool HasFocusBreak()
+    {
+        return hasFocusBreak;
+    }
+
+    public float GetHeavyShotRemainingCooldown()
+    {
+        return Mathf.Max(0f, heavyShotTimer);
+    }
+
+    public float GetFocusBreakRemainingCooldown()
+    {
+        return Mathf.Max(0f, focusBreakTimer);
+    }
+
+    public float GetHeavyShotCooldown()
+    {
+        return heavyShotCooldown;
+    }
+
+    public float GetFocusBreakCooldown()
+    {
+        return focusBreakCooldown;
+    }
+
+    public bool IsHeavyShotReady()
+    {
+        return hasHeavyShot && heavyShotTimer <= 0f;
+    }
+
+    public bool IsFocusBreakReady()
+    {
+        return hasFocusBreak && focusBreakTimer <= 0f;
+    }
 }

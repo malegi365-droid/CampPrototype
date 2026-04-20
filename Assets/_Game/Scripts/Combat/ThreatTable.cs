@@ -70,6 +70,12 @@ public class ThreatTable : MonoBehaviour
         return threatMap[source];
     }
 
+    public bool HasThreatFor(GameObject source)
+    {
+        if (source == null) return false;
+        return threatMap.ContainsKey(source);
+    }
+
     public void ClearAllThreat()
     {
         threatMap.Clear();
