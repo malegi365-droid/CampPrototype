@@ -6,7 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(ThreatTable))]
 public class EnemyAIController : MonoBehaviour
 {
-    private enum EnemyState
+    public enum EnemyState
     {
         Idle,
         Combat,
@@ -141,7 +141,7 @@ public class EnemyAIController : MonoBehaviour
 
     private void MoveToward(Vector3 destination)
     {
-        Vector3 dir = (destination - transform.position);
+        Vector3 dir = destination - transform.position;
         dir.y = 0f;
 
         if (dir.sqrMagnitude <= 0.0001f)
@@ -170,8 +170,18 @@ public class EnemyAIController : MonoBehaviour
         return healthController != null && healthController.IsDead();
     }
 
+    public bool IsBusy()
+    {
+        return currentState == EnemyState.Combat || currentState == EnemyState.Returning || IsDead();
+    }
+
     public Vector3 GetHomePosition()
     {
         return homePosition;
+    }
+
+    public EnemyState GetCurrentState()
+    {
+        return currentState;
     }
 }
