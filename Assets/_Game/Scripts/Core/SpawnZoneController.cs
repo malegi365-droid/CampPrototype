@@ -11,6 +11,9 @@ public class SpawnZoneController : MonoBehaviour
     [SerializeField] private bool spawnOnStart = true;
     [SerializeField] private bool randomizeGroups = true;
 
+    [Header("Group Respawn")]
+    [SerializeField] private float groupRespawnDelay = 12f;
+
     private readonly List<GameObject> spawnedRootGroups = new List<GameObject>();
 
     private void Start()
@@ -35,16 +38,6 @@ public class SpawnZoneController : MonoBehaviour
             return;
         }
 
-        for (int i = 0; i < spawnPoints.Count; i++)
-        {
-            Debug.Log($"{gameObject.name}: SpawnPoint[{i}] = {(spawnPoints[i] == null ? "NULL" : spawnPoints[i].name)}");
-        }
-
-        for (int i = 0; i < possibleGroups.Count; i++)
-        {
-            Debug.Log($"{gameObject.name}: PossibleGroup[{i}] = {(possibleGroups[i] == null ? "NULL" : possibleGroups[i].groupName)}");
-        }
-
         foreach (SpawnPoint point in spawnPoints)
         {
             if (point == null)
@@ -62,6 +55,17 @@ public class SpawnZoneController : MonoBehaviour
 
             SpawnGroupAtPoint(chosenGroup, point);
         }
+    }
+
+    public void RespawnGroup(EnemyGroupTemplate template, SpawnPoint point)
+    {
+        if (template == null || point == null)
+        {
+            Debug.LogWarning($"{gameObject.name}: RespawnGroup failed because template or point was null.");
+            return;
+        }
+
+        SpawnGroupAtPoint(template, point);
     }
 
     private EnemyGroupTemplate ChooseGroupTemplate()
@@ -86,8 +90,11 @@ public class SpawnZoneController : MonoBehaviour
 
         spawnedRootGroups.Add(groupRoot);
 
+        SpawnedEnemyGroup runtimeGroup = groupRoot.AddComponent<SpawnedEnemyGroup>();
+
         Vector3 anchor = point.GetSpawnPosition();
         int runningIndex = 0;
+        List<GameObject> spawnedMembers = new List<GameObject>();
 
         foreach (EnemySpawnEntry entry in groupTemplate.entries)
         {
@@ -119,11 +126,15 @@ public class SpawnZoneController : MonoBehaviour
                 GameObject spawned = Instantiate(entry.enemyPrefab, spawnPos, Quaternion.identity, groupRoot.transform);
                 spawned.name = entry.enemyPrefab.name;
 
+                spawnedMembers.Add(spawned);
+
                 Debug.Log($"{gameObject.name}: Spawned {spawned.name} at {spawnPos}");
 
                 runningIndex++;
             }
         }
+
+        runtimeGroup.Initialize(this, groupTemplate, point, spawnedMembers, groupRespawnDelay);
     }
 
     private Vector3 GetOffset(int index, float spacing)

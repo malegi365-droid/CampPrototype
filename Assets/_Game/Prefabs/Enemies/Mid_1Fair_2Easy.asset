@@ -16,7 +16,7 @@ MonoBehaviour:
   entries:
   - enemyPrefab: {fileID: 2185591147798516472, guid: d9a9b7dd897e43945b2d57b721067597, type: 3}
     count: 1
-    spacing: 1.75
+    spacing: 3
   - enemyPrefab: {fileID: 8832387531288768741, guid: 87efa89ccd2eece43beca0e11f48aefb, type: 3}
     count: 2
-    spacing: 1.75
+    spacing: 3

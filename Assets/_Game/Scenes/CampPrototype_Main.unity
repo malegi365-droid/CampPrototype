@@ -880,7 +880,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyXPReward
   xpReward: 20
-  playerXP: {fileID: 1990596571}
 --- !u!114 &301229864
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1810,6 +1809,62 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &426206353
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 426206355}
+  - component: {fileID: 426206354}
+  m_Layer: 0
+  m_Name: PartyManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &426206354
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 426206353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc16a1da68a7e8546a6bf92ab6adddc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PartyProgressionController
+  currentXP: 0
+  currentLevel: 1
+  xpToLevel2: 60
+  xpToLevel3: 90
+  xpToLevel4: 130
+  xpToLevel5: 180
+  dpsStats: {fileID: 1990596567}
+  dpsAbilities: {fileID: 1990596572}
+  tankStats: {fileID: 1632514459}
+  tankAbilities: {fileID: 1632514457}
+  healerStats: {fileID: 635801749}
+  healerAbilities: {fileID: 635801747}
+--- !u!4 &426206355
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 426206353}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -4.78052, y: 0, z: 14.66389}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &502969857
 GameObject:
   m_ObjectHideFlags: 0
@@ -3133,6 +3188,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 04fa3dcb9fc04224e851c5cf86da9398, type: 2}
   spawnOnStart: 1
   randomizeGroups: 1
+  groupRespawnDelay: 12
 --- !u!4 &970090403
 Transform:
   m_ObjectHideFlags: 0
@@ -3759,7 +3815,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyXPReward
   xpReward: 20
-  playerXP: {fileID: 1990596571}
 --- !u!114 &1117742181
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4039,7 +4094,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31a92c11a30de8f45a39d29b133c2d18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::XPBarUI
-  playerXP: {fileID: 1990596571}
+  partyProgression: {fileID: 426206354}
   xpSlider: {fileID: 1901988804}
   levelText: {fileID: 900724936}
 --- !u!1 &1263645363
@@ -4158,7 +4213,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyXPReward
   xpReward: 20
-  playerXP: {fileID: 1990596571}
 --- !u!114 &1323557057
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4638,6 +4692,7 @@ MonoBehaviour:
   possibleGroups: []
   spawnOnStart: 1
   randomizeGroups: 1
+  groupRespawnDelay: 12
 --- !u!4 &1420417544
 Transform:
   m_ObjectHideFlags: 0
@@ -5012,7 +5067,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyXPReward
   xpReward: 20
-  playerXP: {fileID: 1990596571}
 --- !u!114 &1499825901
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5987,6 +6041,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e3f71caf05343ea4980d22907273ee04, type: 2}
   spawnOnStart: 1
   randomizeGroups: 1
+  groupRespawnDelay: 12
 --- !u!4 &1685352660
 Transform:
   m_ObjectHideFlags: 0
@@ -6258,7 +6313,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyXPReward
   xpReward: 20
-  playerXP: {fileID: 1990596571}
 --- !u!114 &1866886303
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6501,7 +6555,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyXPReward
   xpReward: 20
-  playerXP: {fileID: 1990596571}
 --- !u!114 &1884980945
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6779,7 +6832,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyXPReward
   xpReward: 20
-  playerXP: {fileID: 1990596571}
 --- !u!114 &1893789278
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7220,7 +7272,7 @@ GameObject:
   - component: {fileID: 1990596577}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7377,7 +7429,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1990596562}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 63581854f49e71e48a36ee92eab48d90, type: 3}
   m_Name: 
@@ -8145,3 +8197,4 @@ SceneRoots:
   - {fileID: 970090403}
   - {fileID: 1685352660}
   - {fileID: 1420417544}
+  - {fileID: 426206355}

@@ -3,18 +3,26 @@ using UnityEngine;
 [RequireComponent(typeof(HealthController))]
 public class EnemyXPReward : MonoBehaviour
 {
-    public int xpReward = 20;
-    public XPController playerXP;
+    [SerializeField] private int xpReward = 20;
 
     private HealthController healthController;
+    private PartyProgressionController partyProgression;
 
     private void Awake()
     {
         healthController = GetComponent<HealthController>();
-        healthController.OnDied += HandleDeath;
+        partyProgression = FindFirstObjectByType<PartyProgressionController>();
     }
 
-    private void OnDestroy()
+    private void OnEnable()
+    {
+        if (healthController != null)
+        {
+            healthController.OnDied += HandleDeath;
+        }
+    }
+
+    private void OnDisable()
     {
         if (healthController != null)
         {
@@ -24,9 +32,13 @@ public class EnemyXPReward : MonoBehaviour
 
     private void HandleDeath(HealthController deadUnit)
     {
-        if (playerXP != null)
+        if (partyProgression != null)
         {
-            playerXP.GainXP(xpReward);
+            partyProgression.GainXP(xpReward);
+        }
+        else
+        {
+            Debug.LogWarning($"{gameObject.name}: No PartyProgressionController found for XP reward.");
         }
     }
 }
