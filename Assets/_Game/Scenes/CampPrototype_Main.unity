@@ -827,6 +827,54 @@ RectTransform:
   m_AnchoredPosition: {x: -5, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &266740099
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 266740101}
+  - component: {fileID: 266740100}
+  m_Layer: 0
+  m_Name: PartyControlBootstrap
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &266740100
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 266740099}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eba21715e9165b049bafae09808e146e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PartyControlBootstrap
+  initiallyControlledMember: {fileID: 1990596578}
+  otherMembers:
+  - {fileID: 635801754}
+  - {fileID: 1632514464}
+--- !u!4 &266740101
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 266740099}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -4.78052, y: 0, z: 14.66389}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &301229861
 GameObject:
   m_ObjectHideFlags: 0
@@ -1647,6 +1695,58 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 398419103}
   m_CullTransparentMesh: 1
+--- !u!1 &400854385
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 400854387}
+  - component: {fileID: 400854386}
+  m_Layer: 0
+  m_Name: PartyControlManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &400854386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 400854385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd8941d05095c2a43901b777a60c8781, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PartyControlManager
+  tank: {fileID: 1632514464}
+  dps: {fileID: 1990596578}
+  healer: {fileID: 635801754}
+  startingMember: {fileID: 1990596578}
+  tankKey: 282
+  dpsKey: 283
+  healerKey: 284
+  cameraFollowProxy: {fileID: 0}
+--- !u!4 &400854387
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 400854385}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -4.78052, y: 0, z: 14.66389}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -2238,6 +2338,14 @@ GameObject:
   - component: {fileID: 635801748}
   - component: {fileID: 635801747}
   - component: {fileID: 635801746}
+  - component: {fileID: 635801754}
+  - component: {fileID: 635801755}
+  - component: {fileID: 635801760}
+  - component: {fileID: 635801756}
+  - component: {fileID: 635801757}
+  - component: {fileID: 635801759}
+  - component: {fileID: 635801758}
+  - component: {fileID: 635801761}
   m_Layer: 0
   m_Name: Healer
   m_TagString: Untagged
@@ -2409,6 +2517,141 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &635801754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 635801745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2665302bcc955154ba6136297f1ee09f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PartyMemberControlBridge
+  roleName: Healer
+  playerControlledComponents:
+  - {fileID: 635801757}
+  - {fileID: 635801756}
+  - {fileID: 635801755}
+  aiControlledComponents:
+  - {fileID: 635801746}
+  - {fileID: 635801761}
+  playerControlledIndicator: {fileID: 0}
+  cameraFollowTarget: {fileID: 0}
+--- !u!114 &635801755
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 635801745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1de2eb57651be604e92405bf41cc80d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TargetingController
+  currentTarget: {fileID: 0}
+  targetSearchRadius: 12
+--- !u!114 &635801756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 635801745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 760a30a131c80394ab60d845f0ebf2e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerMovementController
+  moveSpeed: 5
+  turnSpeed: 12
+--- !u!114 &635801757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 635801745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: baa6808638d6e93418472b8495a58908, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAbilityInputController
+--- !u!114 &635801758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 635801745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68d4c5a27db2819469494897cc132123, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerDeathHandler
+  resetDelay: 2
+--- !u!114 &635801759
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 635801745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15375c63d079bd84ab511a0cd843a0c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AutoAttackController
+  currentTarget: {fileID: 0}
+  useTargetingController: 1
+--- !u!143 &635801760
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 635801745}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 1
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &635801761
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 635801745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6ac038e0febb6041bfd282cf9d288c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PartyFollowController
+  partyControlManager: {fileID: 400854386}
+  myControlBridge: {fileID: 635801754}
+  followDistance: 4
+  stopDistance: 2.25
+  moveSpeed: 4
+  rotationSpeed: 10
+  formationOffset: {x: -1.75, y: 0, z: -2}
+  gravity: -20
+  groundedStickForce: -2
 --- !u!1 &641919295
 GameObject:
   m_ObjectHideFlags: 0
@@ -5820,6 +6063,13 @@ GameObject:
   - component: {fileID: 1632514457}
   - component: {fileID: 1632514456}
   - component: {fileID: 1632514455}
+  - component: {fileID: 1632514464}
+  - component: {fileID: 1632514469}
+  - component: {fileID: 1632514467}
+  - component: {fileID: 1632514466}
+  - component: {fileID: 1632514465}
+  - component: {fileID: 1632514468}
+  - component: {fileID: 1632514470}
   m_Layer: 0
   m_Name: Tank
   m_TagString: Untagged
@@ -6006,6 +6256,127 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1632514464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1632514454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2665302bcc955154ba6136297f1ee09f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PartyMemberControlBridge
+  roleName: Tank
+  playerControlledComponents:
+  - {fileID: 1632514467}
+  - {fileID: 1632514466}
+  - {fileID: 1632514465}
+  aiControlledComponents:
+  - {fileID: 1632514455}
+  - {fileID: 1632514470}
+  playerControlledIndicator: {fileID: 0}
+  cameraFollowTarget: {fileID: 0}
+--- !u!114 &1632514465
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1632514454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1de2eb57651be604e92405bf41cc80d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TargetingController
+  currentTarget: {fileID: 0}
+  targetSearchRadius: 12
+--- !u!114 &1632514466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1632514454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: baa6808638d6e93418472b8495a58908, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAbilityInputController
+--- !u!114 &1632514467
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1632514454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 760a30a131c80394ab60d845f0ebf2e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerMovementController
+  moveSpeed: 5
+  turnSpeed: 12
+--- !u!114 &1632514468
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1632514454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68d4c5a27db2819469494897cc132123, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerDeathHandler
+  resetDelay: 2
+--- !u!143 &1632514469
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1632514454}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 1
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1632514470
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1632514454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6ac038e0febb6041bfd282cf9d288c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PartyFollowController
+  partyControlManager: {fileID: 400854386}
+  myControlBridge: {fileID: 1632514464}
+  followDistance: 4
+  stopDistance: 2.25
+  moveSpeed: 4
+  rotationSpeed: 10
+  formationOffset: {x: 0, y: 0, z: 2}
+  gravity: -20
+  groundedStickForce: -2
 --- !u!1 &1685352658
 GameObject:
   m_ObjectHideFlags: 0
@@ -7270,8 +7641,11 @@ GameObject:
   - component: {fileID: 1990596574}
   - component: {fileID: 1990596576}
   - component: {fileID: 1990596577}
+  - component: {fileID: 1990596578}
+  - component: {fileID: 1990596579}
+  - component: {fileID: 1990596580}
   m_Layer: 0
-  m_Name: Player
+  m_Name: DPS
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7538,6 +7912,65 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerDeathHandler
   resetDelay: 2
+--- !u!114 &1990596578
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1990596562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2665302bcc955154ba6136297f1ee09f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PartyMemberControlBridge
+  roleName: DPS
+  playerControlledComponents:
+  - {fileID: 1990596574}
+  - {fileID: 1990596576}
+  - {fileID: 1990596573}
+  aiControlledComponents:
+  - {fileID: 1990596579}
+  - {fileID: 1990596580}
+  playerControlledIndicator: {fileID: 0}
+  cameraFollowTarget: {fileID: 0}
+--- !u!114 &1990596579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1990596562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00276858c6d17ea44b6158c41cba1ed3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DPSAIController
+  playerAnchor: {fileID: 0}
+  followDistance: 3
+  moveSpeed: 4
+  aiEnabled: 0
+--- !u!114 &1990596580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1990596562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6ac038e0febb6041bfd282cf9d288c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PartyFollowController
+  partyControlManager: {fileID: 400854386}
+  myControlBridge: {fileID: 1990596578}
+  followDistance: 4
+  stopDistance: 2.25
+  moveSpeed: 4
+  rotationSpeed: 10
+  formationOffset: {x: 1.75, y: 0, z: -2}
+  gravity: -20
+  groundedStickForce: -2
 --- !u!1 &2002302665
 GameObject:
   m_ObjectHideFlags: 0
@@ -8198,3 +8631,5 @@ SceneRoots:
   - {fileID: 1685352660}
   - {fileID: 1420417544}
   - {fileID: 426206355}
+  - {fileID: 266740101}
+  - {fileID: 400854387}
