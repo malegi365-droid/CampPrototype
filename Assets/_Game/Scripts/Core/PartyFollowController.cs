@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
 public class PartyFollowController : MonoBehaviour
@@ -8,21 +8,17 @@ public class PartyFollowController : MonoBehaviour
     [SerializeField] private PartyMemberControlBridge myControlBridge;
 
     [Header("Follow Settings")]
-    [SerializeField] private float followDistance = 4f;
-    [SerializeField] private float stopDistance = 2.25f;
+    [SerializeField] private float followStartDistance = 5f;
+    [SerializeField] private float stopDistance = 2.5f;
     [SerializeField] private float moveSpeed = 4f;
     [SerializeField] private float rotationSpeed = 10f;
 
-    [Header("Formation Offset")]
-    [Tooltip("Local offset from active member. Example: x = side offset, z = behind/ahead offset.")]
-    [SerializeField] private Vector3 formationOffset = new Vector3(1.5f, 0f, -2f);
-
-    [Header("Grounding")]
-    [SerializeField] private float gravity = -20f;
-    [SerializeField] private float groundedStickForce = -2f;
+    [Header("Prototype Ground Lock")]
+    [SerializeField] private bool lockYPosition = true;
+    [SerializeField] private float lockedYPosition = 1f;
 
     private CharacterController characterController;
-    private float verticalVelocity;
+    private bool isFollowing;
 
     private void Awake()
     {
@@ -33,6 +29,16 @@ public class PartyFollowController : MonoBehaviour
 
         if (partyControlManager == null)
             partyControlManager = FindFirstObjectByType<PartyControlManager>();
+
+        // 🔥 REMOVED: lockedYPosition override
+    }
+
+    private void OnEnable()
+    {
+        isFollowing = false;
+
+        if (lockYPosition)
+            ForceLockedY();
     }
 
     private void Update()
@@ -43,67 +49,60 @@ public class PartyFollowController : MonoBehaviour
         if (myControlBridge.IsPlayerControlled)
             return;
 
-        PartyMemberControlBridge activeMember = partyControlManager.CurrentMember;
+        PartyMemberControlBridge leader = partyControlManager.CurrentMember;
 
-        if (activeMember == null || activeMember == myControlBridge)
+        if (leader == null || leader == myControlBridge)
             return;
 
-        FollowActiveMember(activeMember);
+        FollowLeaderDirectly(leader);
+
+        if (lockYPosition)
+            ForceLockedY();
     }
 
-    private void FollowActiveMember(PartyMemberControlBridge activeMember)
+    private void FollowLeaderDirectly(PartyMemberControlBridge leader)
     {
-        Transform activeTransform = activeMember.transform;
+        Vector3 toLeader = leader.transform.position - transform.position;
+        toLeader.y = 0f;
 
-        Vector3 targetPosition =
-            activeTransform.position +
-            activeTransform.right * formationOffset.x +
-            activeTransform.forward * formationOffset.z;
+        float distance = toLeader.magnitude;
 
-        Vector3 toTarget = targetPosition - transform.position;
-        toTarget.y = 0f;
+        if (!isFollowing && distance >= followStartDistance)
+            isFollowing = true;
 
-        float distance = toTarget.magnitude;
+        if (isFollowing && distance <= stopDistance)
+            isFollowing = false;
 
-        ApplyGravityOnlyIfNeeded();
-
-        if (distance <= stopDistance)
-        {
-            Vector3 gravityMove = new Vector3(0f, verticalVelocity, 0f) * Time.deltaTime;
-            characterController.Move(gravityMove);
+        if (!isFollowing)
             return;
-        }
 
-        if (distance > followDistance)
+        Vector3 moveDirection = toLeader.normalized;
+        Vector3 move = moveDirection * moveSpeed * Time.deltaTime;
+
+        characterController.Move(move);
+
+        if (moveDirection.sqrMagnitude > 0.001f)
         {
-            Vector3 moveDirection = toTarget.normalized;
-
-            Vector3 horizontalMove = moveDirection * moveSpeed * Time.deltaTime;
-            Vector3 verticalMove = new Vector3(0f, verticalVelocity, 0f) * Time.deltaTime;
-
-            characterController.Move(horizontalMove + verticalMove);
-
-            if (moveDirection.sqrMagnitude > 0.001f)
-            {
-                Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
-                transform.rotation = Quaternion.Slerp(
-                    transform.rotation,
-                    targetRotation,
-                    rotationSpeed * Time.deltaTime
-                );
-            }
+            Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation,
+                targetRotation,
+                rotationSpeed * Time.deltaTime
+            );
         }
     }
 
-    private void ApplyGravityOnlyIfNeeded()
+    private void ForceLockedY()
     {
-        if (characterController.isGrounded && verticalVelocity < 0f)
-        {
-            verticalVelocity = groundedStickForce;
-        }
-        else
-        {
-            verticalVelocity += gravity * Time.deltaTime;
-        }
+        if (Mathf.Abs(transform.position.y - lockedYPosition) < 0.001f)
+            return;
+
+        characterController.enabled = false;
+
+        Vector3 pos = transform.position;
+        pos.y = lockedYPosition;
+        transform.position = pos;
+
+        characterController.enabled = true;
     }
 }

@@ -1267,7 +1267,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36f7b5506d06af24c97696593252aec3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SimpleCameraFollow
-  target: {fileID: 1990596563}
+  target: {fileID: 419558235}
   offset: {x: 0, y: 7, z: -8}
   followSpeed: 6
   lookSpeed: 8
@@ -1731,7 +1731,7 @@ MonoBehaviour:
   tankKey: 282
   dpsKey: 283
   healerKey: 284
-  cameraFollowProxy: {fileID: 0}
+  cameraFollowProxy: {fileID: 419558234}
 --- !u!4 &400854387
 Transform:
   m_ObjectHideFlags: 0
@@ -1874,6 +1874,52 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!1 &419558233
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 419558235}
+  - component: {fileID: 419558234}
+  m_Layer: 0
+  m_Name: CameraFollowProxy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &419558234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 419558233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e56b5e8d73bdf8f4a8bbbc2240e95570, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraFollowProxy
+  followSpeed: 12
+  snapDistance: 20
+--- !u!4 &419558235
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 419558233}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -4.78052, y: 0, z: 14.66389}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &420166357
 GameObject:
   m_ObjectHideFlags: 0
@@ -2645,13 +2691,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PartyFollowController
   partyControlManager: {fileID: 400854386}
   myControlBridge: {fileID: 635801754}
-  followDistance: 4
+  followStartDistance: 5
   stopDistance: 2.25
   moveSpeed: 4
   rotationSpeed: 10
-  formationOffset: {x: -1.75, y: 0, z: -2}
-  gravity: -20
-  groundedStickForce: -2
+  lockYPosition: 1
+  lockedYPosition: 0.5
 --- !u!1 &641919295
 GameObject:
   m_ObjectHideFlags: 0
@@ -6370,13 +6415,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PartyFollowController
   partyControlManager: {fileID: 400854386}
   myControlBridge: {fileID: 1632514464}
-  followDistance: 4
+  followStartDistance: 5
   stopDistance: 2.25
   moveSpeed: 4
   rotationSpeed: 10
-  formationOffset: {x: 0, y: 0, z: 2}
-  gravity: -20
-  groundedStickForce: -2
+  lockYPosition: 1
+  lockedYPosition: 0.5
 --- !u!1 &1685352658
 GameObject:
   m_ObjectHideFlags: 0
@@ -7964,13 +8008,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PartyFollowController
   partyControlManager: {fileID: 400854386}
   myControlBridge: {fileID: 1990596578}
-  followDistance: 4
+  followStartDistance: 5
   stopDistance: 2.25
   moveSpeed: 4
   rotationSpeed: 10
-  formationOffset: {x: 1.75, y: 0, z: -2}
-  gravity: -20
-  groundedStickForce: -2
+  lockYPosition: 1
+  lockedYPosition: 1
 --- !u!1 &2002302665
 GameObject:
   m_ObjectHideFlags: 0
@@ -8633,3 +8676,4 @@ SceneRoots:
   - {fileID: 426206355}
   - {fileID: 266740101}
   - {fileID: 400854387}
+  - {fileID: 419558235}

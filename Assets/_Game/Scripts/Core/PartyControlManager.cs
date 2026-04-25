@@ -15,8 +15,8 @@ public class PartyControlManager : MonoBehaviour
     [SerializeField] private KeyCode dpsKey = KeyCode.F2;
     [SerializeField] private KeyCode healerKey = KeyCode.F3;
 
-    [Header("Optional Camera")]
-    [SerializeField] private Transform cameraFollowProxy;
+    [Header("Camera")]
+    [SerializeField] private CameraFollowProxy cameraFollowProxy;
 
     public PartyMemberControlBridge CurrentMember { get; private set; }
 
@@ -25,7 +25,7 @@ public class PartyControlManager : MonoBehaviour
         if (startingMember == null)
             startingMember = dps;
 
-        ForceSwitchControl(startingMember);
+        ForceSwitchControl(startingMember, true);
     }
 
     private void Update()
@@ -42,6 +42,11 @@ public class PartyControlManager : MonoBehaviour
 
     public void ForceSwitchControl(PartyMemberControlBridge newMember)
     {
+        ForceSwitchControl(newMember, false);
+    }
+
+    private void ForceSwitchControl(PartyMemberControlBridge newMember, bool snapCamera)
+    {
         if (newMember == null)
         {
             Debug.LogWarning("[PartyControlManager] Tried to switch to a null party member.");
@@ -54,7 +59,7 @@ public class PartyControlManager : MonoBehaviour
 
         CurrentMember = newMember;
 
-        UpdateCameraProxy();
+        UpdateCameraTarget(snapCamera);
 
         Debug.Log($"[PartyControlManager] Player now controlling: {CurrentMember.RoleName}");
     }
@@ -68,12 +73,11 @@ public class PartyControlManager : MonoBehaviour
         member.ForceRefreshState();
     }
 
-    private void UpdateCameraProxy()
+    private void UpdateCameraTarget(bool snapCamera)
     {
         if (cameraFollowProxy == null || CurrentMember == null)
             return;
 
-        cameraFollowProxy.position = CurrentMember.CameraFollowTarget.position;
-        cameraFollowProxy.SetParent(CurrentMember.CameraFollowTarget, true);
+        cameraFollowProxy.SetTarget(CurrentMember.CameraFollowTarget, snapCamera);
     }
 }
