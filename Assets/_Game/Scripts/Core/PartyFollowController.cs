@@ -6,6 +6,7 @@ public class PartyFollowController : MonoBehaviour
     [Header("References")]
     [SerializeField] private PartyControlManager partyControlManager;
     [SerializeField] private PartyMemberControlBridge myControlBridge;
+    [SerializeField] private TargetingController targetingController;
 
     [Header("Follow Settings")]
     [SerializeField] private float followStartDistance = 5f;
@@ -13,9 +14,13 @@ public class PartyFollowController : MonoBehaviour
     [SerializeField] private float moveSpeed = 4f;
     [SerializeField] private float rotationSpeed = 10f;
 
+    [Header("Combat-Aware Follow")]
+    [Tooltip("If true, this unit will stop following while it has a current target.")]
+    [SerializeField] private bool stopFollowingWhenTargetingEnemy = true;
+
     [Header("Prototype Ground Lock")]
     [SerializeField] private bool lockYPosition = true;
-    [SerializeField] private float lockedYPosition = 1f;
+    [SerializeField] private float lockedYPosition = 0.5f;
 
     private CharacterController characterController;
     private bool isFollowing;
@@ -27,10 +32,11 @@ public class PartyFollowController : MonoBehaviour
         if (myControlBridge == null)
             myControlBridge = GetComponent<PartyMemberControlBridge>();
 
-        if (partyControlManager == null)
-            partyControlManager = FindFirstObjectByType<PartyControlManager>();
+        if (targetingController == null)
+            targetingController = GetComponent<TargetingController>();
 
-        // 🔥 REMOVED: lockedYPosition override
+        if (partyControlManager == null)
+            partyControlManager = FindAnyObjectByType<PartyControlManager>();
     }
 
     private void OnEnable()
@@ -49,18 +55,49 @@ public class PartyFollowController : MonoBehaviour
         if (myControlBridge.IsPlayerControlled)
             return;
 
+        if (ShouldStopFollowingForCombat())
+        {
+            isFollowing = false;
+
+            if (lockYPosition)
+                ForceLockedY();
+
+            return;
+        }
+
         PartyMemberControlBridge leader = partyControlManager.CurrentMember;
 
         if (leader == null || leader == myControlBridge)
             return;
 
-        FollowLeaderDirectly(leader);
+        FollowLeader(leader);
 
         if (lockYPosition)
             ForceLockedY();
     }
 
-    private void FollowLeaderDirectly(PartyMemberControlBridge leader)
+    private bool ShouldStopFollowingForCombat()
+    {
+        if (!stopFollowingWhenTargetingEnemy)
+            return false;
+
+        if (targetingController == null)
+            return false;
+
+        Transform currentTarget = targetingController.GetCurrentTarget();
+
+        if (currentTarget == null)
+            return false;
+
+        HealthController targetHealth = currentTarget.GetComponent<HealthController>();
+
+        if (targetHealth != null && targetHealth.IsDead())
+            return false;
+
+        return currentTarget.gameObject.activeInHierarchy;
+    }
+
+    private void FollowLeader(PartyMemberControlBridge leader)
     {
         Vector3 toLeader = leader.transform.position - transform.position;
         toLeader.y = 0f;
