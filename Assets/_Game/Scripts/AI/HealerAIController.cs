@@ -1,29 +1,32 @@
 using UnityEngine;
 
 [RequireComponent(typeof(AbilityController))]
+[RequireComponent(typeof(CharacterController))]
 public class HealerAIController : MonoBehaviour
 {
-    [SerializeField] private Transform player;
+    [Header("References")]
+    [SerializeField] private PartyControlManager partyControlManager;
     [SerializeField] private GameObject tank;
-    [SerializeField] private float followDistance = 3f;
-    [SerializeField] private float moveSpeed = 3.5f;
+    [SerializeField] private GameObject dps;
+
+    [Header("Healing")]
+    [SerializeField] private float tankHealThreshold = 0.50f;
+    [SerializeField] private float leaderHealThreshold = 0.40f;
+    [SerializeField] private float selfHealThreshold = 0.50f;
 
     [Header("Threat Tuning")]
     [SerializeField] private float healThreatMultiplier = 0.5f;
 
     private AbilityController abilityController;
     private HealthController selfHealth;
-    private TargetingController playerTargeting;
 
     private void Awake()
     {
         abilityController = GetComponent<AbilityController>();
         selfHealth = GetComponent<HealthController>();
 
-        if (player != null)
-        {
-            playerTargeting = player.GetComponent<TargetingController>();
-        }
+        if (partyControlManager == null)
+            partyControlManager = FindAnyObjectByType<PartyControlManager>();
     }
 
     private void Update()
@@ -32,7 +35,6 @@ public class HealerAIController : MonoBehaviour
             return;
 
         TryHealPriorityTarget();
-        FollowPartyAnchor();
     }
 
     private void TryHealPriorityTarget()
@@ -40,47 +42,62 @@ public class HealerAIController : MonoBehaviour
         if (tank != null)
         {
             HealthController tankHealth = tank.GetComponent<HealthController>();
-            if (tankHealth != null && !tankHealth.IsDead() && tankHealth.GetHealthPercent() < 0.50f)
+
+            if (tankHealth != null && !tankHealth.IsDead() && tankHealth.GetHealthPercent() < tankHealThreshold)
             {
                 if (abilityController.UseRestore(tank))
-                {
                     GenerateHealThreat(tank);
-                }
+
                 return;
             }
         }
 
-        if (player != null)
+        PartyMemberControlBridge leader = partyControlManager != null ? partyControlManager.CurrentMember : null;
+
+        if (leader != null)
         {
-            HealthController playerHealth = player.GetComponent<HealthController>();
-            if (playerHealth != null && !playerHealth.IsDead() && playerHealth.GetHealthPercent() < 0.40f)
+            HealthController leaderHealth = leader.GetComponent<HealthController>();
+
+            if (leaderHealth != null && !leaderHealth.IsDead() && leaderHealth.GetHealthPercent() < leaderHealThreshold)
             {
-                if (abilityController.UseRestore(player.gameObject))
-                {
-                    GenerateHealThreat(player.gameObject);
-                }
+                if (abilityController.UseRestore(leader.gameObject))
+                    GenerateHealThreat(leader.gameObject);
+
                 return;
             }
         }
 
-        if (selfHealth != null && selfHealth.GetHealthPercent() < 0.50f)
+        if (dps != null)
+        {
+            HealthController dpsHealth = dps.GetComponent<HealthController>();
+
+            if (dpsHealth != null && !dpsHealth.IsDead() && dpsHealth.GetHealthPercent() < leaderHealThreshold)
+            {
+                if (abilityController.UseRestore(dps))
+                    GenerateHealThreat(dps);
+
+                return;
+            }
+        }
+
+        if (selfHealth != null && selfHealth.GetHealthPercent() < selfHealThreshold)
         {
             if (abilityController.UseRestore(gameObject))
-            {
                 GenerateHealThreat(gameObject);
-            }
         }
     }
 
     private void GenerateHealThreat(GameObject healedTarget)
     {
-        if (playerTargeting == null) return;
+        Transform currentEnemyTarget = GetCurrentLeaderTarget();
 
-        Transform currentEnemyTarget = playerTargeting.GetCurrentTarget();
-        if (currentEnemyTarget == null) return;
+        if (currentEnemyTarget == null)
+            return;
 
         ThreatTable enemyThreatTable = currentEnemyTarget.GetComponent<ThreatTable>();
-        if (enemyThreatTable == null) return;
+
+        if (enemyThreatTable == null)
+            return;
 
         float healAmount = abilityController.GetLastRestoreHealAmount();
         float healThreat = healAmount * healThreatMultiplier;
@@ -90,31 +107,34 @@ public class HealerAIController : MonoBehaviour
         Debug.Log($"{gameObject.name} generated {healThreat} heal threat on {currentEnemyTarget.name} by healing {healedTarget.name}");
     }
 
-    private void FollowPartyAnchor()
+    private Transform GetCurrentLeaderTarget()
     {
-        Vector3 anchorPosition = transform.position;
+        PartyMemberControlBridge leader = partyControlManager != null ? partyControlManager.CurrentMember : null;
 
-        if (tank != null)
-        {
-            anchorPosition = tank.transform.position;
-        }
-        else if (player != null)
-        {
-            anchorPosition = player.position;
-        }
+        if (leader == null)
+            return null;
 
-        float distance = Vector3.Distance(transform.position, anchorPosition);
-        if (distance > followDistance)
-        {
-            Vector3 dir = (anchorPosition - transform.position).normalized;
-            transform.position += dir * moveSpeed * Time.deltaTime;
-        }
+        TargetingController leaderTargeting = leader.GetComponent<TargetingController>();
+
+        if (leaderTargeting == null)
+            return null;
+
+        Transform target = leaderTargeting.GetCurrentTarget();
+
+        if (target == null)
+            return null;
+
+        HealthController targetHealth = target.GetComponent<HealthController>();
+
+        if (targetHealth != null && targetHealth.IsDead())
+            return null;
+
+        return target.gameObject.activeInHierarchy ? target : null;
     }
 
-    public void SetReferences(Transform playerTransform, GameObject tankObject)
+    public void SetReferences(GameObject tankObject, GameObject dpsObject)
     {
-        player = playerTransform;
         tank = tankObject;
-        playerTargeting = player != null ? player.GetComponent<TargetingController>() : null;
+        dps = dpsObject;
     }
 }

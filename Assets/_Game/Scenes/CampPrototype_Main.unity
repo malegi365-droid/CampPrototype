@@ -2411,10 +2411,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ecb668e4040f1844a27e34a9a903a24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealerAIController
-  player: {fileID: 1990596563}
+  partyControlManager: {fileID: 0}
   tank: {fileID: 1632514454}
-  followDistance: 3
-  moveSpeed: 3.5
+  dps: {fileID: 0}
+  tankHealThreshold: 0.5
+  leaderHealThreshold: 0.4
+  selfHealThreshold: 0.5
   healThreatMultiplier: 0.5
 --- !u!114 &635801747
 MonoBehaviour:
@@ -2691,10 +2693,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PartyFollowController
   partyControlManager: {fileID: 400854386}
   myControlBridge: {fileID: 635801754}
+  targetingController: {fileID: 635801755}
   followStartDistance: 5
   stopDistance: 2.25
   moveSpeed: 4
   rotationSpeed: 10
+  stopFollowingWhenTargetingEnemy: 1
+  disengageDelay: 1.5
+  recallDistanceFromLeader: 10
   lockYPosition: 1
   lockedYPosition: 0.5
 --- !u!1 &641919295
@@ -3686,7 +3692,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Player: 0'
+  m_text: 'DPS: 0'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3821,13 +3827,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c97ff4214213a9d44a81bb1d51cd46f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThreatDebugUI
-  playerTargeting: {fileID: 1990596573}
-  player: {fileID: 1990596562}
+  partyControlManager: {fileID: 0}
+  dps: {fileID: 0}
   tank: {fileID: 1632514454}
   healer: {fileID: 635801745}
   threatTitleText: {fileID: 1408989725}
   threatEnemyTargetText: {fileID: 358081999}
-  threatPlayerText: {fileID: 977396350}
+  threatDpsText: {fileID: 0}
   threatTankText: {fileID: 398419105}
   threatHealerText: {fileID: 2006335389}
 --- !u!114 &1057781610
@@ -4385,6 +4391,59 @@ MonoBehaviour:
   partyProgression: {fileID: 426206354}
   xpSlider: {fileID: 1901988804}
   levelText: {fileID: 900724936}
+--- !u!1 &1228104559
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1228104561}
+  - component: {fileID: 1228104560}
+  m_Layer: 0
+  m_Name: PartyTargetCoordinator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1228104560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1228104559}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5eedc9d24cfeef14a96eca74e7026294, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PartyTargetCoordinator
+  partyControlManager: {fileID: 400854386}
+  tank: {fileID: 1632514464}
+  dps: {fileID: 1990596578}
+  healer: {fileID: 635801754}
+  tankTargeting: {fileID: 1632514465}
+  dpsTargeting: {fileID: 1990596573}
+  healerTargeting: {fileID: 635801755}
+  syncTankAndDpsTargets: 1
+  clearInactiveHealerTarget: 1
+--- !u!4 &1228104561
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1228104559}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -4.78052, y: 0, z: 14.66389}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1263645363
 GameObject:
   m_ObjectHideFlags: 0
@@ -5786,7 +5845,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43044a55c593a1040ba98b648d974540, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CampRecoveryZone
-  player: {fileID: 1990596562}
+  dps: {fileID: 0}
   tank: {fileID: 1632514454}
   healer: {fileID: 635801745}
   clearTargetsOnRecover: 1
@@ -6134,12 +6193,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2bd03b35b42548498492d20b875d9a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TankAIController
-  player: {fileID: 1990596563}
+  partyControlManager: {fileID: 0}
   healer: {fileID: 635801745}
-  followDistance: 2
   moveSpeed: 4
+  rotationSpeed: 8
   awarenessRadius: 25
-  maxDistanceFromPlayer: 6
+  maxDistanceFromLeader: 10
+  assistLeaderTargetMaxDistance: 8
 --- !u!114 &1632514456
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6415,10 +6475,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PartyFollowController
   partyControlManager: {fileID: 400854386}
   myControlBridge: {fileID: 1632514464}
+  targetingController: {fileID: 1632514465}
   followStartDistance: 5
   stopDistance: 2.25
   moveSpeed: 4
   rotationSpeed: 10
+  stopFollowingWhenTargetingEnemy: 1
+  disengageDelay: 1.5
+  recallDistanceFromLeader: 10
   lockYPosition: 1
   lockedYPosition: 0.5
 --- !u!1 &1685352658
@@ -7990,10 +8054,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00276858c6d17ea44b6158c41cba1ed3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DPSAIController
-  playerAnchor: {fileID: 0}
-  followDistance: 3
+  partyControlManager: {fileID: 0}
   moveSpeed: 4
-  aiEnabled: 0
+  rotationSpeed: 8
+  maxAssistDistanceFromTarget: 25
 --- !u!114 &1990596580
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8008,10 +8072,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PartyFollowController
   partyControlManager: {fileID: 400854386}
   myControlBridge: {fileID: 1990596578}
+  targetingController: {fileID: 1990596573}
   followStartDistance: 5
   stopDistance: 2.25
   moveSpeed: 4
   rotationSpeed: 10
+  stopFollowingWhenTargetingEnemy: 1
+  disengageDelay: 1.5
+  recallDistanceFromLeader: 10
   lockYPosition: 1
   lockedYPosition: 1
 --- !u!1 &2002302665
@@ -8677,3 +8745,4 @@ SceneRoots:
   - {fileID: 266740101}
   - {fileID: 400854387}
   - {fileID: 419558235}
+  - {fileID: 1228104561}

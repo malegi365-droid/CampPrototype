@@ -4,24 +4,35 @@ using UnityEngine;
 public class ThreatDebugUI : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private TargetingController playerTargeting;
-    [SerializeField] private GameObject player;
+    [SerializeField] private PartyControlManager partyControlManager;
+    [SerializeField] private GameObject dps;
     [SerializeField] private GameObject tank;
     [SerializeField] private GameObject healer;
 
     [Header("UI")]
     [SerializeField] private TextMeshProUGUI threatTitleText;
     [SerializeField] private TextMeshProUGUI threatEnemyTargetText;
-    [SerializeField] private TextMeshProUGUI threatPlayerText;
+    [SerializeField] private TextMeshProUGUI threatDpsText;
     [SerializeField] private TextMeshProUGUI threatTankText;
     [SerializeField] private TextMeshProUGUI threatHealerText;
 
+    private void Awake()
+    {
+        if (partyControlManager == null)
+            partyControlManager = FindAnyObjectByType<PartyControlManager>();
+    }
+
     private void Update()
     {
-        if (playerTargeting == null)
-            return;
+        TargetingController activeTargeting = GetActiveTargeting();
 
-        Transform currentTarget = playerTargeting.GetCurrentTarget();
+        if (activeTargeting == null)
+        {
+            ShowNoTarget();
+            return;
+        }
+
+        Transform currentTarget = activeTargeting.GetCurrentTarget();
 
         if (currentTarget == null)
         {
@@ -45,25 +56,31 @@ public class ThreatDebugUI : MonoBehaviour
 
         string enemyCurrentTargetName = "None";
         if (enemyAttack != null && enemyAttack.GetTarget() != null)
-        {
             enemyCurrentTargetName = enemyAttack.GetTarget().name;
-        }
 
         if (threatEnemyTargetText != null)
             threatEnemyTargetText.text = $"Enemy Target: {enemyCurrentTargetName}";
 
-        float playerThreat = threatTable.GetThreatFor(player);
+        float dpsThreat = threatTable.GetThreatFor(dps);
         float tankThreat = threatTable.GetThreatFor(tank);
         float healerThreat = threatTable.GetThreatFor(healer);
 
-        if (threatPlayerText != null)
-            threatPlayerText.text = $"Player: {playerThreat:F1}";
+        if (threatDpsText != null)
+            threatDpsText.text = $"DPS: {dpsThreat:F1}";
 
         if (threatTankText != null)
             threatTankText.text = $"Tank: {tankThreat:F1}";
 
         if (threatHealerText != null)
             threatHealerText.text = $"Healer: {healerThreat:F1}";
+    }
+
+    private TargetingController GetActiveTargeting()
+    {
+        if (partyControlManager == null || partyControlManager.CurrentMember == null)
+            return null;
+
+        return partyControlManager.CurrentMember.GetComponent<TargetingController>();
     }
 
     private void ShowNoTarget()
@@ -74,8 +91,8 @@ public class ThreatDebugUI : MonoBehaviour
         if (threatEnemyTargetText != null)
             threatEnemyTargetText.text = "Enemy Target: None";
 
-        if (threatPlayerText != null)
-            threatPlayerText.text = "Player: 0";
+        if (threatDpsText != null)
+            threatDpsText.text = "DPS: 0";
 
         if (threatTankText != null)
             threatTankText.text = "Tank: 0";

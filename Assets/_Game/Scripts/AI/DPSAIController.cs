@@ -4,19 +4,24 @@ using UnityEngine;
 [RequireComponent(typeof(AbilityController))]
 [RequireComponent(typeof(HealthController))]
 [RequireComponent(typeof(UnitStats))]
+[RequireComponent(typeof(CharacterController))]
 public class DPSAIController : MonoBehaviour
 {
-    [SerializeField] private Transform playerAnchor;
-    [SerializeField] private float followDistance = 3f;
-    [SerializeField] private float moveSpeed = 4f;
+    [Header("References")]
+    [SerializeField] private PartyControlManager partyControlManager;
+
+    [Header("Movement")]
+    [SerializeField] private float moveSpeed = 4.5f;
+    [SerializeField] private float rotationSpeed = 8f;
+
+    [Header("Combat")]
+    [SerializeField] private float maxAssistDistanceFromTarget = 25f;
 
     private AutoAttackController autoAttackController;
     private AbilityController abilityController;
     private HealthController healthController;
-    private TargetingController playerTargeting;
     private UnitStats stats;
-
-    [SerializeField] private bool aiEnabled = false;
+    private CharacterController characterController;
 
     private void Awake()
     {
@@ -24,50 +29,73 @@ public class DPSAIController : MonoBehaviour
         abilityController = GetComponent<AbilityController>();
         healthController = GetComponent<HealthController>();
         stats = GetComponent<UnitStats>();
+        characterController = GetComponent<CharacterController>();
 
-        if (playerAnchor != null)
-        {
-            playerTargeting = playerAnchor.GetComponent<TargetingController>();
-        }
+        if (partyControlManager == null)
+            partyControlManager = FindAnyObjectByType<PartyControlManager>();
     }
 
     private void Update()
     {
-        if (!aiEnabled) return;
-        if (healthController != null && healthController.IsDead()) return;
+        if (healthController != null && healthController.IsDead())
+            return;
 
-        Transform target = playerTargeting != null ? playerTargeting.GetCurrentTarget() : null;
+        PartyMemberControlBridge leader = partyControlManager != null ? partyControlManager.CurrentMember : null;
 
-        if (target != null)
-        {
-            autoAttackController.SetTarget(target);
+        if (leader == null)
+            return;
 
-            float distance = Vector3.Distance(transform.position, target.position);
-            if (distance > stats.attackRange)
-            {
-                MoveToward(target.position);
-            }
+        Transform target = GetLeaderTarget(leader);
 
-            abilityController.UseHeavyShot();
-
-            if (abilityController.HasFocusBreak())
-            {
-                abilityController.UseFocusBreak();
-            }
-        }
-        else
+        if (target == null)
         {
             autoAttackController.SetTarget(null);
-
-            if (playerAnchor != null)
-            {
-                float distanceToAnchor = Vector3.Distance(transform.position, playerAnchor.position);
-                if (distanceToAnchor > followDistance)
-                {
-                    MoveToward(playerAnchor.position);
-                }
-            }
+            return;
         }
+
+        float distanceToTarget = FlatDistance(transform.position, target.position);
+
+        if (distanceToTarget > maxAssistDistanceFromTarget)
+        {
+            autoAttackController.SetTarget(null);
+            return;
+        }
+
+        autoAttackController.SetTarget(target);
+
+        if (distanceToTarget > stats.attackRange)
+        {
+            MoveToward(target.position);
+            return;
+        }
+
+        abilityController.UseHeavyShot();
+
+        if (abilityController.HasFocusBreak())
+            abilityController.UseFocusBreak();
+    }
+
+    private Transform GetLeaderTarget(PartyMemberControlBridge leader)
+    {
+        TargetingController leaderTargeting = leader.GetComponent<TargetingController>();
+
+        if (leaderTargeting == null)
+            return null;
+
+        Transform target = leaderTargeting.GetCurrentTarget();
+
+        if (target == null || !target.gameObject.activeInHierarchy)
+            return null;
+
+        HealthController targetHealth = target.GetComponent<HealthController>();
+        if (targetHealth != null && targetHealth.IsDead())
+            return null;
+
+        UnitStats targetStats = target.GetComponent<UnitStats>();
+        if (targetStats == null || targetStats.role != UnitRole.Enemy)
+            return null;
+
+        return target;
     }
 
     private void MoveToward(Vector3 destination)
@@ -79,25 +107,17 @@ public class DPSAIController : MonoBehaviour
             return;
 
         dir.Normalize();
-        transform.position += dir * moveSpeed * Time.deltaTime;
+
+        characterController.Move(dir * moveSpeed * Time.deltaTime);
 
         Quaternion targetRotation = Quaternion.LookRotation(dir, Vector3.up);
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 8f * Time.deltaTime);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
 
-    public void SetAIEnabled(bool enabled)
+    private float FlatDistance(Vector3 a, Vector3 b)
     {
-        aiEnabled = enabled;
-    }
-
-    public bool IsAIEnabled()
-    {
-        return aiEnabled;
-    }
-
-    public void SetPlayerAnchor(Transform anchor)
-    {
-        playerAnchor = anchor;
-        playerTargeting = playerAnchor != null ? playerAnchor.GetComponent<TargetingController>() : null;
+        a.y = 0f;
+        b.y = 0f;
+        return Vector3.Distance(a, b);
     }
 }

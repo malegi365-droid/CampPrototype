@@ -9,6 +9,14 @@ public class TargetingController : MonoBehaviour
     private void Update()
     {
         Keyboard kb = Keyboard.current;
+
+        if (kb != null && kb.escapeKey.wasPressedThisFrame)
+        {
+            ClearTarget();
+            Debug.Log($"{gameObject.name} cleared target.");
+            return;
+        }
+
         if (kb != null && kb.tabKey.wasPressedThisFrame)
         {
             TargetNearestEnemy();
@@ -34,9 +42,7 @@ public class TargetingController : MonoBehaviour
         currentTarget = newTarget;
 
         if (currentTarget != null)
-        {
             Debug.Log($"{gameObject.name} targeted {currentTarget.name}");
-        }
     }
 
     public void ClearTarget()
@@ -77,13 +83,9 @@ public class TargetingController : MonoBehaviour
         }
 
         if (nearest != null)
-        {
             SetTarget(nearest);
-        }
         else
-        {
             Debug.Log($"{gameObject.name} found no enemy to target.");
-        }
     }
 
     private void OnDrawGizmosSelected()

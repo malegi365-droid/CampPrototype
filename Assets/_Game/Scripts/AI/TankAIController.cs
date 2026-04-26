@@ -3,22 +3,27 @@ using UnityEngine;
 [RequireComponent(typeof(UnitStats))]
 [RequireComponent(typeof(AutoAttackController))]
 [RequireComponent(typeof(AbilityController))]
+[RequireComponent(typeof(CharacterController))]
 public class TankAIController : MonoBehaviour
 {
-    [SerializeField] private Transform player;
+    [Header("References")]
+    [SerializeField] private PartyControlManager partyControlManager;
     [SerializeField] private GameObject healer;
-    [SerializeField] private float followDistance = 2f;
-    [SerializeField] private float moveSpeed = 4f;
-    [SerializeField] private float awarenessRadius = 25f;
 
-    [Header("Disengage")]
-    [SerializeField] private float maxDistanceFromPlayer = 6f;
+    [Header("Movement")]
+    [SerializeField] private float moveSpeed = 4f;
+    [SerializeField] private float rotationSpeed = 8f;
+
+    [Header("Combat")]
+    [SerializeField] private float awarenessRadius = 25f;
+    [SerializeField] private float maxDistanceFromLeader = 10f;
+    [SerializeField] private float assistLeaderTargetMaxDistance = 8f;
 
     private AbilityController abilityController;
     private AutoAttackController autoAttackController;
-    private TargetingController playerTargeting;
     private HealthController healthController;
     private UnitStats myStats;
+    private CharacterController characterController;
 
     private void Awake()
     {
@@ -26,11 +31,10 @@ public class TankAIController : MonoBehaviour
         autoAttackController = GetComponent<AutoAttackController>();
         healthController = GetComponent<HealthController>();
         myStats = GetComponent<UnitStats>();
+        characterController = GetComponent<CharacterController>();
 
-        if (player != null)
-        {
-            playerTargeting = player.GetComponent<TargetingController>();
-        }
+        if (partyControlManager == null)
+            partyControlManager = FindAnyObjectByType<PartyControlManager>();
     }
 
     private void Update()
@@ -38,31 +42,30 @@ public class TankAIController : MonoBehaviour
         if (healthController != null && healthController.IsDead())
             return;
 
-        if (player == null)
+        PartyMemberControlBridge leader = partyControlManager != null ? partyControlManager.CurrentMember : null;
+
+        if (leader == null)
             return;
 
-        float distanceFromPlayer = Vector3.Distance(transform.position, player.position);
+        float distanceFromLeader = FlatDistance(transform.position, leader.transform.position);
 
-        // If the tank gets too far from the player, break off and return.
-        if (distanceFromPlayer > maxDistanceFromPlayer)
+        if (distanceFromLeader > maxDistanceFromLeader)
         {
             autoAttackController.SetTarget(null);
-            FollowPlayer(forceFollow: true);
             return;
         }
 
-        Transform priorityTarget = GetPriorityTarget();
+        Transform priorityTarget = GetPriorityTarget(leader);
 
         if (priorityTarget == null)
         {
-            FollowPlayer(forceFollow: false);
             autoAttackController.SetTarget(null);
             return;
         }
 
         autoAttackController.SetTarget(priorityTarget);
 
-        float distanceToTarget = Vector3.Distance(transform.position, priorityTarget.position);
+        float distanceToTarget = FlatDistance(transform.position, priorityTarget.position);
         if (distanceToTarget > myStats.attackRange)
         {
             MoveToward(priorityTarget.position);
@@ -71,30 +74,36 @@ public class TankAIController : MonoBehaviour
         abilityController.UseGuardingStrike(priorityTarget);
     }
 
-    private Transform GetPriorityTarget()
+    private Transform GetPriorityTarget(PartyMemberControlBridge leader)
     {
-        Transform targetAttackingPlayer = FindEnemyTargeting(player);
-        if (targetAttackingPlayer != null)
-            return targetAttackingPlayer;
+        Transform enemyAttackingLeader = FindEnemyTargeting(leader.transform);
+        if (enemyAttackingLeader != null)
+            return enemyAttackingLeader;
 
         if (healer != null)
         {
-            Transform targetAttackingHealer = FindEnemyTargeting(healer.transform);
-            if (targetAttackingHealer != null)
-                return targetAttackingHealer;
+            Transform enemyAttackingHealer = FindEnemyTargeting(healer.transform);
+            if (enemyAttackingHealer != null)
+                return enemyAttackingHealer;
         }
 
-        Transform targetAttackingTank = FindEnemyTargeting(transform);
-        if (targetAttackingTank != null)
-            return targetAttackingTank;
+        Transform enemyAttackingTank = FindEnemyTargeting(transform);
+        if (enemyAttackingTank != null)
+            return enemyAttackingTank;
 
-        Transform playerSelectedTarget = playerTargeting != null ? playerTargeting.GetCurrentTarget() : null;
-        if (playerSelectedTarget != null && playerSelectedTarget.gameObject.activeInHierarchy)
+        TargetingController leaderTargeting = leader.GetComponent<TargetingController>();
+        Transform leaderTarget = leaderTargeting != null ? leaderTargeting.GetCurrentTarget() : null;
+
+        if (leaderTarget != null && leaderTarget.gameObject.activeInHierarchy)
         {
-            HealthController targetHealth = playerSelectedTarget.GetComponent<HealthController>();
+            HealthController targetHealth = leaderTarget.GetComponent<HealthController>();
+
             if (targetHealth == null || !targetHealth.IsDead())
             {
-                return playerSelectedTarget;
+                float distanceToLeaderTarget = FlatDistance(transform.position, leaderTarget.position);
+
+                if (distanceToLeaderTarget <= assistLeaderTargetMaxDistance)
+                    return leaderTarget;
             }
         }
 
@@ -103,7 +112,8 @@ public class TankAIController : MonoBehaviour
 
     private Transform FindEnemyTargeting(Transform partyMember)
     {
-        if (partyMember == null) return null;
+        if (partyMember == null)
+            return null;
 
         Collider[] hits = Physics.OverlapSphere(transform.position, awarenessRadius);
 
@@ -132,7 +142,7 @@ public class TankAIController : MonoBehaviour
             if (enemyTarget != partyMember)
                 continue;
 
-            float dist = Vector3.Distance(transform.position, hit.transform.position);
+            float dist = FlatDistance(transform.position, hit.transform.position);
             if (dist < closestDistance)
             {
                 closestDistance = dist;
@@ -143,25 +153,31 @@ public class TankAIController : MonoBehaviour
         return bestEnemy;
     }
 
-    private void FollowPlayer(bool forceFollow)
-    {
-        float distance = Vector3.Distance(transform.position, player.position);
-        if (forceFollow || distance > followDistance)
-        {
-            MoveToward(player.position);
-        }
-    }
-
     private void MoveToward(Vector3 destination)
     {
-        Vector3 dir = (destination - transform.position).normalized;
-        transform.position += dir * moveSpeed * Time.deltaTime;
+        Vector3 dir = destination - transform.position;
+        dir.y = 0f;
+
+        if (dir.sqrMagnitude <= 0.0001f)
+            return;
+
+        dir.Normalize();
+
+        characterController.Move(dir * moveSpeed * Time.deltaTime);
+
+        Quaternion targetRotation = Quaternion.LookRotation(dir, Vector3.up);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
 
-    public void SetReferences(Transform playerTransform, GameObject healerObject)
+    private float FlatDistance(Vector3 a, Vector3 b)
     {
-        player = playerTransform;
+        a.y = 0f;
+        b.y = 0f;
+        return Vector3.Distance(a, b);
+    }
+
+    public void SetReferences(GameObject healerObject)
+    {
         healer = healerObject;
-        playerTargeting = player != null ? player.GetComponent<TargetingController>() : null;
     }
 }

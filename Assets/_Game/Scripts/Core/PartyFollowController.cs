@@ -14,9 +14,12 @@ public class PartyFollowController : MonoBehaviour
     [SerializeField] private float moveSpeed = 4f;
     [SerializeField] private float rotationSpeed = 10f;
 
-    [Header("Combat-Aware Follow")]
-    [Tooltip("If true, this unit will stop following while it has a current target.")]
+    [Header("Combat Behavior")]
     [SerializeField] private bool stopFollowingWhenTargetingEnemy = true;
+    [SerializeField] private float disengageDelay = 1.5f;
+
+    [Tooltip("If this unit is in combat but gets this far from the leader, it drops target and returns.")]
+    [SerializeField] private float recallDistanceFromLeader = 10f;
 
     [Header("Prototype Ground Lock")]
     [SerializeField] private bool lockYPosition = true;
@@ -24,6 +27,9 @@ public class PartyFollowController : MonoBehaviour
 
     private CharacterController characterController;
     private bool isFollowing;
+
+    private float lastCombatTime;
+    private bool wasInCombat;
 
     private void Awake()
     {
@@ -42,6 +48,7 @@ public class PartyFollowController : MonoBehaviour
     private void OnEnable()
     {
         isFollowing = false;
+        wasInCombat = false;
 
         if (lockYPosition)
             ForceLockedY();
@@ -55,20 +62,44 @@ public class PartyFollowController : MonoBehaviour
         if (myControlBridge.IsPlayerControlled)
             return;
 
-        if (ShouldStopFollowingForCombat())
-        {
-            isFollowing = false;
-
-            if (lockYPosition)
-                ForceLockedY();
-
-            return;
-        }
-
         PartyMemberControlBridge leader = partyControlManager.CurrentMember;
 
         if (leader == null || leader == myControlBridge)
             return;
+
+        float distanceFromLeader = GetFlatDistanceTo(leader.transform);
+
+        if (IsInCombat())
+        {
+            if (distanceFromLeader >= recallDistanceFromLeader)
+            {
+                RecallToLeader();
+            }
+            else
+            {
+                lastCombatTime = Time.time;
+                wasInCombat = true;
+                isFollowing = false;
+
+                if (lockYPosition)
+                    ForceLockedY();
+
+                return;
+            }
+        }
+
+        if (wasInCombat)
+        {
+            if (Time.time - lastCombatTime < disengageDelay)
+            {
+                if (lockYPosition)
+                    ForceLockedY();
+
+                return;
+            }
+
+            wasInCombat = false;
+        }
 
         FollowLeader(leader);
 
@@ -76,7 +107,7 @@ public class PartyFollowController : MonoBehaviour
             ForceLockedY();
     }
 
-    private bool ShouldStopFollowingForCombat()
+    private bool IsInCombat()
     {
         if (!stopFollowingWhenTargetingEnemy)
             return false;
@@ -89,12 +120,21 @@ public class PartyFollowController : MonoBehaviour
         if (currentTarget == null)
             return false;
 
-        HealthController targetHealth = currentTarget.GetComponent<HealthController>();
+        HealthController health = currentTarget.GetComponent<HealthController>();
 
-        if (targetHealth != null && targetHealth.IsDead())
+        if (health != null && health.IsDead())
             return false;
 
         return currentTarget.gameObject.activeInHierarchy;
+    }
+
+    private void RecallToLeader()
+    {
+        if (targetingController != null)
+            targetingController.ClearTarget();
+
+        wasInCombat = false;
+        isFollowing = true;
     }
 
     private void FollowLeader(PartyMemberControlBridge leader)
@@ -127,6 +167,13 @@ public class PartyFollowController : MonoBehaviour
                 rotationSpeed * Time.deltaTime
             );
         }
+    }
+
+    private float GetFlatDistanceTo(Transform target)
+    {
+        Vector3 offset = target.position - transform.position;
+        offset.y = 0f;
+        return offset.magnitude;
     }
 
     private void ForceLockedY()

@@ -3,7 +3,7 @@ using UnityEngine;
 public class CampRecoveryZone : MonoBehaviour
 {
     [Header("Party References")]
-    [SerializeField] private GameObject player;
+    [SerializeField] private GameObject dps;
     [SerializeField] private GameObject tank;
     [SerializeField] private GameObject healer;
 
@@ -13,9 +13,10 @@ public class CampRecoveryZone : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (player == null) return;
+        PartyMemberControlBridge bridge =
+            other.GetComponent<PartyMemberControlBridge>();
 
-        if (other.gameObject != player)
+        if (bridge == null || !bridge.IsPlayerControlled)
             return;
 
         RecoverParty();
@@ -23,21 +24,19 @@ public class CampRecoveryZone : MonoBehaviour
 
     private void RecoverParty()
     {
-        RestoreUnit(player);
+        RestoreUnit(dps);
         RestoreUnit(tank);
         RestoreUnit(healer);
 
         if (clearTargetsOnRecover)
         {
-            ClearTarget(player);
+            ClearTarget(dps);
             ClearTarget(tank);
             ClearTarget(healer);
         }
 
         if (logRecovery)
-        {
             Debug.Log("Party recovered at camp.");
-        }
     }
 
     private void RestoreUnit(GameObject unit)
@@ -46,9 +45,7 @@ public class CampRecoveryZone : MonoBehaviour
 
         HealthController health = unit.GetComponent<HealthController>();
         if (health != null)
-        {
             health.ResetHealth();
-        }
     }
 
     private void ClearTarget(GameObject unit)
@@ -57,14 +54,10 @@ public class CampRecoveryZone : MonoBehaviour
 
         TargetingController targeting = unit.GetComponent<TargetingController>();
         if (targeting != null)
-        {
             targeting.ClearTarget();
-        }
 
         AutoAttackController autoAttack = unit.GetComponent<AutoAttackController>();
         if (autoAttack != null)
-        {
             autoAttack.SetTarget(null);
-        }
     }
 }
