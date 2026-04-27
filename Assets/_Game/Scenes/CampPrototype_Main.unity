@@ -209,7 +209,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 476744a933e7bdf41b26ebe284c1df6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TargetUIController
-  playerTargeting: {fileID: 1990596573}
+  partyControlManager: {fileID: 0}
   targetHPSlider: {fileID: 1803483643}
   targetNameText: {fileID: 5730007}
 --- !u!1 &5730005
@@ -1732,6 +1732,7 @@ MonoBehaviour:
   dpsKey: 283
   healerKey: 284
   cameraFollowProxy: {fileID: 419558234}
+  transferTargetOnSwitch: 1
 --- !u!4 &400854387
 Transform:
   m_ObjectHideFlags: 0
@@ -2392,6 +2393,8 @@ GameObject:
   - component: {fileID: 635801759}
   - component: {fileID: 635801758}
   - component: {fileID: 635801761}
+  - component: {fileID: 635801762}
+  - component: {fileID: 635801763}
   m_Layer: 0
   m_Name: Healer
   m_TagString: Untagged
@@ -2406,7 +2409,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 635801745}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9ecb668e4040f1844a27e34a9a903a24, type: 3}
   m_Name: 
@@ -2582,9 +2585,8 @@ MonoBehaviour:
   - {fileID: 635801757}
   - {fileID: 635801756}
   - {fileID: 635801755}
-  aiControlledComponents:
-  - {fileID: 635801746}
-  - {fileID: 635801761}
+  - {fileID: 635801763}
+  aiControlledComponents: []
   playerControlledIndicator: {fileID: 0}
   cameraFollowTarget: {fileID: 0}
 --- !u!114 &635801755
@@ -2647,7 +2649,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 635801745}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 15375c63d079bd84ab511a0cd843a0c5, type: 3}
   m_Name: 
@@ -2686,7 +2688,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 635801745}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b6ac038e0febb6041bfd282cf9d288c8, type: 3}
   m_Name: 
@@ -2703,6 +2705,47 @@ MonoBehaviour:
   recallDistanceFromLeader: 10
   lockYPosition: 1
   lockedYPosition: 0.5
+--- !u!114 &635801762
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 635801745}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28bbf0cc61c6a1943b0eed532b6dfe10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerBasicAttackInputController
+  attackCooldown: 0.35
+--- !u!114 &635801763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 635801745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84cbe251d83cbd7418360b517d749728, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DirectionalBasicAttackController
+  attackMode: 2
+  holdToAttack: 1
+  attackCooldown: 0.45
+  sweepRange: 2.2
+  sweepAngle: 100
+  shotRange: 12
+  shotRadius: 0.25
+  dpsFacesMouseBeforeShooting: 1
+  aimCamera: {fileID: 330585545}
+  healerShotRange: 14
+  healerShotRadius: 0.35
+  hitLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  showVisibleTracer: 1
+  tracerDuration: 0.08
 --- !u!1 &641919295
 GameObject:
   m_ObjectHideFlags: 0
@@ -4407,7 +4450,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1228104560
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6174,6 +6217,8 @@ GameObject:
   - component: {fileID: 1632514465}
   - component: {fileID: 1632514468}
   - component: {fileID: 1632514470}
+  - component: {fileID: 1632514471}
+  - component: {fileID: 1632514472}
   m_Layer: 0
   m_Name: Tank
   m_TagString: Untagged
@@ -6188,7 +6233,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1632514454}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e2bd03b35b42548498492d20b875d9a5, type: 3}
   m_Name: 
@@ -6207,7 +6252,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1632514454}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 15375c63d079bd84ab511a0cd843a0c5, type: 3}
   m_Name: 
@@ -6378,9 +6423,8 @@ MonoBehaviour:
   - {fileID: 1632514467}
   - {fileID: 1632514466}
   - {fileID: 1632514465}
-  aiControlledComponents:
-  - {fileID: 1632514455}
-  - {fileID: 1632514470}
+  - {fileID: 1632514472}
+  aiControlledComponents: []
   playerControlledIndicator: {fileID: 0}
   cameraFollowTarget: {fileID: 0}
 --- !u!114 &1632514465
@@ -6468,7 +6512,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1632514454}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b6ac038e0febb6041bfd282cf9d288c8, type: 3}
   m_Name: 
@@ -6485,6 +6529,47 @@ MonoBehaviour:
   recallDistanceFromLeader: 10
   lockYPosition: 1
   lockedYPosition: 0.5
+--- !u!114 &1632514471
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1632514454}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28bbf0cc61c6a1943b0eed532b6dfe10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerBasicAttackInputController
+  attackCooldown: 0.35
+--- !u!114 &1632514472
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1632514454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84cbe251d83cbd7418360b517d749728, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DirectionalBasicAttackController
+  attackMode: 0
+  holdToAttack: 1
+  attackCooldown: 0.35
+  sweepRange: 2.2
+  sweepAngle: 100
+  shotRange: 12
+  shotRadius: 0.25
+  dpsFacesMouseBeforeShooting: 1
+  aimCamera: {fileID: 0}
+  healerShotRange: 14
+  healerShotRadius: 0.35
+  hitLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  showVisibleTracer: 1
+  tracerDuration: 0.08
 --- !u!1 &1685352658
 GameObject:
   m_ObjectHideFlags: 0
@@ -7752,6 +7837,8 @@ GameObject:
   - component: {fileID: 1990596578}
   - component: {fileID: 1990596579}
   - component: {fileID: 1990596580}
+  - component: {fileID: 1990596581}
+  - component: {fileID: 1990596582}
   m_Layer: 0
   m_Name: DPS
   m_TagString: Player
@@ -7781,7 +7868,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1990596562}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 15375c63d079bd84ab511a0cd843a0c5, type: 3}
   m_Name: 
@@ -8037,9 +8124,8 @@ MonoBehaviour:
   - {fileID: 1990596574}
   - {fileID: 1990596576}
   - {fileID: 1990596573}
-  aiControlledComponents:
-  - {fileID: 1990596579}
-  - {fileID: 1990596580}
+  - {fileID: 1990596582}
+  aiControlledComponents: []
   playerControlledIndicator: {fileID: 0}
   cameraFollowTarget: {fileID: 0}
 --- !u!114 &1990596579
@@ -8049,7 +8135,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1990596562}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 00276858c6d17ea44b6158c41cba1ed3, type: 3}
   m_Name: 
@@ -8065,7 +8151,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1990596562}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b6ac038e0febb6041bfd282cf9d288c8, type: 3}
   m_Name: 
@@ -8082,6 +8168,47 @@ MonoBehaviour:
   recallDistanceFromLeader: 10
   lockYPosition: 1
   lockedYPosition: 1
+--- !u!114 &1990596581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1990596562}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28bbf0cc61c6a1943b0eed532b6dfe10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerBasicAttackInputController
+  attackCooldown: 0.35
+--- !u!114 &1990596582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1990596562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84cbe251d83cbd7418360b517d749728, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DirectionalBasicAttackController
+  attackMode: 1
+  holdToAttack: 1
+  attackCooldown: 0.25
+  sweepRange: 2.2
+  sweepAngle: 100
+  shotRange: 30
+  shotRadius: 1.5
+  dpsFacesMouseBeforeShooting: 1
+  aimCamera: {fileID: 0}
+  healerShotRange: 14
+  healerShotRadius: 0.35
+  hitLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  showVisibleTracer: 1
+  tracerDuration: 0.08
 --- !u!1 &2002302665
 GameObject:
   m_ObjectHideFlags: 0

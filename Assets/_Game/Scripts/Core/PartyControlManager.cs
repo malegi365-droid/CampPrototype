@@ -2,12 +2,12 @@ using UnityEngine;
 
 public class PartyControlManager : MonoBehaviour
 {
-    [Header("Party Members")]
+    [Header("Class Bodies")]
     [SerializeField] private PartyMemberControlBridge tank;
     [SerializeField] private PartyMemberControlBridge dps;
     [SerializeField] private PartyMemberControlBridge healer;
 
-    [Header("Starting Control")]
+    [Header("Starting Class")]
     [SerializeField] private PartyMemberControlBridge startingMember;
 
     [Header("Keybinds")]
@@ -18,6 +18,9 @@ public class PartyControlManager : MonoBehaviour
     [Header("Camera")]
     [SerializeField] private CameraFollowProxy cameraFollowProxy;
 
+    [Header("Switch Settings")]
+    [SerializeField] private bool transferTargetOnSwitch = true;
+
     public PartyMemberControlBridge CurrentMember { get; private set; }
 
     private void Start()
@@ -25,59 +28,88 @@ public class PartyControlManager : MonoBehaviour
         if (startingMember == null)
             startingMember = dps;
 
-        ForceSwitchControl(startingMember, true);
+        ActivateOnly(startingMember, true);
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(tankKey))
-            ForceSwitchControl(tank);
+            ActivateOnly(tank, false);
 
         if (Input.GetKeyDown(dpsKey))
-            ForceSwitchControl(dps);
+            ActivateOnly(dps, false);
 
         if (Input.GetKeyDown(healerKey))
-            ForceSwitchControl(healer);
+            ActivateOnly(healer, false);
     }
 
-    public void ForceSwitchControl(PartyMemberControlBridge newMember)
-    {
-        ForceSwitchControl(newMember, false);
-    }
-
-    private void ForceSwitchControl(PartyMemberControlBridge newMember, bool snapCamera)
+    public void ActivateOnly(PartyMemberControlBridge newMember, bool snapCamera)
     {
         if (newMember == null)
         {
-            Debug.LogWarning("[PartyControlManager] Tried to switch to a null party member.");
+            Debug.LogWarning("[PartyControlManager] Tried to activate null member.");
             return;
         }
 
-        SetMemberState(tank, tank == newMember);
-        SetMemberState(dps, dps == newMember);
-        SetMemberState(healer, healer == newMember);
+        if (newMember == CurrentMember)
+            return;
+
+        Vector3 switchPosition = newMember.transform.position;
+        Quaternion switchRotation = newMember.transform.rotation;
+        Transform previousTarget = null;
+
+        if (CurrentMember != null)
+        {
+            switchPosition = CurrentMember.transform.position;
+            switchRotation = CurrentMember.transform.rotation;
+
+            TargetingController oldTargeting = CurrentMember.GetComponent<TargetingController>();
+            if (oldTargeting != null)
+                previousTarget = oldTargeting.GetCurrentTarget();
+        }
+
+        DeactivateMember(tank);
+        DeactivateMember(dps);
+        DeactivateMember(healer);
+
+        newMember.transform.position = switchPosition;
+        newMember.transform.rotation = switchRotation;
+
+        newMember.gameObject.SetActive(true);
+        newMember.SetPlayerControlled(true);
+        newMember.ForceRefreshState();
+
+        if (transferTargetOnSwitch && previousTarget != null)
+        {
+            TargetingController newTargeting = newMember.GetComponent<TargetingController>();
+            if (newTargeting != null)
+                newTargeting.SetTarget(previousTarget);
+        }
 
         CurrentMember = newMember;
 
-        UpdateCameraTarget(snapCamera);
+        if (cameraFollowProxy != null)
+            cameraFollowProxy.SetTarget(CurrentMember.CameraFollowTarget, snapCamera);
 
-        Debug.Log($"[PartyControlManager] Player now controlling: {CurrentMember.RoleName}");
+        Debug.Log($"[PartyControlManager] Active class: {CurrentMember.RoleName}");
     }
 
-    private void SetMemberState(PartyMemberControlBridge member, bool shouldBePlayerControlled)
+    private void DeactivateMember(PartyMemberControlBridge member)
     {
         if (member == null)
             return;
 
-        member.SetPlayerControlled(shouldBePlayerControlled);
+        member.SetPlayerControlled(false);
         member.ForceRefreshState();
-    }
 
-    private void UpdateCameraTarget(bool snapCamera)
-    {
-        if (cameraFollowProxy == null || CurrentMember == null)
-            return;
+        TargetingController targeting = member.GetComponent<TargetingController>();
+        if (targeting != null)
+            targeting.ClearTarget();
 
-        cameraFollowProxy.SetTarget(CurrentMember.CameraFollowTarget, snapCamera);
+        AutoAttackController autoAttack = member.GetComponent<AutoAttackController>();
+        if (autoAttack != null)
+            autoAttack.SetTarget(null);
+
+        member.gameObject.SetActive(false);
     }
 }

@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 586477447686572030}
   - component: {fileID: 340256476137611513}
   - component: {fileID: 5490845968160670751}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Enemy_Easy_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -214,7 +214,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyXPReward
   xpReward: 20
-  playerXP: {fileID: 0}
 --- !u!114 &586477447686572030
 MonoBehaviour:
   m_ObjectHideFlags: 0

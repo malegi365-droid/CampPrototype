@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 3173848401627822621}
   - component: {fileID: 3358473398099925446}
   - component: {fileID: 834231450226965800}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Enemy_Dangerous
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -214,7 +214,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyXPReward
   xpReward: 90
-  playerXP: {fileID: 0}
 --- !u!114 &3173848401627822621
 MonoBehaviour:
   m_ObjectHideFlags: 0

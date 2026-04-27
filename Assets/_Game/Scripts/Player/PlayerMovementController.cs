@@ -5,7 +5,6 @@ using UnityEngine.InputSystem;
 public class PlayerMovementController : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 5f;
-    [SerializeField] private float turnSpeed = 12f;
 
     private CharacterController controller;
 
@@ -37,16 +36,6 @@ public class PlayerMovementController : MonoBehaviour
         if (move.sqrMagnitude > 1f)
             move.Normalize();
 
-        if (move.sqrMagnitude > 0.0001f)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(move, Vector3.up);
-            transform.rotation = Quaternion.Slerp(
-                transform.rotation,
-                targetRotation,
-                turnSpeed * Time.deltaTime
-            );
-
-            controller.Move(move * moveSpeed * Time.deltaTime);
-        }
+        controller.Move(move * moveSpeed * Time.deltaTime);
     }
 }
