@@ -31,9 +31,11 @@ public class DirectionalBasicAttackController : MonoBehaviour
     [SerializeField] private float shotRange = 25f;
     [SerializeField] private float shotRadius = 1.25f;
 
-    [Header("Healer Aimed Shot")]
+    [Header("Healer AOE Shot")]
     [SerializeField] private float healerShotRange = 30f;
     [SerializeField] private float healerShotRadius = 0.75f;
+    [SerializeField] private float healerAOERadius = 2.25f;
+    [SerializeField] private float healerAOEDamageMultiplier = 0.75f;
 
     [Header("Detection")]
     [SerializeField] private LayerMask hitLayers = ~0;
@@ -90,7 +92,7 @@ public class DirectionalBasicAttackController : MonoBehaviour
                 break;
 
             case BasicAttackMode.HealerAimedShot:
-                PerformHealerAimedShot();
+                PerformHealerAOEShot();
                 break;
         }
 
@@ -99,13 +101,7 @@ public class DirectionalBasicAttackController : MonoBehaviour
 
     private bool PerformTankSweep()
     {
-        Collider[] hits = Physics.OverlapSphere(
-            transform.position,
-            sweepRange,
-            hitLayers,
-            QueryTriggerInteraction.Ignore
-        );
-
+        Collider[] hits = Physics.OverlapSphere(transform.position, sweepRange, hitLayers, QueryTriggerInteraction.Ignore);
         bool hitAny = false;
 
         foreach (Collider hit in hits)
@@ -133,18 +129,11 @@ public class DirectionalBasicAttackController : MonoBehaviour
 
     private bool PerformDpsStraightShot()
     {
-        Vector3 origin = transform.position + Vector3.up * 1.25f;
+        Vector3 origin = transform.position + Vector3.up * 0.75f;
         Vector3 direction = transform.forward;
         Vector3 endPoint = origin + direction * shotRange;
 
-        RaycastHit[] hits = Physics.SphereCastAll(
-            origin,
-            shotRadius,
-            direction,
-            shotRange,
-            hitLayers,
-            QueryTriggerInteraction.Ignore
-        );
+        RaycastHit[] hits = Physics.SphereCastAll(origin, shotRadius, direction, shotRange, hitLayers, QueryTriggerInteraction.Ignore);
 
         if (hits != null && hits.Length > 0)
         {
@@ -172,7 +161,7 @@ public class DirectionalBasicAttackController : MonoBehaviour
         return false;
     }
 
-    private bool PerformHealerAimedShot()
+    private bool PerformHealerAOEShot()
     {
         if (aimCamera == null)
             return false;
@@ -182,15 +171,9 @@ public class DirectionalBasicAttackController : MonoBehaviour
             return false;
 
         Ray ray = aimCamera.ScreenPointToRay(mouse.position.ReadValue());
-        Vector3 endPoint = ray.origin + ray.direction * healerShotRange;
+        Vector3 impactPoint = ray.origin + ray.direction * healerShotRange;
 
-        RaycastHit[] hits = Physics.SphereCastAll(
-            ray,
-            healerShotRadius,
-            healerShotRange,
-            hitLayers,
-            QueryTriggerInteraction.Ignore
-        );
+        RaycastHit[] hits = Physics.SphereCastAll(ray, healerShotRadius, healerShotRange, hitLayers, QueryTriggerInteraction.Ignore);
 
         if (hits != null && hits.Length > 0)
         {
@@ -202,20 +185,33 @@ public class DirectionalBasicAttackController : MonoBehaviour
                 if (enemyRoot == null)
                     continue;
 
-                endPoint = hit.point;
-
-                if (showVisibleTracer)
-                    SpawnTracer(ray.origin, endPoint);
-
-                DealDamage(enemyRoot, stats.attack);
-                return true;
+                impactPoint = hit.point;
+                break;
             }
         }
 
         if (showVisibleTracer)
-            SpawnTracer(ray.origin, endPoint);
+            SpawnTracer(ray.origin, impactPoint);
 
-        return false;
+        return DealAOEDamage(impactPoint);
+    }
+
+    private bool DealAOEDamage(Vector3 center)
+    {
+        Collider[] hits = Physics.OverlapSphere(center, healerAOERadius, hitLayers, QueryTriggerInteraction.Ignore);
+        bool hitAny = false;
+
+        foreach (Collider hit in hits)
+        {
+            Transform enemyRoot = GetValidEnemyRoot(hit.transform);
+            if (enemyRoot == null)
+                continue;
+
+            DealDamage(enemyRoot, stats.attack * healerAOEDamageMultiplier);
+            hitAny = true;
+        }
+
+        return hitAny;
     }
 
     private Transform GetValidEnemyRoot(Transform candidate)
@@ -259,13 +255,10 @@ public class DirectionalBasicAttackController : MonoBehaviour
             flash.Flash();
 
         HitSoundController sound = enemyRoot.GetComponent<HitSoundController>();
-
         if (sound == null)
             sound = enemyRoot.GetComponentInChildren<HitSoundController>();
-
         if (sound == null)
             sound = enemyRoot.GetComponentInParent<HitSoundController>();
-
         if (sound != null)
             sound.PlayHit();
 
