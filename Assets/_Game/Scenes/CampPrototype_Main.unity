@@ -2484,7 +2484,7 @@ MonoBehaviour:
   level: 1
   maxHP: 80
   currentHP: 80
-  attack: 4
+  attack: 6
   defense: 3
   attackInterval: 3
   attackRange: 2.5
@@ -6324,7 +6324,7 @@ MonoBehaviour:
   level: 1
   maxHP: 140
   currentHP: 140
-  attack: 6
+  attack: 10
   defense: 8
   attackInterval: 3
   attackRange: 2.5
@@ -7924,7 +7924,7 @@ MonoBehaviour:
   level: 1
   maxHP: 90
   currentHP: 90
-  attack: 10
+  attack: 15
   defense: 4
   attackInterval: 3
   attackRange: 2.5
