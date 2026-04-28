@@ -21,7 +21,7 @@ public class DirectionalBasicAttackController : MonoBehaviour
 
     [Header("Aiming")]
     [SerializeField] private Camera aimCamera;
-    [SerializeField] private bool faceMouseBeforeAttack = true;
+    [SerializeField] private bool faceMouseBeforeAttack = false;
 
     [Header("Tank Sweep")]
     [SerializeField] private float sweepRange = 2.5f;
@@ -32,8 +32,8 @@ public class DirectionalBasicAttackController : MonoBehaviour
     [SerializeField] private float shotRadius = 1.25f;
 
     [Header("Healer Aimed Shot")]
-    [SerializeField] private float healerShotRange = 18f;
-    [SerializeField] private float healerShotRadius = 0.5f;
+    [SerializeField] private float healerShotRange = 30f;
+    [SerializeField] private float healerShotRadius = 0.75f;
 
     [Header("Detection")]
     [SerializeField] private LayerMask hitLayers = ~0;
@@ -79,20 +79,18 @@ public class DirectionalBasicAttackController : MonoBehaviour
         if (faceMouseBeforeAttack)
             FaceMouseGroundPoint();
 
-        bool attacked = false;
-
         switch (attackMode)
         {
             case BasicAttackMode.TankSweep:
-                attacked = PerformTankSweep();
+                PerformTankSweep();
                 break;
 
             case BasicAttackMode.DpsStraightShot:
-                attacked = PerformDpsStraightShot();
+                PerformDpsStraightShot();
                 break;
 
             case BasicAttackMode.HealerAimedShot:
-                attacked = PerformHealerAimedShot();
+                PerformHealerAimedShot();
                 break;
         }
 
@@ -154,9 +152,6 @@ public class DirectionalBasicAttackController : MonoBehaviour
 
             foreach (RaycastHit hit in hits)
             {
-                if (hit.transform == transform)
-                    continue;
-
                 Transform enemyRoot = GetValidEnemyRoot(hit.transform);
                 if (enemyRoot == null)
                     continue;
@@ -179,14 +174,19 @@ public class DirectionalBasicAttackController : MonoBehaviour
 
     private bool PerformHealerAimedShot()
     {
-        Vector3 origin = transform.position + Vector3.up * 1.25f;
-        Vector3 direction = transform.forward;
-        Vector3 endPoint = origin + direction * healerShotRange;
+        if (aimCamera == null)
+            return false;
+
+        Mouse mouse = Mouse.current;
+        if (mouse == null)
+            return false;
+
+        Ray ray = aimCamera.ScreenPointToRay(mouse.position.ReadValue());
+        Vector3 endPoint = ray.origin + ray.direction * healerShotRange;
 
         RaycastHit[] hits = Physics.SphereCastAll(
-            origin,
+            ray,
             healerShotRadius,
-            direction,
             healerShotRange,
             hitLayers,
             QueryTriggerInteraction.Ignore
@@ -205,7 +205,7 @@ public class DirectionalBasicAttackController : MonoBehaviour
                 endPoint = hit.point;
 
                 if (showVisibleTracer)
-                    SpawnTracer(origin, endPoint);
+                    SpawnTracer(ray.origin, endPoint);
 
                 DealDamage(enemyRoot, stats.attack);
                 return true;
@@ -213,7 +213,7 @@ public class DirectionalBasicAttackController : MonoBehaviour
         }
 
         if (showVisibleTracer)
-            SpawnTracer(origin, endPoint);
+            SpawnTracer(ray.origin, endPoint);
 
         return false;
     }
@@ -223,42 +223,58 @@ public class DirectionalBasicAttackController : MonoBehaviour
         if (candidate == null || candidate == transform)
             return null;
 
-        UnitStats stats = candidate.GetComponent<UnitStats>();
-        if (stats == null)
-            stats = candidate.GetComponentInParent<UnitStats>();
+        UnitStats enemyStats = candidate.GetComponent<UnitStats>();
+        if (enemyStats == null)
+            enemyStats = candidate.GetComponentInParent<UnitStats>();
 
-        HealthController health = candidate.GetComponent<HealthController>();
-        if (health == null)
-            health = candidate.GetComponentInParent<HealthController>();
+        HealthController enemyHealth = candidate.GetComponent<HealthController>();
+        if (enemyHealth == null)
+            enemyHealth = candidate.GetComponentInParent<HealthController>();
 
-        if (stats == null || health == null)
+        if (enemyStats == null || enemyHealth == null)
             return null;
 
-        if (stats.role != UnitRole.Enemy)
+        if (enemyStats.role != UnitRole.Enemy)
             return null;
 
-        if (health.IsDead())
+        if (enemyHealth.IsDead())
             return null;
 
-        return stats.transform;
+        return enemyStats.transform;
     }
 
     private void DealDamage(Transform enemyRoot, float damage)
     {
-        IDamageable dmg = enemyRoot.GetComponent<IDamageable>();
-        if (dmg == null)
-            dmg = enemyRoot.GetComponentInParent<IDamageable>();
+        IDamageable damageable = enemyRoot.GetComponent<IDamageable>();
+        if (damageable == null)
+            damageable = enemyRoot.GetComponentInParent<IDamageable>();
 
-        if (dmg == null)
+        if (damageable == null)
             return;
 
-        dmg.TakeDamage(damage, stats);
+        damageable.TakeDamage(damage, stats);
 
-        ThreatTable threat = enemyRoot.GetComponent<ThreatTable>();
-        if (threat != null)
-            threat.AddThreat(gameObject, damage * stats.threatMultiplier);
+        HitFlashController flash = enemyRoot.GetComponentInChildren<HitFlashController>();
+        if (flash != null)
+            flash.Flash();
 
-        targetingController.SetTarget(enemyRoot);
+        HitSoundController sound = enemyRoot.GetComponent<HitSoundController>();
+
+        if (sound == null)
+            sound = enemyRoot.GetComponentInChildren<HitSoundController>();
+
+        if (sound == null)
+            sound = enemyRoot.GetComponentInParent<HitSoundController>();
+
+        if (sound != null)
+            sound.PlayHit();
+
+        ThreatTable threatTable = enemyRoot.GetComponent<ThreatTable>();
+        if (threatTable != null)
+            threatTable.AddThreat(gameObject, damage * stats.threatMultiplier);
+
+        if (targetingController != null)
+            targetingController.SetTarget(enemyRoot);
 
         Debug.Log($"{gameObject.name} hit {enemyRoot.name} for {damage}");
     }
@@ -285,7 +301,6 @@ public class DirectionalBasicAttackController : MonoBehaviour
         if (direction.sqrMagnitude <= 0.001f)
             return;
 
-        // 🔥 INSTANT ROTATION FIX
         transform.rotation = Quaternion.LookRotation(direction.normalized, Vector3.up);
     }
 

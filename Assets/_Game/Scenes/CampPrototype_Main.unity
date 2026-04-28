@@ -2616,7 +2616,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovementController
   moveSpeed: 5
-  turnSpeed: 12
+  aimCamera: {fileID: 0}
 --- !u!114 &635801757
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2733,17 +2733,17 @@ MonoBehaviour:
   attackMode: 2
   holdToAttack: 1
   attackCooldown: 0.45
+  aimCamera: {fileID: 330585545}
+  faceMouseBeforeAttack: 1
   sweepRange: 2.2
   sweepAngle: 100
   shotRange: 12
   shotRadius: 0.25
-  dpsFacesMouseBeforeShooting: 1
-  aimCamera: {fileID: 330585545}
   healerShotRange: 14
   healerShotRadius: 0.35
   hitLayers:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 4294967295
   showVisibleTracer: 1
   tracerDuration: 0.08
 --- !u!1 &641919295
@@ -6466,7 +6466,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovementController
   moveSpeed: 5
-  turnSpeed: 12
+  aimCamera: {fileID: 0}
 --- !u!114 &1632514468
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6557,12 +6557,12 @@ MonoBehaviour:
   attackMode: 0
   holdToAttack: 1
   attackCooldown: 0.35
+  aimCamera: {fileID: 0}
+  faceMouseBeforeAttack: 1
   sweepRange: 2.2
   sweepAngle: 100
   shotRange: 12
   shotRadius: 0.25
-  dpsFacesMouseBeforeShooting: 1
-  aimCamera: {fileID: 0}
   healerShotRange: 14
   healerShotRadius: 0.35
   hitLayers:
@@ -8056,7 +8056,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovementController
   moveSpeed: 5
-  turnSpeed: 12
+  aimCamera: {fileID: 0}
 --- !u!143 &1990596575
 CharacterController:
   m_ObjectHideFlags: 0
@@ -8196,12 +8196,12 @@ MonoBehaviour:
   attackMode: 1
   holdToAttack: 1
   attackCooldown: 0.25
+  aimCamera: {fileID: 0}
+  faceMouseBeforeAttack: 1
   sweepRange: 2.2
   sweepAngle: 100
   shotRange: 30
   shotRadius: 1.5
-  dpsFacesMouseBeforeShooting: 1
-  aimCamera: {fileID: 0}
   healerShotRange: 14
   healerShotRadius: 0.35
   hitLayers:
