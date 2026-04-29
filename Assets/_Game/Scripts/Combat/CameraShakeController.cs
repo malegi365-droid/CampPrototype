@@ -5,16 +5,19 @@ public class CameraShakeController : MonoBehaviour
 {
     public static CameraShakeController Instance { get; private set; }
 
+    [Header("Default Shake")]
     [SerializeField] private float defaultDuration = 0.08f;
-    [SerializeField] private float defaultMagnitude = 0.08f;
+    [SerializeField] private float defaultMagnitude = 0.75f;
 
-    private Vector3 originalLocalPosition;
+    private Quaternion originalLocalRotation;
     private Coroutine shakeRoutine;
 
     private void Awake()
     {
         Instance = this;
-        originalLocalPosition = transform.localPosition;
+        originalLocalRotation = transform.localRotation;
+
+        Debug.Log("CameraShakeController initialized on: " + gameObject.name);
     }
 
     public void Shake()
@@ -36,14 +39,16 @@ public class CameraShakeController : MonoBehaviour
 
         while (elapsed < duration)
         {
-            Vector2 random = Random.insideUnitCircle * magnitude;
-            transform.localPosition = originalLocalPosition + new Vector3(random.x, random.y, 0f);
+            float x = Random.Range(-magnitude, magnitude);
+            float y = Random.Range(-magnitude, magnitude);
+
+            transform.localRotation = originalLocalRotation * Quaternion.Euler(x, y, 0f);
 
             elapsed += Time.deltaTime;
             yield return null;
         }
 
-        transform.localPosition = originalLocalPosition;
+        transform.localRotation = originalLocalRotation;
         shakeRoutine = null;
     }
 }

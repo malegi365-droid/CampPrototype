@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class CampRecoveryZone : MonoBehaviour
 {
-    [Header("Party References")]
+    [Header("Class References")]
     [SerializeField] private GameObject dps;
     [SerializeField] private GameObject tank;
     [SerializeField] private GameObject healer;
@@ -13,8 +13,20 @@ public class CampRecoveryZone : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        PartyMemberControlBridge bridge =
-            other.GetComponent<PartyMemberControlBridge>();
+        TryRecoverFromCollider(other);
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        TryRecoverFromCollider(other);
+    }
+
+    private void TryRecoverFromCollider(Collider other)
+    {
+        PartyMemberControlBridge bridge = other.GetComponent<PartyMemberControlBridge>();
+
+        if (bridge == null)
+            bridge = other.GetComponentInParent<PartyMemberControlBridge>();
 
         if (bridge == null || !bridge.IsPlayerControlled)
             return;

@@ -13,6 +13,12 @@ public class HealthController : MonoBehaviour, IDamageable
     [Header("Threat Tuning")]
     [SerializeField] private float threatLossFromDamageMultiplier = 0.2f;
 
+    [Header("Player Damage Feedback")]
+    [SerializeField] private bool enablePlayerDamageFeedback = true;
+    [SerializeField] private float playerHitShakeDuration = 0.04f;
+    [SerializeField] private float playerHitShakeMagnitude = 0.02f;
+    [SerializeField] private bool logPlayerDamageFeedback = true;
+
     private void Awake()
     {
         stats = GetComponent<UnitStats>();
@@ -26,11 +32,8 @@ public class HealthController : MonoBehaviour, IDamageable
         float reducedDamage = Mathf.Max(1f, amount - stats.defense);
         stats.currentHP = Mathf.Max(0f, stats.currentHP - reducedDamage);
 
-        // If the attacker has a ThreatTable, reduce THIS target's threat
-        // in the attacker's threat table based on damage received.
-        //
-        // Example:
-        // Enemy hits Player -> Enemy's threat table reduces Player threat entry.
+        TriggerDamageFeedback(reducedDamage);
+
         if (sourceStats != null)
         {
             ThreatTable attackerThreatTable = sourceStats.GetComponent<ThreatTable>();
@@ -51,6 +54,35 @@ public class HealthController : MonoBehaviour, IDamageable
         }
     }
 
+    private void TriggerDamageFeedback(float damageTaken)
+    {
+        if (!enablePlayerDamageFeedback)
+            return;
+
+        if (stats == null)
+            return;
+
+        // Only player classes should shake/flash here. Enemies already flash from attack feedback.
+        if (stats.role == UnitRole.Enemy)
+            return;
+
+        if (CameraShakeController.Instance != null)
+        {
+            CameraShakeController.Instance.Shake(playerHitShakeDuration, playerHitShakeMagnitude);
+        }
+        else
+        {
+            Debug.LogWarning("No CameraShakeController.Instance found.");
+        }
+
+        HitFlashController flash = GetComponentInChildren<HitFlashController>();
+        if (flash != null)
+            flash.Flash();
+
+        if (logPlayerDamageFeedback)
+            Debug.Log($"{gameObject.name} took {damageTaken} damage. Player damage feedback triggered.");
+    }
+
     public void ReceiveHealing(float amount)
     {
         if (dead) return;
@@ -67,6 +99,7 @@ public class HealthController : MonoBehaviour, IDamageable
     private void Die()
     {
         if (dead) return;
+
         dead = true;
         OnDied?.Invoke(this);
 
@@ -78,19 +111,16 @@ public class HealthController : MonoBehaviour, IDamageable
     private void HideIfEnemy()
     {
         UnitStats unitStats = GetComponent<UnitStats>();
+
         if (unitStats != null && unitStats.role == UnitRole.Enemy)
         {
             Renderer[] renderers = GetComponentsInChildren<Renderer>();
             foreach (Renderer r in renderers)
-            {
                 r.enabled = false;
-            }
 
             Collider[] colliders = GetComponentsInChildren<Collider>();
             foreach (Collider c in colliders)
-            {
                 c.enabled = false;
-            }
         }
         else
         {
@@ -105,15 +135,11 @@ public class HealthController : MonoBehaviour, IDamageable
 
         Renderer[] renderers = GetComponentsInChildren<Renderer>();
         foreach (Renderer r in renderers)
-        {
             r.enabled = true;
-        }
 
         Collider[] colliders = GetComponentsInChildren<Collider>();
         foreach (Collider c in colliders)
-        {
             c.enabled = true;
-        }
 
         OnHealthChanged?.Invoke(stats.currentHP, stats.maxHP);
     }
