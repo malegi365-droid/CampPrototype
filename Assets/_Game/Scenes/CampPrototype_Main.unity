@@ -983,6 +983,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthController
   threatLossFromDamageMultiplier: 0.3
+  enablePlayerDamageFeedback: 1
+  playerHitShakeDuration: 0.035
+  playerHitShakeMagnitude: 0.01
+  logPlayerDamageFeedback: 1
 --- !u!114 &301229868
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1130,7 +1134,6 @@ GameObject:
   - component: {fileID: 330585544}
   - component: {fileID: 330585547}
   - component: {fileID: 330585548}
-  - component: {fileID: 330585549}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1205,12 +1208,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 3.38, z: -10}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 2052440344}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &330585547
 MonoBehaviour:
@@ -1265,27 +1268,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 330585543}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 36f7b5506d06af24c97696593252aec3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SimpleCameraFollow
-  target: {fileID: 419558235}
-  offset: {x: 0, y: 7, z: -8}
-  followSpeed: 6
-  lookSpeed: 8
---- !u!114 &330585549
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 330585543}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e9edf18890e8b95458c61e44fe72dea0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraShakeController
-  defaultDuration: 0.025
-  defaultMagnitude: 0.005
+  defaultDuration: 0.06
+  defaultMagnitude: 0.35
 --- !u!1 &358081997
 GameObject:
   m_ObjectHideFlags: 0
@@ -2410,9 +2397,10 @@ GameObject:
   - component: {fileID: 635801761}
   - component: {fileID: 635801762}
   - component: {fileID: 635801763}
+  - component: {fileID: 635801764}
   m_Layer: 0
   m_Name: Healer
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2467,6 +2455,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthController
   threatLossFromDamageMultiplier: 0.3
+  enablePlayerDamageFeedback: 1
+  playerHitShakeDuration: 0.06
+  playerHitShakeMagnitude: 0.35
+  logPlayerDamageFeedback: 1
 --- !u!114 &635801749
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2763,6 +2755,21 @@ MonoBehaviour:
     m_Bits: 4294967295
   showVisibleTracer: 1
   tracerDuration: 0.08
+--- !u!114 &635801764
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 635801745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6915ff18765792542a5ac8d480ff5aa7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitFlashController
+  targetRenderer: {fileID: 0}
+  flashColor: {r: 1, g: 1, b: 1, a: 1}
+  flashDuration: 0.1
 --- !u!1 &641919295
 GameObject:
   m_ObjectHideFlags: 0
@@ -4224,6 +4231,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthController
   threatLossFromDamageMultiplier: 0.3
+  enablePlayerDamageFeedback: 1
+  playerHitShakeDuration: 0.035
+  playerHitShakeMagnitude: 0.01
+  logPlayerDamageFeedback: 1
 --- !u!114 &1117742185
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4675,6 +4686,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthController
   threatLossFromDamageMultiplier: 0.3
+  enablePlayerDamageFeedback: 1
+  playerHitShakeDuration: 0.035
+  playerHitShakeMagnitude: 0.01
+  logPlayerDamageFeedback: 1
 --- !u!114 &1323557061
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5529,6 +5544,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthController
   threatLossFromDamageMultiplier: 0.3
+  enablePlayerDamageFeedback: 1
+  playerHitShakeDuration: 0.035
+  playerHitShakeMagnitude: 0.01
+  logPlayerDamageFeedback: 1
 --- !u!114 &1499825905
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5905,7 +5924,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43044a55c593a1040ba98b648d974540, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CampRecoveryZone
-  dps: {fileID: 0}
+  dps: {fileID: 1990596562}
   tank: {fileID: 1632514454}
   healer: {fileID: 635801745}
   clearTargetsOnRecover: 1
@@ -6236,9 +6255,10 @@ GameObject:
   - component: {fileID: 1632514470}
   - component: {fileID: 1632514471}
   - component: {fileID: 1632514472}
+  - component: {fileID: 1632514473}
   m_Layer: 0
   m_Name: Tank
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6307,6 +6327,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthController
   threatLossFromDamageMultiplier: 0.3
+  enablePlayerDamageFeedback: 1
+  playerHitShakeDuration: 0.06
+  playerHitShakeMagnitude: 0.35
+  logPlayerDamageFeedback: 1
 --- !u!114 &1632514459
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6589,6 +6613,21 @@ MonoBehaviour:
     m_Bits: 64
   showVisibleTracer: 1
   tracerDuration: 0.08
+--- !u!114 &1632514473
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1632514454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6915ff18765792542a5ac8d480ff5aa7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitFlashController
+  targetRenderer: {fileID: 0}
+  flashColor: {r: 1, g: 1, b: 1, a: 1}
+  flashDuration: 0.1
 --- !u!1 &1685352658
 GameObject:
   m_ObjectHideFlags: 0
@@ -6951,6 +6990,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthController
   threatLossFromDamageMultiplier: 0.3
+  enablePlayerDamageFeedback: 1
+  playerHitShakeDuration: 0.035
+  playerHitShakeMagnitude: 0.01
+  logPlayerDamageFeedback: 1
 --- !u!114 &1866886307
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7193,6 +7236,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthController
   threatLossFromDamageMultiplier: 0.3
+  enablePlayerDamageFeedback: 1
+  playerHitShakeDuration: 0.035
+  playerHitShakeMagnitude: 0.01
+  logPlayerDamageFeedback: 1
 --- !u!114 &1884980949
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7470,6 +7517,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthController
   threatLossFromDamageMultiplier: 0.3
+  enablePlayerDamageFeedback: 1
+  playerHitShakeDuration: 0.035
+  playerHitShakeMagnitude: 0.01
+  logPlayerDamageFeedback: 1
 --- !u!114 &1893789282
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7858,6 +7909,7 @@ GameObject:
   - component: {fileID: 1990596580}
   - component: {fileID: 1990596581}
   - component: {fileID: 1990596582}
+  - component: {fileID: 1990596583}
   m_Layer: 0
   m_Name: DPS
   m_TagString: Player
@@ -7907,6 +7959,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthController
   threatLossFromDamageMultiplier: 0.3
+  enablePlayerDamageFeedback: 1
+  playerHitShakeDuration: 0.06
+  playerHitShakeMagnitude: 0.35
+  logPlayerDamageFeedback: 1
 --- !u!114 &1990596567
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8230,6 +8286,21 @@ MonoBehaviour:
     m_Bits: 4294967295
   showVisibleTracer: 1
   tracerDuration: 0.08
+--- !u!114 &1990596583
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1990596562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6915ff18765792542a5ac8d480ff5aa7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitFlashController
+  targetRenderer: {fileID: 0}
+  flashColor: {r: 1, g: 1, b: 1, a: 1}
+  flashDuration: 0.1
 --- !u!1 &2002302665
 GameObject:
   m_ObjectHideFlags: 0
@@ -8512,6 +8583,55 @@ MonoBehaviour:
   hpSlider: {fileID: 832013626}
   labelText: {fileID: 1097396535}
   displayName: Player
+--- !u!1 &2052440343
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2052440344}
+  - component: {fileID: 2052440345}
+  m_Layer: 0
+  m_Name: CameraRig
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2052440344
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2052440343}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -4.78052, y: 0, z: 14.66389}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 330585546}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2052440345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2052440343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36f7b5506d06af24c97696593252aec3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SimpleCameraFollow
+  target: {fileID: 419558235}
+  offset: {x: 0, y: 7, z: -8}
+  followSpeed: 6
+  lookSpeed: 8
 --- !u!1 &2062607161
 GameObject:
   m_ObjectHideFlags: 0
@@ -8863,7 +8983,7 @@ PrefabInstance:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 330585546}
+  - {fileID: 2052440344}
   - {fileID: 410087041}
   - {fileID: 180330782}
   - {fileID: 1990596563}
