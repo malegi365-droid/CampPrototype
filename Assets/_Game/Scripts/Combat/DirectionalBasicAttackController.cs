@@ -26,6 +26,7 @@ public class DirectionalBasicAttackController : MonoBehaviour
     [Header("Tank Sweep")]
     [SerializeField] private float sweepRange = 2.5f;
     [SerializeField] private float sweepAngle = 110f;
+    [SerializeField] private float tankKnockbackStrength = 1f;
 
     [Header("DPS Straight Shot")]
     [SerializeField] private float shotRange = 25f;
@@ -36,6 +37,7 @@ public class DirectionalBasicAttackController : MonoBehaviour
     [SerializeField] private float healerShotRadius = 0.75f;
     [SerializeField] private float healerAOERadius = 2.25f;
     [SerializeField] private float healerAOEDamageMultiplier = 0.75f;
+    [SerializeField] private float healerStaggerDuration = 0.18f;
 
     [Header("Detection")]
     [SerializeField] private LayerMask hitLayers = ~0;
@@ -101,7 +103,13 @@ public class DirectionalBasicAttackController : MonoBehaviour
 
     private bool PerformTankSweep()
     {
-        Collider[] hits = Physics.OverlapSphere(transform.position, sweepRange, hitLayers, QueryTriggerInteraction.Ignore);
+        Collider[] hits = Physics.OverlapSphere(
+            transform.position,
+            sweepRange,
+            hitLayers,
+            QueryTriggerInteraction.Ignore
+        );
+
         bool hitAny = false;
 
         foreach (Collider hit in hits)
@@ -121,6 +129,8 @@ public class DirectionalBasicAttackController : MonoBehaviour
                 continue;
 
             DealDamage(enemyRoot, stats.attack);
+            ApplyTankKnockback(enemyRoot);
+
             hitAny = true;
         }
 
@@ -133,7 +143,14 @@ public class DirectionalBasicAttackController : MonoBehaviour
         Vector3 direction = transform.forward;
         Vector3 endPoint = origin + direction * shotRange;
 
-        RaycastHit[] hits = Physics.SphereCastAll(origin, shotRadius, direction, shotRange, hitLayers, QueryTriggerInteraction.Ignore);
+        RaycastHit[] hits = Physics.SphereCastAll(
+            origin,
+            shotRadius,
+            direction,
+            shotRange,
+            hitLayers,
+            QueryTriggerInteraction.Ignore
+        );
 
         if (hits != null && hits.Length > 0)
         {
@@ -173,7 +190,13 @@ public class DirectionalBasicAttackController : MonoBehaviour
         Ray ray = aimCamera.ScreenPointToRay(mouse.position.ReadValue());
         Vector3 impactPoint = ray.origin + ray.direction * healerShotRange;
 
-        RaycastHit[] hits = Physics.SphereCastAll(ray, healerShotRadius, healerShotRange, hitLayers, QueryTriggerInteraction.Ignore);
+        RaycastHit[] hits = Physics.SphereCastAll(
+            ray,
+            healerShotRadius,
+            healerShotRange,
+            hitLayers,
+            QueryTriggerInteraction.Ignore
+        );
 
         if (hits != null && hits.Length > 0)
         {
@@ -198,7 +221,13 @@ public class DirectionalBasicAttackController : MonoBehaviour
 
     private bool DealAOEDamage(Vector3 center)
     {
-        Collider[] hits = Physics.OverlapSphere(center, healerAOERadius, hitLayers, QueryTriggerInteraction.Ignore);
+        Collider[] hits = Physics.OverlapSphere(
+            center,
+            healerAOERadius,
+            hitLayers,
+            QueryTriggerInteraction.Ignore
+        );
+
         bool hitAny = false;
 
         foreach (Collider hit in hits)
@@ -208,10 +237,47 @@ public class DirectionalBasicAttackController : MonoBehaviour
                 continue;
 
             DealDamage(enemyRoot, stats.attack * healerAOEDamageMultiplier);
+            ApplyHealerStagger(enemyRoot);
+
             hitAny = true;
         }
 
         return hitAny;
+    }
+
+    private void ApplyTankKnockback(Transform enemyRoot)
+    {
+        EnemyHitReactionController reaction = enemyRoot.GetComponent<EnemyHitReactionController>();
+
+        if (reaction == null)
+            reaction = enemyRoot.GetComponentInChildren<EnemyHitReactionController>();
+
+        if (reaction == null)
+            reaction = enemyRoot.GetComponentInParent<EnemyHitReactionController>();
+
+        if (reaction == null)
+            return;
+
+        Vector3 knockbackDirection = enemyRoot.position - transform.position;
+        knockbackDirection.y = 0f;
+
+        reaction.ApplyKnockback(knockbackDirection, tankKnockbackStrength);
+    }
+
+    private void ApplyHealerStagger(Transform enemyRoot)
+    {
+        EnemyHitReactionController reaction = enemyRoot.GetComponent<EnemyHitReactionController>();
+
+        if (reaction == null)
+            reaction = enemyRoot.GetComponentInChildren<EnemyHitReactionController>();
+
+        if (reaction == null)
+            reaction = enemyRoot.GetComponentInParent<EnemyHitReactionController>();
+
+        if (reaction == null)
+            return;
+
+        reaction.ApplyStagger(healerStaggerDuration);
     }
 
     private Transform GetValidEnemyRoot(Transform candidate)

@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 7385935491592191315}
   - component: {fileID: -8350706401820139638}
   - component: {fileID: 2754699182507264586}
+  - component: {fileID: -6588217312537715425}
   m_Layer: 6
   m_Name: Enemy_Dangerous
   m_TagString: Untagged
@@ -162,6 +163,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthController
   threatLossFromDamageMultiplier: 0.3
+  enablePlayerDamageFeedback: 1
+  playerHitShakeDuration: 0.04
+  playerHitShakeMagnitude: 0.02
+  logPlayerDamageFeedback: 1
 --- !u!114 &2237740539480571053
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -390,3 +395,22 @@ MonoBehaviour:
   hitClip: {fileID: 8300000, guid: eb675eea71c76d546a32391316f9a1f7, type: 3}
   volume: 1
   logWhenPlayed: 1
+--- !u!114 &-6588217312537715425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8840222014455456102}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e649e45f78ee78408501e6eacbca7f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHitReactionController
+  knockbackDuration: 0.12
+  knockbackSpeed: 8
+  knockbackResistance: 0.7
+  defaultStaggerDuration: 0.18
+  staggerResistance: 0.6
+  immuneToStagger: 0
+  immuneToKnockback: 0

@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 4394093002551224626}
   - component: {fileID: 6175341947432034096}
   - component: {fileID: -8530144295633085110}
+  - component: {fileID: 2539290880966639913}
   m_Layer: 6
   m_Name: Enemy_Easy_01
   m_TagString: Untagged
@@ -162,6 +163,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthController
   threatLossFromDamageMultiplier: 0.3
+  enablePlayerDamageFeedback: 1
+  playerHitShakeDuration: 0.04
+  playerHitShakeMagnitude: 0.02
+  logPlayerDamageFeedback: 1
 --- !u!114 &2739322189747320220
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -390,3 +395,18 @@ MonoBehaviour:
   hitClip: {fileID: 8300000, guid: eb675eea71c76d546a32391316f9a1f7, type: 3}
   volume: 1
   logWhenPlayed: 1
+--- !u!114 &2539290880966639913
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8832387531288768741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e649e45f78ee78408501e6eacbca7f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHitReactionController
+  knockbackDuration: 0.12
+  knockbackSpeed: 8
+  defaultStaggerDuration: 0.18
