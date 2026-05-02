@@ -143,33 +143,31 @@ public class DirectionalBasicAttackController : MonoBehaviour
         Vector3 direction = transform.forward;
         Vector3 endPoint = origin + direction * shotRange;
 
-        RaycastHit[] hits = Physics.SphereCastAll(
+        if (Physics.SphereCast(
             origin,
             shotRadius,
             direction,
+            out RaycastHit hit,
             shotRange,
             hitLayers,
             QueryTriggerInteraction.Ignore
-        );
-
-        if (hits != null && hits.Length > 0)
+        ))
         {
-            System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+            endPoint = hit.point;
 
-            foreach (RaycastHit hit in hits)
+            if (showVisibleTracer)
+                SpawnTracer(origin, endPoint);
+
+            Transform enemyRoot = GetValidEnemyRoot(hit.transform);
+
+            if (enemyRoot != null)
             {
-                Transform enemyRoot = GetValidEnemyRoot(hit.transform);
-                if (enemyRoot == null)
-                    continue;
-
-                endPoint = hit.point;
-
-                if (showVisibleTracer)
-                    SpawnTracer(origin, endPoint);
-
                 DealDamage(enemyRoot, stats.attack);
                 return true;
             }
+
+            // Hit a wall/obstacle first, so the shot stops here.
+            return false;
         }
 
         if (showVisibleTracer)
@@ -190,27 +188,16 @@ public class DirectionalBasicAttackController : MonoBehaviour
         Ray ray = aimCamera.ScreenPointToRay(mouse.position.ReadValue());
         Vector3 impactPoint = ray.origin + ray.direction * healerShotRange;
 
-        RaycastHit[] hits = Physics.SphereCastAll(
+        if (Physics.SphereCast(
             ray,
             healerShotRadius,
+            out RaycastHit hit,
             healerShotRange,
             hitLayers,
             QueryTriggerInteraction.Ignore
-        );
-
-        if (hits != null && hits.Length > 0)
+        ))
         {
-            System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
-
-            foreach (RaycastHit hit in hits)
-            {
-                Transform enemyRoot = GetValidEnemyRoot(hit.transform);
-                if (enemyRoot == null)
-                    continue;
-
-                impactPoint = hit.point;
-                break;
-            }
+            impactPoint = hit.point;
         }
 
         if (showVisibleTracer)
