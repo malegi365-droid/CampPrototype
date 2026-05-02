@@ -1,38 +1,26 @@
 using UnityEngine;
 
-[RequireComponent(typeof(AudioSource))]
 public class HitSoundController : MonoBehaviour
 {
     [SerializeField] private AudioClip hitClip;
-    [SerializeField] private float volume = 1f;
-    [SerializeField] private bool logWhenPlayed = true;
-
-    private AudioSource audioSource;
-
-    private void Awake()
-    {
-        audioSource = GetComponent<AudioSource>();
-
-        audioSource.playOnAwake = false;
-        audioSource.spatialBlend = 0f; // 2D sound for testing
-        audioSource.volume = 1f;
-        audioSource.mute = false;
-    }
+    [SerializeField] private float volume = 0.65f;
+    [SerializeField] private float minIntervalBetweenHits = 0.08f;
+    [SerializeField] private bool logWhenPlayed = false;
 
     public void PlayHit()
     {
         if (hitClip == null)
+            return;
+
+        if (GameAudioManager.Instance == null)
         {
-            Debug.LogWarning($"{gameObject.name} has no hit clip assigned.");
+            Debug.LogWarning($"{gameObject.name} could not find GameAudioManager.");
             return;
         }
 
-        if (audioSource == null)
-            audioSource = GetComponent<AudioSource>();
-
-        audioSource.PlayOneShot(hitClip, volume);
+        GameAudioManager.Instance.PlayUISound(hitClip, volume, minIntervalBetweenHits);
 
         if (logWhenPlayed)
-            Debug.Log($"{gameObject.name} played hit sound: {hitClip.name}");
+            Debug.Log($"{gameObject.name} requested hit sound: {hitClip.name}");
     }
 }

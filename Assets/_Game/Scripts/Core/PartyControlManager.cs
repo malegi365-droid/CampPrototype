@@ -28,7 +28,7 @@ public class PartyControlManager : MonoBehaviour
         if (startingMember == null)
             startingMember = dps;
 
-        ActivateOnly(startingMember, true);
+        ActivateOnly(startingMember, true, true);
     }
 
     private void Update()
@@ -45,10 +45,32 @@ public class PartyControlManager : MonoBehaviour
 
     public void ActivateOnly(PartyMemberControlBridge newMember, bool snapCamera)
     {
+        ActivateOnly(newMember, snapCamera, false);
+    }
+
+    private void ActivateOnly(PartyMemberControlBridge newMember, bool snapCamera, bool bypassUnlockCheck)
+    {
         if (newMember == null)
         {
             Debug.LogWarning("[PartyControlManager] Tried to activate null member.");
             return;
+        }
+
+        PlayerClassType requestedClass = GetClassTypeForMember(newMember);
+
+        if (!bypassUnlockCheck)
+        {
+            if (ClassUnlockManager.Instance == null)
+            {
+                Debug.LogWarning("[PartyControlManager] No ClassUnlockManager found in scene.");
+                return;
+            }
+
+            if (!ClassUnlockManager.Instance.IsClassUnlocked(requestedClass))
+            {
+                Debug.Log($"[PartyControlManager] {requestedClass} is locked.");
+                return;
+            }
         }
 
         if (newMember == CurrentMember)
@@ -92,6 +114,17 @@ public class PartyControlManager : MonoBehaviour
             cameraFollowProxy.SetTarget(CurrentMember.CameraFollowTarget, snapCamera);
 
         Debug.Log($"[PartyControlManager] Active class: {CurrentMember.RoleName}");
+    }
+
+    private PlayerClassType GetClassTypeForMember(PartyMemberControlBridge member)
+    {
+        if (member == tank)
+            return PlayerClassType.Tank;
+
+        if (member == healer)
+            return PlayerClassType.Healer;
+
+        return PlayerClassType.DPS;
     }
 
     private void DeactivateMember(PartyMemberControlBridge member)

@@ -290,7 +290,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8840222014455456102}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
@@ -393,8 +393,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HitSoundController
   hitClip: {fileID: 8300000, guid: eb675eea71c76d546a32391316f9a1f7, type: 3}
-  volume: 1
-  logWhenPlayed: 1
+  volume: 0.55
+  minIntervalBetweenHits: 0.08
+  logWhenPlayed: 0
 --- !u!114 &-6588217312537715425
 MonoBehaviour:
   m_ObjectHideFlags: 0

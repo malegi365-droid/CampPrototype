@@ -290,7 +290,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8832387531288768741}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
@@ -393,8 +393,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HitSoundController
   hitClip: {fileID: 8300000, guid: eb675eea71c76d546a32391316f9a1f7, type: 3}
-  volume: 1
-  logWhenPlayed: 1
+  volume: 0.55
+  minIntervalBetweenHits: 0.08
+  logWhenPlayed: 0
 --- !u!114 &2539290880966639913
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -409,4 +410,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHitReactionController
   knockbackDuration: 0.12
   knockbackSpeed: 8
+  knockbackResistance: 0
   defaultStaggerDuration: 0.18
+  staggerResistance: 0
+  immuneToStagger: 0
+  immuneToKnockback: 0

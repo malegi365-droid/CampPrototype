@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &2185591147798516472
+--- !u!1 &6522277537983270768
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,60 +8,61 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6306361822766607061}
-  - component: {fileID: 8594703078996298731}
-  - component: {fileID: 1721540623420257336}
-  - component: {fileID: 3349786105124723201}
-  - component: {fileID: 4831795060178468844}
-  - component: {fileID: 1548421966520329903}
-  - component: {fileID: 3466149665126315761}
-  - component: {fileID: 8466019518544013755}
-  - component: {fileID: 5857836506912015714}
-  - component: {fileID: 5590078339198992793}
-  - component: {fileID: 4789084092999374562}
-  - component: {fileID: 3523916002390764131}
-  - component: {fileID: 8584299062488662532}
-  - component: {fileID: 1305215600926534560}
-  - component: {fileID: -2620928102447972453}
-  - component: {fileID: -4460845464469346827}
-  - component: {fileID: -2351557446309573505}
+  - component: {fileID: 7708467662630638260}
+  - component: {fileID: 5195492135060409442}
+  - component: {fileID: 4010200387333467964}
+  - component: {fileID: 3483475437870405135}
+  - component: {fileID: 2363416398306206932}
+  - component: {fileID: 5071384736721683182}
+  - component: {fileID: 5101302140858252162}
+  - component: {fileID: 6322286518037000883}
+  - component: {fileID: 3679088192479493360}
+  - component: {fileID: 2492235203771377266}
+  - component: {fileID: 1333455401977512140}
+  - component: {fileID: 6959804990036297114}
+  - component: {fileID: 7323551532328901318}
+  - component: {fileID: 4523523424593904974}
+  - component: {fileID: 841679463064850517}
+  - component: {fileID: 6847316421071546197}
+  - component: {fileID: 1275615223802649821}
+  - component: {fileID: 3854912317618031989}
   m_Layer: 6
-  m_Name: Enemy_Fair
+  m_Name: Boss_TankUnlock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &6306361822766607061
+--- !u!4 &7708467662630638260
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2185591147798516472}
+  m_GameObject: {fileID: 6522277537983270768}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 13, y: 1, z: 1}
-  m_LocalScale: {x: 1.2, y: 1.2, z: 1.2}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &8594703078996298731
+--- !u!33 &5195492135060409442
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2185591147798516472}
+  m_GameObject: {fileID: 6522277537983270768}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &1721540623420257336
+--- !u!23 &4010200387333467964
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2185591147798516472}
+  m_GameObject: {fileID: 6522277537983270768}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -80,7 +81,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 463af4e055290354e9393a83cbbccb4b, type: 2}
+  - {fileID: 2100000, guid: acd9a36605484ed4b88047f1b486ec03, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -104,13 +105,13 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &3349786105124723201
+--- !u!136 &3483475437870405135
 CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2185591147798516472}
+  m_GameObject: {fileID: 6522277537983270768}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -127,36 +128,36 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &4831795060178468844
+--- !u!114 &2363416398306206932
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2185591147798516472}
+  m_GameObject: {fileID: 6522277537983270768}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ab3a3511b0e99ba4d94fe4eec0939eb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitStats
-  unitName: Sand Hunter
+  unitName: Dune Terror
   role: 3
   level: 1
-  maxHP: 190
-  currentHP: 190
-  attack: 24
-  defense: 7
-  attackInterval: 2.5
+  maxHP: 400
+  currentHP: 400
+  attack: 60
+  defense: 13
+  attackInterval: 2.1
   attackRange: 2.5
   threatMultiplier: 1
   healPower: 10
---- !u!114 &1548421966520329903
+--- !u!114 &5071384736721683182
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2185591147798516472}
+  m_GameObject: {fileID: 6522277537983270768}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cd4d235e661802c4e8d26cf80a4d19ce, type: 3}
@@ -167,13 +168,13 @@ MonoBehaviour:
   playerHitShakeDuration: 0.04
   playerHitShakeMagnitude: 0.02
   logPlayerDamageFeedback: 1
---- !u!114 &3466149665126315761
+--- !u!114 &5101302140858252162
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2185591147798516472}
+  m_GameObject: {fileID: 6522277537983270768}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 15375c63d079bd84ab511a0cd843a0c5, type: 3}
@@ -181,25 +182,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AutoAttackController
   currentTarget: {fileID: 0}
   useTargetingController: 1
---- !u!114 &8466019518544013755
+--- !u!114 &6322286518037000883
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2185591147798516472}
+  m_GameObject: {fileID: 6522277537983270768}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d0925ba607b608459898c7d6a438b2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThreatTable
---- !u!114 &5857836506912015714
+--- !u!114 &3679088192479493360
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2185591147798516472}
+  m_GameObject: {fileID: 6522277537983270768}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 292b945cfd6c6474ba19439b9e32ee01, type: 3}
@@ -209,39 +210,39 @@ MonoBehaviour:
   moveSpeed: 3
   leashDistance: 12
   returnStopDistance: 0.2
---- !u!114 &5590078339198992793
+--- !u!114 &2492235203771377266
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2185591147798516472}
+  m_GameObject: {fileID: 6522277537983270768}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ed35ec865fd760a4696b793dfcf262a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyXPReward
-  xpReward: 40
---- !u!114 &4789084092999374562
+  xpReward: 90
+--- !u!114 &1333455401977512140
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2185591147798516472}
+  m_GameObject: {fileID: 6522277537983270768}
   m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 35cad78341216e04ebf739d672ddaf6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyRespawnController
-  respawnDelay: 10
---- !u!114 &3523916002390764131
+  respawnDelay: 14
+--- !u!114 &6959804990036297114
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2185591147798516472}
+  m_GameObject: {fileID: 6522277537983270768}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 930db5db15295a144ae47f98b38bff29, type: 3}
@@ -251,13 +252,13 @@ MonoBehaviour:
   assistThreat: 8
   assistOncePerCombat: 1
   debugAssistLogs: 1
---- !u!114 &8584299062488662532
+--- !u!114 &7323551532328901318
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2185591147798516472}
+  m_GameObject: {fileID: 6522277537983270768}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ff30a549269ade4e812db31ad7f90bf, type: 3}
@@ -268,13 +269,13 @@ MonoBehaviour:
   minPauseTime: 1.5
   maxPauseTime: 3.5
   waypointTolerance: 0.15
---- !u!114 &1305215600926534560
+--- !u!114 &4523523424593904974
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2185591147798516472}
+  m_GameObject: {fileID: 6522277537983270768}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6915ff18765792542a5ac8d480ff5aa7, type: 3}
@@ -283,13 +284,13 @@ MonoBehaviour:
   targetRenderer: {fileID: 0}
   flashColor: {r: 1, g: 1, b: 1, a: 1}
   flashDuration: 0.1
---- !u!82 &-2620928102447972453
+--- !u!82 &841679463064850517
 AudioSource:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2185591147798516472}
+  m_GameObject: {fileID: 6522277537983270768}
   m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
@@ -380,13 +381,13 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &-4460845464469346827
+--- !u!114 &6847316421071546197
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2185591147798516472}
+  m_GameObject: {fileID: 6522277537983270768}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 693e561bb5c4a8149868678327263d02, type: 3}
@@ -396,13 +397,13 @@ MonoBehaviour:
   volume: 0.55
   minIntervalBetweenHits: 0.08
   logWhenPlayed: 0
---- !u!114 &-2351557446309573505
+--- !u!114 &1275615223802649821
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2185591147798516472}
+  m_GameObject: {fileID: 6522277537983270768}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0e649e45f78ee78408501e6eacbca7f3, type: 3}
@@ -410,8 +411,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHitReactionController
   knockbackDuration: 0.12
   knockbackSpeed: 8
-  knockbackResistance: 0.35
+  knockbackResistance: 0.7
   defaultStaggerDuration: 0.18
-  staggerResistance: 0.25
+  staggerResistance: 0.6
   immuneToStagger: 0
   immuneToKnockback: 0
+--- !u!114 &3854912317618031989
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6522277537983270768}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a10c55dbdca638940bf2cf219483a4da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ClassUnlockOnDeath
+  classToUnlock: 1
+  isBoss: 1

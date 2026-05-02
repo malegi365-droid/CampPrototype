@@ -2744,12 +2744,14 @@ MonoBehaviour:
   faceMouseBeforeAttack: 1
   sweepRange: 2.2
   sweepAngle: 100
+  tankKnockbackStrength: 1
   shotRange: 12
   shotRadius: 0.25
   healerShotRange: 30
   healerShotRadius: 0.75
   healerAOERadius: 2.25
   healerAOEDamageMultiplier: 0.75
+  healerStaggerDuration: 0.18
   hitLayers:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -3512,6 +3514,53 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 900724934}
   m_CullTransparentMesh: 1
+--- !u!1 &947141174
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 947141176}
+  - component: {fileID: 947141175}
+  m_Layer: 0
+  m_Name: ClassUnlockManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &947141175
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 947141174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3aa8d4e51acb1e4b9afcaf4314b0861, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ClassUnlockManager
+  dpsUnlocked: 1
+  tankUnlocked: 0
+  healerUnlocked: 0
+--- !u!4 &947141176
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 947141174}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -4.78052, y: 0, z: 14.66389}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &970090401
 GameObject:
   m_ObjectHideFlags: 0
@@ -6602,12 +6651,14 @@ MonoBehaviour:
   faceMouseBeforeAttack: 1
   sweepRange: 2.8
   sweepAngle: 140
+  tankKnockbackStrength: 1
   shotRange: 12
   shotRadius: 0.25
   healerShotRange: 14
   healerShotRadius: 0.35
   healerAOERadius: 2.25
   healerAOEDamageMultiplier: 0.75
+  healerStaggerDuration: 0.18
   hitLayers:
     serializedVersion: 2
     m_Bits: 64
@@ -8275,12 +8326,14 @@ MonoBehaviour:
   faceMouseBeforeAttack: 1
   sweepRange: 2.2
   sweepAngle: 100
+  tankKnockbackStrength: 1
   shotRange: 30
   shotRadius: 1.2
   healerShotRange: 14
   healerShotRadius: 0.35
   healerAOERadius: 2.25
   healerAOEDamageMultiplier: 0.75
+  healerStaggerDuration: 0.18
   hitLayers:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -9014,3 +9067,4 @@ SceneRoots:
   - {fileID: 400854387}
   - {fileID: 419558235}
   - {fileID: 1228104561}
+  - {fileID: 947141176}
