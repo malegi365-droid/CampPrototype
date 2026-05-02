@@ -477,6 +477,34 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2113539621195598998, guid: e8f5e211d020bde4d99df635877d02e9, type: 3}
+      propertyPath: m_UseGravity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2113539621195598998, guid: e8f5e211d020bde4d99df635877d02e9, type: 3}
+      propertyPath: m_Constraints
+      value: 112
+      objectReference: {fileID: 0}
+    - target: {fileID: 2113539621195598998, guid: e8f5e211d020bde4d99df635877d02e9, type: 3}
+      propertyPath: m_Interpolate
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2113539621195598998, guid: e8f5e211d020bde4d99df635877d02e9, type: 3}
+      propertyPath: m_IsKinematic
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2113539621195598998, guid: e8f5e211d020bde4d99df635877d02e9, type: 3}
+      propertyPath: m_CollisionDetection
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3679088192479493360, guid: e8f5e211d020bde4d99df635877d02e9, type: 3}
+      propertyPath: leashDistance
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 6183935713607187909, guid: e8f5e211d020bde4d99df635877d02e9, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6522277537983270768, guid: e8f5e211d020bde4d99df635877d02e9, type: 3}
       propertyPath: m_Name
       value: Boss_TankUnlock
@@ -524,10 +552,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6522277537983270768, guid: e8f5e211d020bde4d99df635877d02e9, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 794611192}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e8f5e211d020bde4d99df635877d02e9, type: 3}
 --- !u!1 &180330778
 GameObject:
@@ -2807,6 +2832,11 @@ MonoBehaviour:
   tankKnockbackStrength: 1
   shotRange: 12
   shotRadius: 0.25
+  enableDpsChargedShot: 1
+  chargedShotRequiredHoldTime: 1.1
+  chargedShotDamageMultiplier: 1.5
+  chargedShotBreaksBossArmor: 1
+  dpsStopsWhileCharging: 1
   healerShotRange: 30
   healerShotRadius: 0.75
   healerAOERadius: 2.25
@@ -3380,27 +3410,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 791061458}
   m_CullTransparentMesh: 1
---- !u!1 &794611173 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6522277537983270768, guid: e8f5e211d020bde4d99df635877d02e9, type: 3}
-  m_PrefabInstance: {fileID: 146128205}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &794611192
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 794611173}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d270467a5ece0ae488b1ad5012ea00a9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BossChargeAttack
-  chargeCooldown: 5
-  chargeSpeed: 12
-  chargeDuration: 1.2
-  chargeDamage: 25
 --- !u!1 &832013624
 GameObject:
   m_ObjectHideFlags: 0
@@ -7302,6 +7311,11 @@ MonoBehaviour:
   tankKnockbackStrength: 1
   shotRange: 12
   shotRadius: 0.25
+  enableDpsChargedShot: 1
+  chargedShotRequiredHoldTime: 1.1
+  chargedShotDamageMultiplier: 1.5
+  chargedShotBreaksBossArmor: 1
+  dpsStopsWhileCharging: 1
   healerShotRange: 14
   healerShotRadius: 0.35
   healerAOERadius: 2.25
@@ -9214,6 +9228,11 @@ MonoBehaviour:
   tankKnockbackStrength: 1
   shotRange: 30
   shotRadius: 1.2
+  enableDpsChargedShot: 1
+  chargedShotRequiredHoldTime: 1.1
+  chargedShotDamageMultiplier: 1.5
+  chargedShotBreaksBossArmor: 1
+  dpsStopsWhileCharging: 1
   healerShotRange: 14
   healerShotRadius: 0.35
   healerAOERadius: 2.25

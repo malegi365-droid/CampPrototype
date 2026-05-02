@@ -5,6 +5,7 @@ using UnityEngine;
 public class HealthController : MonoBehaviour, IDamageable
 {
     private UnitStats stats;
+    private BossArmorController bossArmor;
     private bool dead = false;
 
     public event Action<HealthController> OnDied;
@@ -22,6 +23,8 @@ public class HealthController : MonoBehaviour, IDamageable
     private void Awake()
     {
         stats = GetComponent<UnitStats>();
+        bossArmor = GetComponent<BossArmorController>();
+
         ResetHealth();
     }
 
@@ -29,7 +32,14 @@ public class HealthController : MonoBehaviour, IDamageable
     {
         if (dead) return;
 
-        float reducedDamage = Mathf.Max(1f, amount - stats.defense);
+        float incomingDamage = amount;
+
+        if (bossArmor != null)
+        {
+            incomingDamage = bossArmor.ModifyIncomingDamage(incomingDamage);
+        }
+
+        float reducedDamage = Mathf.Max(1f, incomingDamage - stats.defense);
         stats.currentHP = Mathf.Max(0f, stats.currentHP - reducedDamage);
 
         TriggerDamageFeedback(reducedDamage);
@@ -62,7 +72,6 @@ public class HealthController : MonoBehaviour, IDamageable
         if (stats == null)
             return;
 
-        // Only player classes should shake/flash here. Enemies already flash from attack feedback.
         if (stats.role == UnitRole.Enemy)
             return;
 

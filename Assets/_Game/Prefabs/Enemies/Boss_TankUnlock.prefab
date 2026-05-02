@@ -58,6 +58,8 @@ GameObject:
   - component: {fileID: 6847316421071546197}
   - component: {fileID: 1275615223802649821}
   - component: {fileID: 3854912317618031989}
+  - component: {fileID: -5327858041876781997}
+  - component: {fileID: -3452085949656510850}
   m_Layer: 6
   m_Name: Boss_TankUnlock
   m_TagString: Untagged
@@ -463,6 +465,48 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ClassUnlockOnDeath
   classToUnlock: 1
   isBoss: 1
+--- !u!114 &-5327858041876781997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6522277537983270768}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d270467a5ece0ae488b1ad5012ea00a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossChargeAttack
+  chargeCooldown: 5
+  chargeSpeed: 14
+  chargeDuration: 1
+  chargeDamage: 30
+  chargeHitRadius: 1.75
+  windupTime: 0.75
+  obstacleLayers:
+    serializedVersion: 2
+    m_Bits: 1
+  playerLayers:
+    serializedVersion: 2
+    m_Bits: 1
+  wallCheckDistance: 0.75
+  wallCheckRadius: 0.45
+  logChargeEvents: 1
+--- !u!114 &-3452085949656510850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6522277537983270768}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8c3cb572cfbb664c9ffe1d99ddc4cf3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossArmorController
+  armorActive: 1
+  armoredDamageMultiplier: 0.2
+  armorBreakDuration: 4
 --- !u!1 &6691148484150843046
 GameObject:
   m_ObjectHideFlags: 0

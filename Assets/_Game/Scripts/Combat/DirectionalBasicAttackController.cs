@@ -32,6 +32,13 @@ public class DirectionalBasicAttackController : MonoBehaviour
     [SerializeField] private float shotRange = 25f;
     [SerializeField] private float shotRadius = 1.25f;
 
+    [Header("DPS Charged Shot")]
+    [SerializeField] private bool enableDpsChargedShot = true;
+    [SerializeField] private float chargedShotRequiredHoldTime = 1.1f;
+    [SerializeField] private float chargedShotDamageMultiplier = 1.5f;
+    [SerializeField] private bool chargedShotBreaksBossArmor = true;
+    [SerializeField] private bool dpsStopsWhileCharging = true;
+
     [Header("Healer AOE Shot")]
     [SerializeField] private float healerShotRange = 30f;
     [SerializeField] private float healerShotRadius = 0.75f;
@@ -50,6 +57,9 @@ public class DirectionalBasicAttackController : MonoBehaviour
     private TargetingController targetingController;
     private float attackTimer;
 
+    private float dpsChargeTimer = 0f;
+    private bool dpsWasCharging = false;
+
     private void Awake()
     {
         stats = GetComponent<UnitStats>();
@@ -67,12 +77,57 @@ public class DirectionalBasicAttackController : MonoBehaviour
         if (mouse == null)
             return;
 
+        if (attackMode == BasicAttackMode.DpsStraightShot && enableDpsChargedShot)
+        {
+            HandleDpsChargedShotInput(mouse);
+            return;
+        }
+
         bool shouldAttack = holdToAttack
             ? mouse.leftButton.isPressed
             : mouse.leftButton.wasPressedThisFrame;
 
         if (shouldAttack)
             TryAttack();
+    }
+
+    private void HandleDpsChargedShotInput(Mouse mouse)
+    {
+        if (mouse.leftButton.isPressed)
+        {
+            dpsChargeTimer += Time.deltaTime;
+            dpsWasCharging = true;
+
+            if (dpsStopsWhileCharging)
+                TryStopMovementWhileCharging();
+
+            if (faceMouseBeforeAttack)
+                FaceMouseGroundPoint();
+
+            return;
+        }
+
+        if (dpsWasCharging && mouse.leftButton.wasReleasedThisFrame)
+        {
+            bool isCharged = dpsChargeTimer >= chargedShotRequiredHoldTime;
+
+            TryDpsShot(isCharged);
+
+            dpsChargeTimer = 0f;
+            dpsWasCharging = false;
+        }
+    }
+
+    private void TryDpsShot(bool isCharged)
+    {
+        if (attackTimer > 0f)
+            return;
+
+        if (faceMouseBeforeAttack)
+            FaceMouseGroundPoint();
+
+        PerformDpsStraightShot(isCharged);
+        attackTimer = attackCooldown;
     }
 
     private void TryAttack()
@@ -90,7 +145,7 @@ public class DirectionalBasicAttackController : MonoBehaviour
                 break;
 
             case BasicAttackMode.DpsStraightShot:
-                PerformDpsStraightShot();
+                PerformDpsStraightShot(false);
                 break;
 
             case BasicAttackMode.HealerAimedShot:
@@ -99,6 +154,24 @@ public class DirectionalBasicAttackController : MonoBehaviour
         }
 
         attackTimer = attackCooldown;
+    }
+
+    private void TryStopMovementWhileCharging()
+    {
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            return;
+        }
+
+        CharacterController controller = GetComponent<CharacterController>();
+        if (controller != null)
+        {
+            // Movement scripts may still move the character.
+            // This method is a soft stop unless your mover supports disabling input.
+            return;
+        }
     }
 
     private bool PerformTankSweep()
@@ -137,7 +210,7 @@ public class DirectionalBasicAttackController : MonoBehaviour
         return hitAny;
     }
 
-    private bool PerformDpsStraightShot()
+    private bool PerformDpsStraightShot(bool isCharged)
     {
         Vector3 origin = transform.position + Vector3.up * 0.75f;
         Vector3 direction = transform.forward;
@@ -162,11 +235,31 @@ public class DirectionalBasicAttackController : MonoBehaviour
 
             if (enemyRoot != null)
             {
-                DealDamage(enemyRoot, stats.attack);
+                float damage = isCharged
+                    ? stats.attack * chargedShotDamageMultiplier
+                    : stats.attack;
+
+                if (isCharged && chargedShotBreaksBossArmor)
+                {
+                    BossArmorController armor = enemyRoot.GetComponent<BossArmorController>();
+                    if (armor == null)
+                        armor = enemyRoot.GetComponentInChildren<BossArmorController>();
+                    if (armor == null)
+                        armor = enemyRoot.GetComponentInParent<BossArmorController>();
+
+                    if (armor != null)
+                        armor.BreakArmor();
+                }
+
+                DealDamage(enemyRoot, damage);
+
+                Debug.Log(isCharged
+                    ? $"{gameObject.name} fired a CHARGED shot."
+                    : $"{gameObject.name} fired a normal shot.");
+
                 return true;
             }
 
-            // Hit a wall/obstacle first, so the shot stops here.
             return false;
         }
 
