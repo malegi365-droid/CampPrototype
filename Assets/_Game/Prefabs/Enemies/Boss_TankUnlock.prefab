@@ -151,10 +151,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 2
+  m_Radius: 1.1
+  m_Height: 3
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 1.4, z: 0}
 --- !u!114 &2363416398306206932
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -591,6 +591,14 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: bb056ab0ebe51fd42801094e5156349a, type: 3}
       propertyPath: m_Name
       value: Meshy_AI_bulky_humanoid_warrio_biped_Character_output
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: bb056ab0ebe51fd42801094e5156349a, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 23d56bffe2d652c44b75cf5f8942f761, type: 2}
+    - target: {fileID: 5866666021909216657, guid: bb056ab0ebe51fd42801094e5156349a, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
