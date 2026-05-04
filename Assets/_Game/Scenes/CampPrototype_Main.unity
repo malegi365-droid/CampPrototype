@@ -440,7 +440,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &105623002
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -511,7 +511,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7708467662630638260, guid: e8f5e211d020bde4d99df635877d02e9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -20.26
+      value: 2.5326319
       objectReference: {fileID: 0}
     - target: {fileID: 7708467662630638260, guid: e8f5e211d020bde4d99df635877d02e9, type: 3}
       propertyPath: m_LocalPosition.y
@@ -519,11 +519,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7708467662630638260, guid: e8f5e211d020bde4d99df635877d02e9, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 2.9156084
+      value: 2.4861202
       objectReference: {fileID: 0}
     - target: {fileID: 7708467662630638260, guid: e8f5e211d020bde4d99df635877d02e9, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: -0.029527714
       objectReference: {fileID: 0}
     - target: {fileID: 7708467662630638260, guid: e8f5e211d020bde4d99df635877d02e9, type: 3}
       propertyPath: m_LocalRotation.x
@@ -531,7 +531,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7708467662630638260, guid: e8f5e211d020bde4d99df635877d02e9, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0.999564
       objectReference: {fileID: 0}
     - target: {fileID: 7708467662630638260, guid: e8f5e211d020bde4d99df635877d02e9, type: 3}
       propertyPath: m_LocalRotation.z
@@ -543,7 +543,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7708467662630638260, guid: e8f5e211d020bde4d99df635877d02e9, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 183.384
       objectReference: {fileID: 0}
     - target: {fileID: 7708467662630638260, guid: e8f5e211d020bde4d99df635877d02e9, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -1378,7 +1378,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &356164522
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2951,7 +2951,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &637165423
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4241,7 +4241,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1004468945
 Transform:
   m_ObjectHideFlags: 0
@@ -4683,7 +4683,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1107212245
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5598,7 +5598,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &1373524423
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6593,7 +6593,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1528643420
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6776,7 +6776,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1546480591
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6923,7 +6923,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!136 &1608798438
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -7516,7 +7516,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1685352659
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8545,7 +8545,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &1901252459
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -9035,7 +9035,7 @@ Transform:
   m_GameObject: {fileID: 1990596562}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: -4.06}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9745,9 +9745,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SimpleCameraFollow
   target: {fileID: 419558235}
-  offset: {x: 0, y: 7, z: -8}
-  followSpeed: 6
-  lookSpeed: 8
+  offset: {x: 0, y: 9, z: -11}
+  followSpeed: 4
+  lookSpeed: 5
 --- !u!1 &2062607161
 GameObject:
   m_ObjectHideFlags: 0
@@ -9843,7 +9843,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &2068784538
 BoxCollider:
   m_ObjectHideFlags: 0
