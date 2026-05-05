@@ -2077,7 +2077,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 962384678}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &420166357
 GameObject:
@@ -3123,6 +3123,75 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 641919295}
   m_CullTransparentMesh: 1
+--- !u!1001 &645472409
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1990596563}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: ac1800a0ca14e5f439e70bafa2eae43c, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ac1800a0ca14e5f439e70bafa2eae43c, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ac1800a0ca14e5f439e70bafa2eae43c, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ac1800a0ca14e5f439e70bafa2eae43c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ac1800a0ca14e5f439e70bafa2eae43c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ac1800a0ca14e5f439e70bafa2eae43c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ac1800a0ca14e5f439e70bafa2eae43c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ac1800a0ca14e5f439e70bafa2eae43c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ac1800a0ca14e5f439e70bafa2eae43c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ac1800a0ca14e5f439e70bafa2eae43c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ac1800a0ca14e5f439e70bafa2eae43c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ac1800a0ca14e5f439e70bafa2eae43c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ac1800a0ca14e5f439e70bafa2eae43c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ac1800a0ca14e5f439e70bafa2eae43c, type: 3}
+      propertyPath: m_Name
+      value: Meshy_AI_Stylized_DPS_adventur_biped_Character_output
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ac1800a0ca14e5f439e70bafa2eae43c, type: 3}
 --- !u!1 &672151136
 GameObject:
   m_ObjectHideFlags: 0
@@ -3867,7 +3936,6 @@ Transform:
   - {fileID: 1632514463}
   - {fileID: 635801753}
   - {fileID: 1990596563}
-  - {fileID: 419558235}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &962384679
@@ -9038,7 +9106,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 1, z: -4.06}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 2045083468}
   m_Father: {fileID: 962384678}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1990596565
@@ -9125,7 +9194,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1990596562}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -9644,6 +9713,11 @@ MonoBehaviour:
   hpSlider: {fileID: 1377901794}
   labelText: {fileID: 1938818280}
   displayName: Tank
+--- !u!4 &2045083468 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: ac1800a0ca14e5f439e70bafa2eae43c, type: 3}
+  m_PrefabInstance: {fileID: 645472409}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2046677867
 GameObject:
   m_ObjectHideFlags: 0
@@ -10224,6 +10298,7 @@ SceneRoots:
   - {fileID: 4236529486873108503}
   - {fileID: 180247124464647183}
   - {fileID: 962384678}
+  - {fileID: 419558235}
   - {fileID: 1608798441}
   - {fileID: 1443493565}
   - {fileID: 864793183}
