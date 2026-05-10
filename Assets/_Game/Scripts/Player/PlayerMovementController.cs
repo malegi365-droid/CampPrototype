@@ -6,6 +6,10 @@ public class PlayerMovementController : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 5f;
 
+    [Header("Animation")]
+    [SerializeField] private Animator characterAnimator;
+    [SerializeField] private string speedParameterName = "Speed";
+
     [Header("Aiming")]
     [SerializeField] private Camera aimCamera;
 
@@ -48,6 +52,9 @@ public class PlayerMovementController : MonoBehaviour
         if (move.sqrMagnitude > 1f)
             move.Normalize();
 
+        if (characterAnimator != null)
+            characterAnimator.SetFloat(speedParameterName, move.magnitude);
+
         controller.Move(move * moveSpeed * Time.deltaTime);
     }
 
@@ -62,7 +69,9 @@ public class PlayerMovementController : MonoBehaviour
 
         Ray ray = aimCamera.ScreenPointToRay(mouse.position.ReadValue());
 
-        Plane groundPlane = new Plane(Vector3.up, new Vector3(0f, transform.position.y, 0f));
+        // Use world ground level instead of player height.
+        // This prevents mouse-facing issues when the visual model height changes.
+        Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
 
         if (!groundPlane.Raycast(ray, out float enter))
             return;
