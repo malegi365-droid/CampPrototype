@@ -4,11 +4,14 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovementController : MonoBehaviour
 {
-    [SerializeField] private float moveSpeed = 5f;
+    [Header("Movement")]
+    [SerializeField] private float runSpeed = 7f;
+    [SerializeField] private float walkSpeed = 3.5f;
 
     [Header("Animation")]
     [SerializeField] private Animator characterAnimator;
     [SerializeField] private string speedParameterName = "Speed";
+    [SerializeField] private float animationDampTime = 0.1f;
 
     [Header("Aiming")]
     [SerializeField] private Camera aimCamera;
@@ -34,6 +37,8 @@ public class PlayerMovementController : MonoBehaviour
         Vector3 move = Vector3.zero;
 
         Keyboard kb = Keyboard.current;
+        bool isWalking = false;
+
         if (kb != null)
         {
             if (kb.wKey.isPressed || kb.upArrowKey.isPressed)
@@ -47,15 +52,23 @@ public class PlayerMovementController : MonoBehaviour
 
             if (kb.dKey.isPressed || kb.rightArrowKey.isPressed)
                 move += Vector3.right;
+
+            isWalking = kb.leftShiftKey.isPressed || kb.rightShiftKey.isPressed;
         }
 
         if (move.sqrMagnitude > 1f)
             move.Normalize();
 
-        if (characterAnimator != null)
-            characterAnimator.SetFloat(speedParameterName, move.magnitude);
+        float currentSpeed = isWalking ? walkSpeed : runSpeed;
 
-        controller.Move(move * moveSpeed * Time.deltaTime);
+        float animationSpeed = 0f;
+        if (move.sqrMagnitude > 0.001f)
+            animationSpeed = isWalking ? 0.5f : 1f;
+
+        if (characterAnimator != null)
+            characterAnimator.SetFloat(speedParameterName, animationSpeed, animationDampTime, Time.deltaTime);
+
+        controller.Move(move * currentSpeed * Time.deltaTime);
     }
 
     private void HandleMouseFacing()
@@ -69,8 +82,6 @@ public class PlayerMovementController : MonoBehaviour
 
         Ray ray = aimCamera.ScreenPointToRay(mouse.position.ReadValue());
 
-        // Use world ground level instead of player height.
-        // This prevents mouse-facing issues when the visual model height changes.
         Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
 
         if (!groundPlane.Raycast(ray, out float enter))
