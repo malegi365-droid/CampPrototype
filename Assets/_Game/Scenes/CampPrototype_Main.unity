@@ -519,6 +519,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Boss_TankUnlock
       objectReference: {fileID: 0}
+    - target: {fileID: 6522277537983270768, guid: e8f5e211d020bde4d99df635877d02e9, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7708467662630638260, guid: e8f5e211d020bde4d99df635877d02e9, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.5326319
@@ -879,7 +883,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 1852576806548013000, guid: 20c7faa0a7ebaf9439a6aa12a6dba19e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 461548320}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 20c7faa0a7ebaf9439a6aa12a6dba19e, type: 3}
 --- !u!1 &210472650
@@ -2245,6 +2252,80 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &432825948
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 570798686}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 59b4fee36ae3b9d48a2f80511941ecee, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 59b4fee36ae3b9d48a2f80511941ecee, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 59b4fee36ae3b9d48a2f80511941ecee, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 59b4fee36ae3b9d48a2f80511941ecee, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.03
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 59b4fee36ae3b9d48a2f80511941ecee, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.218
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 59b4fee36ae3b9d48a2f80511941ecee, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.039
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 59b4fee36ae3b9d48a2f80511941ecee, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 59b4fee36ae3b9d48a2f80511941ecee, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 59b4fee36ae3b9d48a2f80511941ecee, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 59b4fee36ae3b9d48a2f80511941ecee, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 59b4fee36ae3b9d48a2f80511941ecee, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 59b4fee36ae3b9d48a2f80511941ecee, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 59b4fee36ae3b9d48a2f80511941ecee, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 59b4fee36ae3b9d48a2f80511941ecee, type: 3}
+      propertyPath: m_Name
+      value: Meshy_AI_Stylized_compact_one__0514033457_generate
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 59b4fee36ae3b9d48a2f80511941ecee, type: 3}
+--- !u!4 &461548320 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 59b4fee36ae3b9d48a2f80511941ecee, type: 3}
+  m_PrefabInstance: {fileID: 432825948}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &502969857
 GameObject:
   m_ObjectHideFlags: 0
@@ -2547,6 +2628,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 552850030}
   m_CullTransparentMesh: 1
+--- !u!4 &570798686 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1852576806548013000, guid: 20c7faa0a7ebaf9439a6aa12a6dba19e, type: 3}
+  m_PrefabInstance: {fileID: 209002958}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &571956481
 GameObject:
   m_ObjectHideFlags: 0
@@ -2635,7 +2721,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &635801746
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2853,9 +2939,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 760a30a131c80394ab60d845f0ebf2e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovementController
-  moveSpeed: 5
+  runSpeed: 7
+  walkSpeed: 3.5
   characterAnimator: {fileID: 0}
   speedParameterName: Speed
+  animationDampTime: 0.1
   aimCamera: {fileID: 0}
 --- !u!114 &635801757
 MonoBehaviour:
@@ -7447,9 +7535,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 760a30a131c80394ab60d845f0ebf2e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovementController
-  moveSpeed: 5
+  runSpeed: 7
+  walkSpeed: 3.5
   characterAnimator: {fileID: 0}
   speedParameterName: Speed
+  animationDampTime: 0.1
   aimCamera: {fileID: 0}
 --- !u!114 &1632514468
 MonoBehaviour:
@@ -9259,9 +9349,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 760a30a131c80394ab60d845f0ebf2e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovementController
-  moveSpeed: 7
+  runSpeed: 7
+  walkSpeed: 3.5
   characterAnimator: {fileID: 124750364}
   speedParameterName: Speed
+  animationDampTime: 0.1
   aimCamera: {fileID: 0}
 --- !u!143 &1990596575
 CharacterController:
@@ -9767,7 +9859,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SimpleCameraFollow
   target: {fileID: 419558235}
-  offset: {x: 0, y: 9, z: -11}
+  offset: {x: 0, y: 2.5, z: -3}
   followSpeed: 4
   lookSpeed: 5
 --- !u!1 &2062607161
