@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4972370075732805622}
   - component: {fileID: 7536526821108106257}
   - component: {fileID: 5619016915570850485}
+  - component: {fileID: 6862083297387214058}
   m_Layer: 0
   m_Name: DPS_InjectorProjectile_Root
   m_TagString: Untagged
@@ -46,8 +47,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 015e6fa3f075f1a41b415cb5099e6d77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DPSInjectorProjectile
-  speed: 3
+  speed: 15
   lifetime: 3
+  hitRadius: 0.2
+  hitLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  armTime: 0.1
+  impactEffectPrefab: {fileID: 6731236443730300185, guid: 3469330221830ad48ad88a113db8d35e, type: 3}
 --- !u!136 &5619016915570850485
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -71,6 +78,33 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &6862083297387214058
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1750164435413093665}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1001 &7264117786339758437
 PrefabInstance:
   m_ObjectHideFlags: 0

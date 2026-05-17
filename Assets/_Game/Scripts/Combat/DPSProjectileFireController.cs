@@ -7,6 +7,9 @@ public class DPSProjectileFireController : MonoBehaviour
     [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private Transform projectileSpawnPoint;
 
+    [Header("Muzzle Flash")]
+    [SerializeField] private GameObject muzzleFlashPrefab;
+
     [Header("Aiming")]
     [SerializeField] private Camera aimCamera;
     [SerializeField] private Transform aimDebugMarker;
@@ -46,7 +49,7 @@ public class DPSProjectileFireController : MonoBehaviour
         if (aimCamera == null)
             aimCamera = Camera.main;
 
-        Vector3 fireDirection = transform.forward;
+        Vector3 cursorWorldPoint = projectileSpawnPoint.position + projectileSpawnPoint.forward * 10f;
 
         if (aimCamera != null)
         {
@@ -55,27 +58,38 @@ public class DPSProjectileFireController : MonoBehaviour
 
             if (groundPlane.Raycast(ray, out float enter))
             {
-                Vector3 cursorWorldPoint = ray.GetPoint(enter);
+                cursorWorldPoint = ray.GetPoint(enter);
 
                 if (aimDebugMarker != null)
                     aimDebugMarker.position = cursorWorldPoint;
-
-                fireDirection = cursorWorldPoint - projectileSpawnPoint.position;
-                fireDirection.y = 0f;
-
-                if (fireDirection.sqrMagnitude <= 0.001f)
-                    fireDirection = transform.forward;
             }
         }
 
+        Vector3 fireDirection = cursorWorldPoint - projectileSpawnPoint.position;
+        fireDirection.y = 0f;
+
+        if (fireDirection.sqrMagnitude <= 0.001f)
+            fireDirection = transform.forward;
+
         fireDirection.Normalize();
 
-        Quaternion projectileRotation = Quaternion.LookRotation(fireDirection, Vector3.up);
+        Quaternion fireRotation = Quaternion.LookRotation(fireDirection, Vector3.up);
+
+        if (muzzleFlashPrefab != null)
+        {
+            GameObject flash = Instantiate(
+                muzzleFlashPrefab,
+                projectileSpawnPoint.position,
+                fireRotation
+            );
+
+            Destroy(flash, 1f);
+        }
 
         GameObject projectileObject = Instantiate(
             projectilePrefab,
             projectileSpawnPoint.position,
-            projectileRotation
+            fireRotation
         );
 
         DPSInjectorProjectile projectile = projectileObject.GetComponent<DPSInjectorProjectile>();

@@ -1681,7 +1681,7 @@ RectTransform:
   m_Father: {fileID: 232860197}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -3230,7 +3230,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &641919296
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4673,7 +4673,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1057781608
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5483,7 +5483,7 @@ Transform:
   m_GameObject: {fileID: 1292368225}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.0091, y: 0, z: 0.00141}
+  m_LocalPosition: {x: 0.01032, y: 0, z: 0.00141}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7233,7 +7233,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!136 &1608798438
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -7362,7 +7362,7 @@ RectTransform:
   m_Father: {fileID: 219588469}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -9691,6 +9691,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DPSProjectileFireController
   projectilePrefab: {fileID: 1750164435413093665, guid: fa0171bb62cd7bf418f21726c307646b, type: 3}
   projectileSpawnPoint: {fileID: 1292368226}
+  muzzleFlashPrefab: {fileID: 2356583063401529875, guid: 4d97ee2a15261354c908ecac3c535235, type: 3}
   aimCamera: {fileID: 0}
   aimDebugMarker: {fileID: 663445700}
   fireCooldown: 0.25
@@ -10247,7 +10248,7 @@ RectTransform:
   m_Father: {fileID: 672151137}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
