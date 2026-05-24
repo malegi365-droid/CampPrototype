@@ -11,6 +11,12 @@ public class HealthController : MonoBehaviour, IDamageable
     public event Action<HealthController> OnDied;
     public event Action<float, float> OnHealthChanged;
 
+    [Header("Death FX")]
+    [SerializeField] private GameObject deathEffectPrefab;
+    [SerializeField] private Vector3 deathEffectOffset = new Vector3(0f, 0.35f, 0f);
+    [SerializeField] private AudioClip deathSound;
+    [SerializeField] private float deathSoundVolume = 1f;
+
     [Header("Threat Tuning")]
     [SerializeField] private float threatLossFromDamageMultiplier = 0.2f;
 
@@ -35,9 +41,7 @@ public class HealthController : MonoBehaviour, IDamageable
         float incomingDamage = amount;
 
         if (bossArmor != null)
-        {
             incomingDamage = bossArmor.ModifyIncomingDamage(incomingDamage);
-        }
 
         float reducedDamage = Mathf.Max(1f, incomingDamage - stats.defense);
         stats.currentHP = Mathf.Max(0f, stats.currentHP - reducedDamage);
@@ -59,9 +63,7 @@ public class HealthController : MonoBehaviour, IDamageable
         OnHealthChanged?.Invoke(stats.currentHP, stats.maxHP);
 
         if (stats.currentHP <= 0f)
-        {
             Die();
-        }
     }
 
     private void TriggerDamageFeedback(float damageTaken)
@@ -74,8 +76,6 @@ public class HealthController : MonoBehaviour, IDamageable
 
         if (stats.role == UnitRole.Enemy)
             return;
-
-        // Player damage camera shake temporarily disabled.
 
         HitFlashController flash = GetComponentInChildren<HitFlashController>();
         if (flash != null)
@@ -107,7 +107,27 @@ public class HealthController : MonoBehaviour, IDamageable
 
         Debug.Log($"{gameObject.name} died.");
 
+        SpawnDeathEffect();
+        PlayDeathSound();
         HideIfEnemy();
+    }
+
+    private void SpawnDeathEffect()
+    {
+        if (deathEffectPrefab == null)
+            return;
+
+        Vector3 spawnPosition = transform.position + deathEffectOffset;
+        Instantiate(deathEffectPrefab, spawnPosition, Quaternion.identity);
+    }
+
+    private void PlayDeathSound()
+    {
+        if (deathSound == null)
+            return;
+
+        Vector3 soundPosition = transform.position + deathEffectOffset;
+        AudioSource.PlayClipAtPoint(deathSound, soundPosition, deathSoundVolume);
     }
 
     private void HideIfEnemy()

@@ -1152,6 +1152,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd4d235e661802c4e8d26cf80a4d19ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthController
+  deathEffectPrefab: {fileID: 0}
+  deathEffectOffset: {x: 0, y: 1, z: 0}
+  deathSound: {fileID: 0}
+  deathSoundVolume: 1
   threatLossFromDamageMultiplier: 0.3
   enablePlayerDamageFeedback: 1
   playerHitShakeDuration: 0.035
@@ -2774,6 +2778,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd4d235e661802c4e8d26cf80a4d19ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthController
+  deathEffectPrefab: {fileID: 0}
+  deathEffectOffset: {x: 0, y: 1, z: 0}
+  deathSound: {fileID: 0}
+  deathSoundVolume: 1
   threatLossFromDamageMultiplier: 0.3
   enablePlayerDamageFeedback: 1
   playerHitShakeDuration: 0.06
@@ -5098,6 +5106,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd4d235e661802c4e8d26cf80a4d19ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthController
+  deathEffectPrefab: {fileID: 0}
+  deathEffectOffset: {x: 0, y: 1, z: 0}
+  deathSound: {fileID: 0}
+  deathSoundVolume: 1
   threatLossFromDamageMultiplier: 0.3
   enablePlayerDamageFeedback: 1
   playerHitShakeDuration: 0.035
@@ -5584,6 +5596,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd4d235e661802c4e8d26cf80a4d19ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthController
+  deathEffectPrefab: {fileID: 0}
+  deathEffectOffset: {x: 0, y: 1, z: 0}
+  deathSound: {fileID: 0}
+  deathSoundVolume: 1
   threatLossFromDamageMultiplier: 0.3
   enablePlayerDamageFeedback: 1
   playerHitShakeDuration: 0.035
@@ -6718,6 +6734,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd4d235e661802c4e8d26cf80a4d19ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthController
+  deathEffectPrefab: {fileID: 0}
+  deathEffectOffset: {x: 0, y: 1, z: 0}
+  deathSound: {fileID: 0}
+  deathSoundVolume: 1
   threatLossFromDamageMultiplier: 0.3
   enablePlayerDamageFeedback: 1
   playerHitShakeDuration: 0.035
@@ -7501,6 +7521,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd4d235e661802c4e8d26cf80a4d19ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthController
+  deathEffectPrefab: {fileID: 0}
+  deathEffectOffset: {x: 0, y: 1, z: 0}
+  deathSound: {fileID: 0}
+  deathSoundVolume: 1
   threatLossFromDamageMultiplier: 0.3
   enablePlayerDamageFeedback: 1
   playerHitShakeDuration: 0.06
@@ -8175,6 +8199,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd4d235e661802c4e8d26cf80a4d19ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthController
+  deathEffectPrefab: {fileID: 0}
+  deathEffectOffset: {x: 0, y: 1, z: 0}
+  deathSound: {fileID: 0}
+  deathSoundVolume: 1
   threatLossFromDamageMultiplier: 0.3
   enablePlayerDamageFeedback: 1
   playerHitShakeDuration: 0.035
@@ -8421,6 +8449,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd4d235e661802c4e8d26cf80a4d19ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthController
+  deathEffectPrefab: {fileID: 0}
+  deathEffectOffset: {x: 0, y: 1, z: 0}
+  deathSound: {fileID: 0}
+  deathSoundVolume: 1
   threatLossFromDamageMultiplier: 0.3
   enablePlayerDamageFeedback: 1
   playerHitShakeDuration: 0.035
@@ -8702,6 +8734,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd4d235e661802c4e8d26cf80a4d19ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthController
+  deathEffectPrefab: {fileID: 0}
+  deathEffectOffset: {x: 0, y: 1, z: 0}
+  deathSound: {fileID: 0}
+  deathSoundVolume: 1
   threatLossFromDamageMultiplier: 0.3
   enablePlayerDamageFeedback: 1
   playerHitShakeDuration: 0.035
@@ -9382,6 +9418,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd4d235e661802c4e8d26cf80a4d19ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthController
+  deathEffectPrefab: {fileID: 0}
+  deathEffectOffset: {x: 0, y: 1, z: 0}
+  deathSound: {fileID: 0}
+  deathSoundVolume: 1
   threatLossFromDamageMultiplier: 0.3
   enablePlayerDamageFeedback: 1
   playerHitShakeDuration: 0.06
@@ -10521,6 +10561,22 @@ PrefabInstance:
     - target: {fileID: 708648835893353213, guid: 87efa89ccd2eece43beca0e11f48aefb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3530951942972384583, guid: 87efa89ccd2eece43beca0e11f48aefb, type: 3}
+      propertyPath: deathSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 1b56d5335f7033645937de3f341dc301, type: 3}
+    - target: {fileID: 3530951942972384583, guid: 87efa89ccd2eece43beca0e11f48aefb, type: 3}
+      propertyPath: deathSoundVolume
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 3530951942972384583, guid: 87efa89ccd2eece43beca0e11f48aefb, type: 3}
+      propertyPath: deathEffectPrefab
+      value: 
+      objectReference: {fileID: 7529129988300257078, guid: 7658ea4186024ee4d984cf9111d237ba, type: 3}
+    - target: {fileID: 3530951942972384583, guid: 87efa89ccd2eece43beca0e11f48aefb, type: 3}
+      propertyPath: deathEffectOffset.y
+      value: 0.35
       objectReference: {fileID: 0}
     - target: {fileID: 6840697862204036204, guid: 87efa89ccd2eece43beca0e11f48aefb, type: 3}
       propertyPath: playerXP

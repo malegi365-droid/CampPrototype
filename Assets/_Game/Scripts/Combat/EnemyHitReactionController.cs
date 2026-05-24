@@ -26,7 +26,11 @@ public class EnemyHitReactionController : MonoBehaviour
     private EnemyRoamingController roaming;
     private AutoAttackController autoAttack;
 
+    private int controlLocks = 0;
+
     public bool IsStaggered { get; private set; }
+    public bool IsKnockedBack { get; private set; }
+    public bool IsReacting => IsStaggered || IsKnockedBack;
 
     private void Awake()
     {
@@ -69,36 +73,55 @@ public class EnemyHitReactionController : MonoBehaviour
 
     private IEnumerator KnockbackRoutine(Vector3 direction, float strength)
     {
+        IsKnockedBack = true;
+        AddControlLock();
+
         direction.y = 0f;
 
-        if (direction.sqrMagnitude <= 0.001f)
-            yield break;
-
-        direction.Normalize();
-
-        float elapsed = 0f;
-        float speed = knockbackSpeed * strength;
-
-        while (elapsed < knockbackDuration)
+        if (direction.sqrMagnitude > 0.001f)
         {
-            transform.position += direction * speed * Time.deltaTime;
-            elapsed += Time.deltaTime;
-            yield return null;
+            direction.Normalize();
+
+            float elapsed = 0f;
+            float speed = knockbackSpeed * strength;
+
+            while (elapsed < knockbackDuration)
+            {
+                transform.position += direction * speed * Time.deltaTime;
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
         }
 
+        IsKnockedBack = false;
+        RemoveControlLock();
         knockbackRoutine = null;
     }
 
     private IEnumerator StaggerRoutine(float duration)
     {
         IsStaggered = true;
-        SetEnemyControl(false);
+        AddControlLock();
 
         yield return new WaitForSeconds(duration > 0f ? duration : defaultStaggerDuration);
 
-        SetEnemyControl(true);
         IsStaggered = false;
+        RemoveControlLock();
         staggerRoutine = null;
+    }
+
+    private void AddControlLock()
+    {
+        controlLocks++;
+        SetEnemyControl(false);
+    }
+
+    private void RemoveControlLock()
+    {
+        controlLocks = Mathf.Max(0, controlLocks - 1);
+
+        if (controlLocks == 0)
+            SetEnemyControl(true);
     }
 
     private void SetEnemyControl(bool enabled)

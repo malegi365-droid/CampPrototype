@@ -55,7 +55,12 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   armTime: 0.1
+  damageMultiplier: 1
   impactEffectPrefab: {fileID: 6731236443730300185, guid: 3469330221830ad48ad88a113db8d35e, type: 3}
+  impactSound: {fileID: 8300000, guid: 5ca3183ad1ff1374a8e6bb54d91d2abb, type: 3}
+  impactVolume: 1
+  staggerDuration: 0.12
+  knockbackStrength: 0.35
 --- !u!136 &5619016915570850485
 CapsuleCollider:
   m_ObjectHideFlags: 0

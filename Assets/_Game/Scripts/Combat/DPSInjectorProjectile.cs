@@ -16,6 +16,8 @@ public class DPSInjectorProjectile : MonoBehaviour
 
     [Header("Impact")]
     [SerializeField] private GameObject impactEffectPrefab;
+    [SerializeField] private AudioClip impactSound;
+    [SerializeField] private float impactVolume = 1f;
 
     [Header("Hit Reaction")]
     [SerializeField] private float staggerDuration = 0.12f;
@@ -65,6 +67,9 @@ public class DPSInjectorProjectile : MonoBehaviour
 
         if (impactEffectPrefab != null)
             Instantiate(impactEffectPrefab, hit.point, Quaternion.identity);
+
+        if (impactSound != null)
+            AudioSource.PlayClipAtPoint(impactSound, hit.point, impactVolume);
 
         Transform enemyRoot = GetEnemyRoot(hit.collider.transform);
 
