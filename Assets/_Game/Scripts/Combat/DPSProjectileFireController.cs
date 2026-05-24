@@ -83,7 +83,12 @@ public class DPSProjectileFireController : MonoBehaviour
             }
         }
 
-        Vector3 fireDirection = cursorWorldPoint - projectileSpawnPoint.position;
+        Vector3 targetPoint = cursorWorldPoint;
+
+        if (aimDebugMarker != null)
+            targetPoint = aimDebugMarker.position;
+
+        Vector3 fireDirection = targetPoint - projectileSpawnPoint.position;
         fireDirection.y = 0f;
 
         if (fireDirection.sqrMagnitude <= 0.001f)
