@@ -10,6 +10,15 @@ public class DPSProjectileFireController : MonoBehaviour
     [Header("Muzzle Flash")]
     [SerializeField] private GameObject muzzleFlashPrefab;
 
+    [Header("Animation")]
+    [SerializeField] private Animator characterAnimator;
+    [SerializeField] private string fireTriggerName = "Fire";
+
+    [Header("Camera Feedback")]
+    [SerializeField] private CameraShakeController cameraShake;
+    [SerializeField] private float shakeDuration = 0.06f;
+    [SerializeField] private float shakeStrength = 0.04f;
+
     [Header("Aiming")]
     [SerializeField] private Camera aimCamera;
     [SerializeField] private Transform aimDebugMarker;
@@ -18,9 +27,12 @@ public class DPSProjectileFireController : MonoBehaviour
     [SerializeField] private float fireCooldown = 0.25f;
 
     private float nextFireTime;
+    private UnitStats shooterStats;
 
     private void Awake()
     {
+        shooterStats = GetComponent<UnitStats>();
+
         if (aimCamera == null)
             aimCamera = Camera.main;
     }
@@ -45,6 +57,12 @@ public class DPSProjectileFireController : MonoBehaviour
             Debug.LogWarning("[DPSProjectileFireController] Missing projectile prefab or spawn point.");
             return;
         }
+
+        if (characterAnimator != null)
+            characterAnimator.SetTrigger(fireTriggerName);
+
+        if (cameraShake != null)
+            cameraShake.Shake(shakeDuration, shakeStrength);
 
         if (aimCamera == null)
             aimCamera = Camera.main;
@@ -94,6 +112,6 @@ public class DPSProjectileFireController : MonoBehaviour
 
         DPSInjectorProjectile projectile = projectileObject.GetComponent<DPSInjectorProjectile>();
         if (projectile != null)
-            projectile.Initialize(fireDirection);
+            projectile.Initialize(fireDirection, shooterStats);
     }
 }

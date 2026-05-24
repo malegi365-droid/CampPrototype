@@ -75,14 +75,7 @@ public class HealthController : MonoBehaviour, IDamageable
         if (stats.role == UnitRole.Enemy)
             return;
 
-        if (CameraShakeController.Instance != null)
-        {
-            CameraShakeController.Instance.Shake(playerHitShakeDuration, playerHitShakeMagnitude);
-        }
-        else
-        {
-            Debug.LogWarning("No CameraShakeController.Instance found.");
-        }
+        // Player damage camera shake temporarily disabled.
 
         HitFlashController flash = GetComponentInChildren<HitFlashController>();
         if (flash != null)

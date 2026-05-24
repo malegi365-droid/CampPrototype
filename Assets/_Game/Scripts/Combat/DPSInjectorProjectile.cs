@@ -11,15 +11,24 @@ public class DPSInjectorProjectile : MonoBehaviour
     [SerializeField] private LayerMask hitLayers = ~0;
     [SerializeField] private float armTime = 0.1f;
 
+    [Header("Damage")]
+    [SerializeField] private float damageMultiplier = 1f;
+
     [Header("Impact")]
     [SerializeField] private GameObject impactEffectPrefab;
 
+    [Header("Hit Reaction")]
+    [SerializeField] private float staggerDuration = 0.12f;
+    [SerializeField] private float knockbackStrength = 0.35f;
+
     private Vector3 travelDirection;
     private float spawnTime;
+    private UnitStats shooterStats;
 
-    public void Initialize(Vector3 direction)
+    public void Initialize(Vector3 direction, UnitStats ownerStats)
     {
         travelDirection = direction.normalized;
+        shooterStats = ownerStats;
         spawnTime = Time.time;
         Destroy(gameObject, lifetime);
     }
@@ -40,16 +49,47 @@ public class DPSInjectorProjectile : MonoBehaviour
                 QueryTriggerInteraction.Ignore
             ))
             {
-                Debug.Log($"Projectile hit: {hit.collider.name}");
-
-                if (impactEffectPrefab != null)
-                    Instantiate(impactEffectPrefab, hit.point, Quaternion.identity);
-
-                Destroy(gameObject);
+                HandleHit(hit);
                 return;
             }
         }
 
         transform.position += travelDirection * moveDistance;
+    }
+
+    private void HandleHit(RaycastHit hit)
+    {
+        Debug.Log($"Projectile hit: {hit.collider.name}");
+
+        if (impactEffectPrefab != null)
+            Instantiate(impactEffectPrefab, hit.point, Quaternion.identity);
+
+        IDamageable damageable = hit.collider.GetComponent<IDamageable>();
+
+        if (damageable == null)
+            damageable = hit.collider.GetComponentInParent<IDamageable>();
+
+        if (damageable != null && shooterStats != null)
+        {
+            float damageAmount = shooterStats.attack * damageMultiplier;
+            damageable.TakeDamage(damageAmount, shooterStats);
+        }
+
+        EnemyHitReactionController reaction =
+            hit.collider.GetComponent<EnemyHitReactionController>();
+
+        if (reaction == null)
+            reaction = hit.collider.GetComponentInParent<EnemyHitReactionController>();
+
+        if (reaction == null)
+            reaction = hit.collider.GetComponentInChildren<EnemyHitReactionController>();
+
+        if (reaction != null)
+        {
+            reaction.ApplyStagger(staggerDuration);
+            reaction.ApplyKnockback(travelDirection, knockbackStrength);
+        }
+
+        Destroy(gameObject);
     }
 }

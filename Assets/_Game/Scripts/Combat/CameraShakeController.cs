@@ -3,52 +3,46 @@ using System.Collections;
 
 public class CameraShakeController : MonoBehaviour
 {
-    public static CameraShakeController Instance { get; private set; }
-
-    [Header("Default Shake")]
     [SerializeField] private float defaultDuration = 0.08f;
-    [SerializeField] private float defaultMagnitude = 0.75f;
+    [SerializeField] private float defaultStrength = 0.08f;
 
-    private Quaternion originalLocalRotation;
+    private Vector3 originalLocalPosition;
     private Coroutine shakeRoutine;
 
     private void Awake()
     {
-        Instance = this;
-        originalLocalRotation = transform.localRotation;
-
-        Debug.Log("CameraShakeController initialized on: " + gameObject.name);
+        originalLocalPosition = transform.localPosition;
     }
 
     public void Shake()
     {
-        Shake(defaultDuration, defaultMagnitude);
+        Shake(defaultDuration, defaultStrength);
     }
 
-    public void Shake(float duration, float magnitude)
+    public void Shake(float duration, float strength)
     {
         if (shakeRoutine != null)
             StopCoroutine(shakeRoutine);
 
-        shakeRoutine = StartCoroutine(ShakeRoutine(duration, magnitude));
+        shakeRoutine = StartCoroutine(ShakeRoutine(duration, strength));
     }
 
-    private IEnumerator ShakeRoutine(float duration, float magnitude)
+    private IEnumerator ShakeRoutine(float duration, float strength)
     {
         float elapsed = 0f;
 
         while (elapsed < duration)
         {
-            float x = Random.Range(-magnitude, magnitude);
-            float y = Random.Range(-magnitude, magnitude);
+            Vector3 offset = Random.insideUnitSphere * strength;
+            offset.z = 0f;
 
-            transform.localRotation = originalLocalRotation * Quaternion.Euler(x, y, 0f);
+            transform.localPosition = originalLocalPosition + offset;
 
             elapsed += Time.deltaTime;
             yield return null;
         }
 
-        transform.localRotation = originalLocalRotation;
+        transform.localPosition = originalLocalPosition;
         shakeRoutine = null;
     }
 }
