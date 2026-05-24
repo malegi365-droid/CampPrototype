@@ -24,11 +24,13 @@ public class DPSInjectorProjectile : MonoBehaviour
     private Vector3 travelDirection;
     private float spawnTime;
     private UnitStats shooterStats;
+    private TargetingController shooterTargeting;
 
-    public void Initialize(Vector3 direction, UnitStats ownerStats)
+    public void Initialize(Vector3 direction, UnitStats ownerStats, TargetingController ownerTargeting)
     {
         travelDirection = direction.normalized;
         shooterStats = ownerStats;
+        shooterTargeting = ownerTargeting;
         spawnTime = Time.time;
         Destroy(gameObject, lifetime);
     }
@@ -64,6 +66,11 @@ public class DPSInjectorProjectile : MonoBehaviour
         if (impactEffectPrefab != null)
             Instantiate(impactEffectPrefab, hit.point, Quaternion.identity);
 
+        Transform enemyRoot = GetEnemyRoot(hit.collider.transform);
+
+        if (enemyRoot != null && shooterTargeting != null)
+            shooterTargeting.SetTarget(enemyRoot);
+
         IDamageable damageable = hit.collider.GetComponent<IDamageable>();
 
         if (damageable == null)
@@ -91,5 +98,24 @@ public class DPSInjectorProjectile : MonoBehaviour
         }
 
         Destroy(gameObject);
+    }
+
+    private Transform GetEnemyRoot(Transform candidate)
+    {
+        if (candidate == null)
+            return null;
+
+        UnitStats stats = candidate.GetComponent<UnitStats>();
+
+        if (stats == null)
+            stats = candidate.GetComponentInParent<UnitStats>();
+
+        if (stats == null)
+            return null;
+
+        if (stats.role != UnitRole.Enemy)
+            return null;
+
+        return stats.transform;
     }
 }

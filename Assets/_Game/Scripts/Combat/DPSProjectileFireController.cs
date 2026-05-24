@@ -10,6 +10,9 @@ public class DPSProjectileFireController : MonoBehaviour
     [Header("Muzzle Flash")]
     [SerializeField] private GameObject muzzleFlashPrefab;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource fireAudioSource;
+
     [Header("Animation")]
     [SerializeField] private Animator characterAnimator;
     [SerializeField] private string fireTriggerName = "Fire";
@@ -28,10 +31,15 @@ public class DPSProjectileFireController : MonoBehaviour
 
     private float nextFireTime;
     private UnitStats shooterStats;
+    private TargetingController shooterTargeting;
 
     private void Awake()
     {
         shooterStats = GetComponent<UnitStats>();
+        shooterTargeting = GetComponent<TargetingController>();
+
+        if (fireAudioSource == null)
+            fireAudioSource = GetComponent<AudioSource>();
 
         if (aimCamera == null)
             aimCamera = Camera.main;
@@ -60,6 +68,9 @@ public class DPSProjectileFireController : MonoBehaviour
 
         if (characterAnimator != null)
             characterAnimator.SetTrigger(fireTriggerName);
+
+        if (fireAudioSource != null && fireAudioSource.clip != null)
+            fireAudioSource.PlayOneShot(fireAudioSource.clip);
 
         if (cameraShake != null)
             cameraShake.Shake(shakeDuration, shakeStrength);
@@ -117,6 +128,6 @@ public class DPSProjectileFireController : MonoBehaviour
 
         DPSInjectorProjectile projectile = projectileObject.GetComponent<DPSInjectorProjectile>();
         if (projectile != null)
-            projectile.Initialize(fireDirection, shooterStats);
+            projectile.Initialize(fireDirection, shooterStats, shooterTargeting);
     }
 }
