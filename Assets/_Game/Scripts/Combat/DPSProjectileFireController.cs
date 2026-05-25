@@ -9,6 +9,7 @@ public class DPSProjectileFireController : MonoBehaviour
 
     [Header("Ability Projectiles")]
     [SerializeField] private GameObject piercingProjectilePrefab;
+    [SerializeField] private GameObject explosiveProjectilePrefab;
 
     [Header("Muzzle Flash")]
     [SerializeField] private GameObject muzzleFlashPrefab;
@@ -16,17 +17,26 @@ public class DPSProjectileFireController : MonoBehaviour
     [Header("Audio")]
     [SerializeField] private AudioSource fireAudioSource;
     [SerializeField] private AudioClip piercingFireSound;
+    [SerializeField] private AudioClip explosiveFireSound;
 
     [Header("Animation")]
     [SerializeField] private Animator characterAnimator;
     [SerializeField] private string fireTriggerName = "Fire";
 
+    [Header("HUD")]
+    [SerializeField] private DPSAbilityHUDController abilityHUD;
+
     [Header("Camera Feedback")]
     [SerializeField] private CameraShakeController cameraShake;
+
     [SerializeField] private float shakeDuration = 0.06f;
     [SerializeField] private float shakeStrength = 0.04f;
+
     [SerializeField] private float piercingShakeDuration = 0.08f;
     [SerializeField] private float piercingShakeStrength = 0.06f;
+
+    [SerializeField] private float explosiveShakeDuration = 0.12f;
+    [SerializeField] private float explosiveShakeStrength = 0.10f;
 
     [Header("Aiming")]
     [SerializeField] private Camera aimCamera;
@@ -37,9 +47,11 @@ public class DPSProjectileFireController : MonoBehaviour
 
     [Header("Ability Cooldowns")]
     [SerializeField] private float piercingCooldown = 3f;
+    [SerializeField] private float explosiveCooldown = 5f;
 
     private float nextFireTime;
     private float nextPiercingTime;
+    private float nextExplosiveTime;
 
     private UnitStats shooterStats;
     private TargetingController shooterTargeting;
@@ -66,7 +78,9 @@ public class DPSProjectileFireController : MonoBehaviour
 
         Vector2 mousePosition = mouse.position.ReadValue();
 
-        if (mouse.leftButton.wasPressedThisFrame && Time.time >= nextFireTime)
+        // BASIC SHOT
+        if (mouse.leftButton.wasPressedThisFrame &&
+            Time.time >= nextFireTime)
         {
             FireProjectile(
                 projectilePrefab,
@@ -79,6 +93,7 @@ public class DPSProjectileFireController : MonoBehaviour
             nextFireTime = Time.time + fireCooldown;
         }
 
+        // PIERCING SHOT
         if (keyboard != null &&
             keyboard.qKey.wasPressedThisFrame &&
             Time.time >= nextPiercingTime)
@@ -86,12 +101,42 @@ public class DPSProjectileFireController : MonoBehaviour
             FireProjectile(
                 piercingProjectilePrefab,
                 mousePosition,
-                piercingFireSound != null ? piercingFireSound : fireAudioSource != null ? fireAudioSource.clip : null,
+                piercingFireSound != null
+                    ? piercingFireSound
+                    : fireAudioSource != null
+                        ? fireAudioSource.clip
+                        : null,
                 piercingShakeDuration,
                 piercingShakeStrength
             );
 
             nextPiercingTime = Time.time + piercingCooldown;
+
+            if (abilityHUD != null)
+                abilityHUD.TriggerPiercingCooldown();
+        }
+
+        // EXPLOSIVE SHOT
+        if (keyboard != null &&
+            keyboard.eKey.wasPressedThisFrame &&
+            Time.time >= nextExplosiveTime)
+        {
+            FireProjectile(
+                explosiveProjectilePrefab,
+                mousePosition,
+                explosiveFireSound != null
+                    ? explosiveFireSound
+                    : fireAudioSource != null
+                        ? fireAudioSource.clip
+                        : null,
+                explosiveShakeDuration,
+                explosiveShakeStrength
+            );
+
+            nextExplosiveTime = Time.time + explosiveCooldown;
+
+            if (abilityHUD != null)
+                abilityHUD.TriggerExplosiveCooldown();
         }
     }
 
@@ -103,9 +148,13 @@ public class DPSProjectileFireController : MonoBehaviour
         float selectedShakeStrength
     )
     {
-        if (selectedProjectilePrefab == null || projectileSpawnPoint == null)
+        if (selectedProjectilePrefab == null ||
+            projectileSpawnPoint == null)
         {
-            Debug.LogWarning("[DPSProjectileFireController] Missing projectile prefab or spawn point.");
+            Debug.LogWarning(
+                "[DPSProjectileFireController] Missing projectile prefab or spawn point."
+            );
+
             return;
         }
 
@@ -116,11 +165,16 @@ public class DPSProjectileFireController : MonoBehaviour
             fireAudioSource.PlayOneShot(fireSound);
 
         if (cameraShake != null)
-            cameraShake.Shake(selectedShakeDuration, selectedShakeStrength);
+            cameraShake.Shake(
+                selectedShakeDuration,
+                selectedShakeStrength
+            );
 
         Vector3 targetPoint = GetAimPoint(mouseScreenPosition);
 
-        Vector3 fireDirection = targetPoint - projectileSpawnPoint.position;
+        Vector3 fireDirection =
+            targetPoint - projectileSpawnPoint.position;
+
         fireDirection.y = 0f;
 
         if (fireDirection.sqrMagnitude <= 0.001f)
@@ -128,7 +182,8 @@ public class DPSProjectileFireController : MonoBehaviour
 
         fireDirection.Normalize();
 
-        Quaternion fireRotation = Quaternion.LookRotation(fireDirection, Vector3.up);
+        Quaternion fireRotation =
+            Quaternion.LookRotation(fireDirection, Vector3.up);
 
         SpawnMuzzleFlash(fireRotation);
 
@@ -142,7 +197,11 @@ public class DPSProjectileFireController : MonoBehaviour
             projectileObject.GetComponent<DPSInjectorProjectile>();
 
         if (projectile != null)
-            projectile.Initialize(fireDirection, shooterStats, shooterTargeting);
+            projectile.Initialize(
+                fireDirection,
+                shooterStats,
+                shooterTargeting
+            );
     }
 
     private Vector3 GetAimPoint(Vector2 mouseScreenPosition)
@@ -151,19 +210,24 @@ public class DPSProjectileFireController : MonoBehaviour
             aimCamera = Camera.main;
 
         Vector3 cursorWorldPoint =
-            projectileSpawnPoint.position + projectileSpawnPoint.forward * 10f;
+            projectileSpawnPoint.position +
+            projectileSpawnPoint.forward * 10f;
 
         if (aimCamera != null)
         {
-            Ray ray = aimCamera.ScreenPointToRay(mouseScreenPosition);
-            Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+            Ray ray =
+                aimCamera.ScreenPointToRay(mouseScreenPosition);
+
+            Plane groundPlane =
+                new Plane(Vector3.up, Vector3.zero);
 
             if (groundPlane.Raycast(ray, out float enter))
             {
                 cursorWorldPoint = ray.GetPoint(enter);
 
                 if (aimDebugMarker != null)
-                    aimDebugMarker.position = cursorWorldPoint;
+                    aimDebugMarker.position =
+                        cursorWorldPoint;
             }
         }
 

@@ -25,6 +25,12 @@ public class DPSInjectorProjectile : MonoBehaviour
     [SerializeField] private int maxPierceHits = 3;
     [SerializeField] private float piercingDamageFalloff = 0.85f;
 
+    [Header("Explosion")]
+    [SerializeField] private bool explosive = false;
+    [SerializeField] private float explosionRadius = 4f;
+    [SerializeField] private float explosionDamageMultiplier = 0.75f;
+    [SerializeField] private GameObject explosionEffectPrefab;
+
     [Header("Hit Reaction")]
     [SerializeField] private float staggerDuration = 0.12f;
     [SerializeField] private float knockbackStrength = 0.35f;
@@ -99,6 +105,9 @@ public class DPSInjectorProjectile : MonoBehaviour
         if (impactSound != null)
             AudioSource.PlayClipAtPoint(impactSound, hit.point, impactVolume);
 
+        if (explosive)
+            Explode(hit.point, enemyRoot);
+
         if (enemyRoot != null && shooterTargeting != null)
             shooterTargeting.SetTarget(enemyRoot);
 
@@ -107,7 +116,7 @@ public class DPSInjectorProjectile : MonoBehaviour
         if (damageable == null)
             damageable = hit.collider.GetComponentInParent<IDamageable>();
 
-        if (damageable != null && shooterStats != null)
+        if (damageable != null && shooterStats != null && !explosive)
         {
             float damageAmount = shooterStats.attack * damageMultiplier;
 
@@ -126,7 +135,7 @@ public class DPSInjectorProjectile : MonoBehaviour
         if (reaction == null)
             reaction = hit.collider.GetComponentInChildren<EnemyHitReactionController>();
 
-        if (reaction != null)
+        if (reaction != null && !explosive)
         {
             reaction.ApplyStagger(staggerDuration);
             reaction.ApplyKnockback(travelDirection, knockbackStrength);
@@ -147,6 +156,77 @@ public class DPSInjectorProjectile : MonoBehaviour
         }
 
         return false;
+    }
+
+    private void Explode(Vector3 centerPoint, Transform directHitEnemyRoot)
+    {
+        if (explosionEffectPrefab != null)
+            Instantiate(explosionEffectPrefab, centerPoint, Quaternion.identity);
+
+        Collider[] hits = Physics.OverlapSphere(
+            centerPoint,
+            explosionRadius,
+            hitLayers,
+            QueryTriggerInteraction.Ignore
+        );
+
+        HashSet<Transform> damagedEnemies = new HashSet<Transform>();
+
+        foreach (Collider col in hits)
+        {
+            Transform enemyRoot = GetEnemyRoot(col.transform);
+
+            if (enemyRoot == null)
+                continue;
+
+            if (damagedEnemies.Contains(enemyRoot))
+                continue;
+
+            damagedEnemies.Add(enemyRoot);
+
+            IDamageable damageable = enemyRoot.GetComponent<IDamageable>();
+
+            if (damageable == null)
+                damageable = enemyRoot.GetComponentInParent<IDamageable>();
+
+            if (damageable == null)
+                continue;
+
+            float damageAmount =
+                shooterStats.attack *
+                damageMultiplier *
+                explosionDamageMultiplier;
+
+            if (enemyRoot == directHitEnemyRoot)
+                damageAmount = shooterStats.attack * damageMultiplier;
+
+            damageable.TakeDamage(damageAmount, shooterStats);
+
+            EnemyHitReactionController reaction =
+                enemyRoot.GetComponent<EnemyHitReactionController>();
+
+            if (reaction == null)
+                reaction = enemyRoot.GetComponentInChildren<EnemyHitReactionController>();
+
+            if (reaction != null)
+            {
+                Vector3 knockDirection =
+                    enemyRoot.position - centerPoint;
+
+                knockDirection.y = 0f;
+
+                if (knockDirection.sqrMagnitude <= 0.001f)
+                    knockDirection = travelDirection;
+
+                knockDirection.Normalize();
+
+                reaction.ApplyStagger(staggerDuration * 1.5f);
+                reaction.ApplyKnockback(knockDirection, knockbackStrength * 2f);
+            }
+
+            if (enemyRoot != null && shooterTargeting != null)
+                shooterTargeting.SetTarget(enemyRoot);
+        }
     }
 
     private Transform GetEnemyRoot(Transform candidate)
