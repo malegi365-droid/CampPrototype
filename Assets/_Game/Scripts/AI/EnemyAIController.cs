@@ -14,6 +14,10 @@ public class EnemyAIController : MonoBehaviour
         Dead
     }
 
+    [Header("Detection")]
+    [SerializeField] private float aggroRadius = 8f;
+    [SerializeField] private LayerMask playerLayers;
+
     [Header("Combat")]
     [SerializeField] private float retargetInterval = 0.5f;
     [SerializeField] private float moveSpeed = 3f;
@@ -72,10 +76,47 @@ public class EnemyAIController : MonoBehaviour
 
     private void HandleIdle()
     {
+        DetectNearbyPlayer();
+
         GameObject highestThreatTarget = threatTable.GetHighestThreatTarget();
+
         if (highestThreatTarget != null)
         {
             currentState = EnemyState.Combat;
+
+            Debug.Log($"{gameObject.name} entered combat with {highestThreatTarget.name}");
+        }
+    }
+
+    private void DetectNearbyPlayer()
+    {
+        Collider[] hits = Physics.OverlapSphere(
+            transform.position,
+            aggroRadius,
+            playerLayers,
+            QueryTriggerInteraction.Ignore
+        );
+
+        foreach (Collider hit in hits)
+        {
+            UnitStats targetStats =
+                hit.GetComponent<UnitStats>();
+
+            if (targetStats == null)
+                targetStats =
+                    hit.GetComponentInParent<UnitStats>();
+
+            if (targetStats == null)
+                continue;
+
+            if (targetStats.role == UnitRole.Enemy)
+                continue;
+
+            threatTable.AddThreat(targetStats.gameObject, 1f);
+
+            Debug.Log($"{gameObject.name} detected player proximity: {targetStats.gameObject.name}");
+
+            return;
         }
     }
 
@@ -83,7 +124,8 @@ public class EnemyAIController : MonoBehaviour
     {
         retargetTimer += Time.deltaTime;
 
-        GameObject highestThreatTarget = threatTable.GetHighestThreatTarget();
+        GameObject highestThreatTarget =
+            threatTable.GetHighestThreatTarget();
 
         if (highestThreatTarget == null)
         {
@@ -91,7 +133,12 @@ public class EnemyAIController : MonoBehaviour
             return;
         }
 
-        float targetDistanceFromHome = Vector3.Distance(homePosition, highestThreatTarget.transform.position);
+        float targetDistanceFromHome =
+            Vector3.Distance(
+                homePosition,
+                highestThreatTarget.transform.position
+            );
+
         if (targetDistanceFromHome > leashDistance)
         {
             Debug.Log($"{gameObject.name} is leashing back home.");
@@ -102,10 +149,17 @@ public class EnemyAIController : MonoBehaviour
         if (retargetTimer >= retargetInterval)
         {
             retargetTimer = 0f;
-            autoAttackController.SetTarget(highestThreatTarget.transform);
+            autoAttackController.SetTarget(
+                highestThreatTarget.transform
+            );
         }
 
-        float distanceToTarget = Vector3.Distance(transform.position, highestThreatTarget.transform.position);
+        float distanceToTarget =
+            Vector3.Distance(
+                transform.position,
+                highestThreatTarget.transform.position
+            );
+
         if (distanceToTarget > stats.attackRange)
         {
             MoveToward(highestThreatTarget.transform.position);
@@ -116,7 +170,9 @@ public class EnemyAIController : MonoBehaviour
     {
         autoAttackController.SetTarget(null);
 
-        float distanceToHome = Vector3.Distance(transform.position, homePosition);
+        float distanceToHome =
+            Vector3.Distance(transform.position, homePosition);
+
         if (distanceToHome > returnStopDistance)
         {
             MoveToward(homePosition);
@@ -151,8 +207,15 @@ public class EnemyAIController : MonoBehaviour
 
         transform.position += dir * moveSpeed * Time.deltaTime;
 
-        Quaternion targetRotation = Quaternion.LookRotation(dir, Vector3.up);
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 10f * Time.deltaTime);
+        Quaternion targetRotation =
+            Quaternion.LookRotation(dir, Vector3.up);
+
+        transform.rotation =
+            Quaternion.Slerp(
+                transform.rotation,
+                targetRotation,
+                10f * Time.deltaTime
+            );
     }
 
     public void ForceEngage(GameObject target, float startingThreat = 5f)
@@ -167,12 +230,15 @@ public class EnemyAIController : MonoBehaviour
 
     public bool IsDead()
     {
-        return healthController != null && healthController.IsDead();
+        return healthController != null &&
+               healthController.IsDead();
     }
 
     public bool IsBusy()
     {
-        return currentState == EnemyState.Combat || currentState == EnemyState.Returning || IsDead();
+        return currentState == EnemyState.Combat ||
+               currentState == EnemyState.Returning ||
+               IsDead();
     }
 
     public Vector3 GetHomePosition()
@@ -183,5 +249,14 @@ public class EnemyAIController : MonoBehaviour
     public EnemyState GetCurrentState()
     {
         return currentState;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, aggroRadius);
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(homePosition, leashDistance);
     }
 }

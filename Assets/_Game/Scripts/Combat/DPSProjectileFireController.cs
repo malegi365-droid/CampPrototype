@@ -3,15 +3,19 @@ using UnityEngine.InputSystem;
 
 public class DPSProjectileFireController : MonoBehaviour
 {
-    [Header("Projectile")]
+    [Header("Basic Projectile")]
     [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private Transform projectileSpawnPoint;
+
+    [Header("Ability Projectiles")]
+    [SerializeField] private GameObject piercingProjectilePrefab;
 
     [Header("Muzzle Flash")]
     [SerializeField] private GameObject muzzleFlashPrefab;
 
     [Header("Audio")]
     [SerializeField] private AudioSource fireAudioSource;
+    [SerializeField] private AudioClip piercingFireSound;
 
     [Header("Animation")]
     [SerializeField] private Animator characterAnimator;
@@ -21,6 +25,8 @@ public class DPSProjectileFireController : MonoBehaviour
     [SerializeField] private CameraShakeController cameraShake;
     [SerializeField] private float shakeDuration = 0.06f;
     [SerializeField] private float shakeStrength = 0.04f;
+    [SerializeField] private float piercingShakeDuration = 0.08f;
+    [SerializeField] private float piercingShakeStrength = 0.06f;
 
     [Header("Aiming")]
     [SerializeField] private Camera aimCamera;
@@ -29,7 +35,12 @@ public class DPSProjectileFireController : MonoBehaviour
     [Header("Fire Settings")]
     [SerializeField] private float fireCooldown = 0.25f;
 
+    [Header("Ability Cooldowns")]
+    [SerializeField] private float piercingCooldown = 3f;
+
     private float nextFireTime;
+    private float nextPiercingTime;
+
     private UnitStats shooterStats;
     private TargetingController shooterTargeting;
 
@@ -48,19 +59,51 @@ public class DPSProjectileFireController : MonoBehaviour
     private void Update()
     {
         Mouse mouse = Mouse.current;
+        Keyboard keyboard = Keyboard.current;
+
         if (mouse == null)
             return;
 
+        Vector2 mousePosition = mouse.position.ReadValue();
+
         if (mouse.leftButton.wasPressedThisFrame && Time.time >= nextFireTime)
         {
-            FireAtCursor(mouse.position.ReadValue());
+            FireProjectile(
+                projectilePrefab,
+                mousePosition,
+                fireAudioSource != null ? fireAudioSource.clip : null,
+                shakeDuration,
+                shakeStrength
+            );
+
             nextFireTime = Time.time + fireCooldown;
+        }
+
+        if (keyboard != null &&
+            keyboard.qKey.wasPressedThisFrame &&
+            Time.time >= nextPiercingTime)
+        {
+            FireProjectile(
+                piercingProjectilePrefab,
+                mousePosition,
+                piercingFireSound != null ? piercingFireSound : fireAudioSource != null ? fireAudioSource.clip : null,
+                piercingShakeDuration,
+                piercingShakeStrength
+            );
+
+            nextPiercingTime = Time.time + piercingCooldown;
         }
     }
 
-    private void FireAtCursor(Vector2 mouseScreenPosition)
+    private void FireProjectile(
+        GameObject selectedProjectilePrefab,
+        Vector2 mouseScreenPosition,
+        AudioClip fireSound,
+        float selectedShakeDuration,
+        float selectedShakeStrength
+    )
     {
-        if (projectilePrefab == null || projectileSpawnPoint == null)
+        if (selectedProjectilePrefab == null || projectileSpawnPoint == null)
         {
             Debug.LogWarning("[DPSProjectileFireController] Missing projectile prefab or spawn point.");
             return;
@@ -69,16 +112,46 @@ public class DPSProjectileFireController : MonoBehaviour
         if (characterAnimator != null)
             characterAnimator.SetTrigger(fireTriggerName);
 
-        if (fireAudioSource != null && fireAudioSource.clip != null)
-            fireAudioSource.PlayOneShot(fireAudioSource.clip);
+        if (fireAudioSource != null && fireSound != null)
+            fireAudioSource.PlayOneShot(fireSound);
 
         if (cameraShake != null)
-            cameraShake.Shake(shakeDuration, shakeStrength);
+            cameraShake.Shake(selectedShakeDuration, selectedShakeStrength);
 
+        Vector3 targetPoint = GetAimPoint(mouseScreenPosition);
+
+        Vector3 fireDirection = targetPoint - projectileSpawnPoint.position;
+        fireDirection.y = 0f;
+
+        if (fireDirection.sqrMagnitude <= 0.001f)
+            fireDirection = transform.forward;
+
+        fireDirection.Normalize();
+
+        Quaternion fireRotation = Quaternion.LookRotation(fireDirection, Vector3.up);
+
+        SpawnMuzzleFlash(fireRotation);
+
+        GameObject projectileObject = Instantiate(
+            selectedProjectilePrefab,
+            projectileSpawnPoint.position,
+            fireRotation
+        );
+
+        DPSInjectorProjectile projectile =
+            projectileObject.GetComponent<DPSInjectorProjectile>();
+
+        if (projectile != null)
+            projectile.Initialize(fireDirection, shooterStats, shooterTargeting);
+    }
+
+    private Vector3 GetAimPoint(Vector2 mouseScreenPosition)
+    {
         if (aimCamera == null)
             aimCamera = Camera.main;
 
-        Vector3 cursorWorldPoint = projectileSpawnPoint.position + projectileSpawnPoint.forward * 10f;
+        Vector3 cursorWorldPoint =
+            projectileSpawnPoint.position + projectileSpawnPoint.forward * 10f;
 
         if (aimCamera != null)
         {
@@ -94,40 +167,23 @@ public class DPSProjectileFireController : MonoBehaviour
             }
         }
 
-        Vector3 targetPoint = cursorWorldPoint;
-
         if (aimDebugMarker != null)
-            targetPoint = aimDebugMarker.position;
+            return aimDebugMarker.position;
 
-        Vector3 fireDirection = targetPoint - projectileSpawnPoint.position;
-        fireDirection.y = 0f;
+        return cursorWorldPoint;
+    }
 
-        if (fireDirection.sqrMagnitude <= 0.001f)
-            fireDirection = transform.forward;
+    private void SpawnMuzzleFlash(Quaternion fireRotation)
+    {
+        if (muzzleFlashPrefab == null)
+            return;
 
-        fireDirection.Normalize();
-
-        Quaternion fireRotation = Quaternion.LookRotation(fireDirection, Vector3.up);
-
-        if (muzzleFlashPrefab != null)
-        {
-            GameObject flash = Instantiate(
-                muzzleFlashPrefab,
-                projectileSpawnPoint.position,
-                fireRotation
-            );
-
-            Destroy(flash, 1f);
-        }
-
-        GameObject projectileObject = Instantiate(
-            projectilePrefab,
+        GameObject flash = Instantiate(
+            muzzleFlashPrefab,
             projectileSpawnPoint.position,
             fireRotation
         );
 
-        DPSInjectorProjectile projectile = projectileObject.GetComponent<DPSInjectorProjectile>();
-        if (projectile != null)
-            projectile.Initialize(fireDirection, shooterStats, shooterTargeting);
+        Destroy(flash, 1f);
     }
 }

@@ -17,9 +17,6 @@ public class HealthController : MonoBehaviour, IDamageable
     [SerializeField] private AudioClip deathSound;
     [SerializeField] private float deathSoundVolume = 1f;
 
-    [Header("Threat Tuning")]
-    [SerializeField] private float threatLossFromDamageMultiplier = 0.2f;
-
     [Header("Player Damage Feedback")]
     [SerializeField] private bool enablePlayerDamageFeedback = true;
     [SerializeField] private float playerHitShakeDuration = 0.04f;
@@ -47,23 +44,30 @@ public class HealthController : MonoBehaviour, IDamageable
         stats.currentHP = Mathf.Max(0f, stats.currentHP - reducedDamage);
 
         TriggerDamageFeedback(reducedDamage);
-
-        if (sourceStats != null)
-        {
-            ThreatTable attackerThreatTable = sourceStats.GetComponent<ThreatTable>();
-            if (attackerThreatTable != null)
-            {
-                float threatReduction = reducedDamage * threatLossFromDamageMultiplier;
-                attackerThreatTable.ReduceThreat(gameObject, threatReduction);
-
-                Debug.Log($"{sourceStats.gameObject.name} reduced threat on {gameObject.name} by {threatReduction}");
-            }
-        }
+        AddThreatFromDamage(sourceStats, reducedDamage);
 
         OnHealthChanged?.Invoke(stats.currentHP, stats.maxHP);
 
         if (stats.currentHP <= 0f)
             Die();
+    }
+
+    private void AddThreatFromDamage(UnitStats sourceStats, float damageAmount)
+    {
+        if (sourceStats == null)
+            return;
+
+        if (stats == null || stats.role != UnitRole.Enemy)
+            return;
+
+        ThreatTable myThreatTable = GetComponent<ThreatTable>();
+
+        if (myThreatTable == null)
+            return;
+
+        myThreatTable.AddThreat(sourceStats.gameObject, damageAmount);
+
+        Debug.Log($"{gameObject.name} gained {damageAmount} threat toward {sourceStats.gameObject.name}");
     }
 
     private void TriggerDamageFeedback(float damageTaken)

@@ -25,6 +25,7 @@ GameObject:
   - component: {fileID: 6175341947432034096}
   - component: {fileID: -8530144295633085110}
   - component: {fileID: 2539290880966639913}
+  - component: {fileID: -8739419464656913405}
   m_Layer: 6
   m_Name: Enemy_Easy_01
   m_TagString: Untagged
@@ -162,7 +163,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd4d235e661802c4e8d26cf80a4d19ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthController
-  threatLossFromDamageMultiplier: 0.3
+  deathEffectPrefab: {fileID: 0}
+  deathEffectOffset: {x: 0, y: 0.35, z: 0}
+  deathSound: {fileID: 0}
+  deathSoundVolume: 1
   enablePlayerDamageFeedback: 1
   playerHitShakeDuration: 0.04
   playerHitShakeMagnitude: 0.02
@@ -180,7 +184,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AutoAttackController
   currentTarget: {fileID: 0}
-  useTargetingController: 1
+  initialAttackDelay: 0.35
+  faceTargetBeforeAttack: 1
 --- !u!114 &3438930359027069533
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -205,6 +210,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 292b945cfd6c6474ba19439b9e32ee01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAIController
+  aggroRadius: 8
+  playerLayers:
+    serializedVersion: 2
+    m_Bits: 0
   retargetInterval: 2
   moveSpeed: 3
   leashDistance: 12
@@ -415,3 +424,16 @@ MonoBehaviour:
   staggerResistance: 0
   immuneToStagger: 0
   immuneToKnockback: 0
+--- !u!114 &-8739419464656913405
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8832387531288768741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46248e6d130d7f44599e65cd724462ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyWorldHPBarSpawner
+  hpBarPrefab: {fileID: 5330655765378923595, guid: b71caf63512d7864eaa845aaf9837b70, type: 3}
