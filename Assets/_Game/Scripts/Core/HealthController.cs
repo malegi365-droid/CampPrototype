@@ -6,6 +6,7 @@ public class HealthController : MonoBehaviour, IDamageable
 {
     private UnitStats stats;
     private BossArmorController bossArmor;
+    private EnemyHitFlash enemyHitFlash;
     private bool dead = false;
 
     public event Action<HealthController> OnDied;
@@ -19,14 +20,13 @@ public class HealthController : MonoBehaviour, IDamageable
 
     [Header("Player Damage Feedback")]
     [SerializeField] private bool enablePlayerDamageFeedback = true;
-    [SerializeField] private float playerHitShakeDuration = 0.04f;
-    [SerializeField] private float playerHitShakeMagnitude = 0.02f;
     [SerializeField] private bool logPlayerDamageFeedback = true;
 
     private void Awake()
     {
         stats = GetComponent<UnitStats>();
         bossArmor = GetComponent<BossArmorController>();
+        enemyHitFlash = GetComponent<EnemyHitFlash>();
 
         ResetHealth();
     }
@@ -43,6 +43,7 @@ public class HealthController : MonoBehaviour, IDamageable
         float reducedDamage = Mathf.Max(1f, incomingDamage - stats.defense);
         stats.currentHP = Mathf.Max(0f, stats.currentHP - reducedDamage);
 
+        TriggerEnemyHitFlash();
         TriggerDamageFeedback(reducedDamage);
         AddThreatFromDamage(sourceStats, reducedDamage);
 
@@ -50,6 +51,15 @@ public class HealthController : MonoBehaviour, IDamageable
 
         if (stats.currentHP <= 0f)
             Die();
+    }
+
+    private void TriggerEnemyHitFlash()
+    {
+        if (stats == null || stats.role != UnitRole.Enemy)
+            return;
+
+        if (enemyHitFlash != null)
+            enemyHitFlash.TriggerFlash();
     }
 
     private void AddThreatFromDamage(UnitStats sourceStats, float damageAmount)

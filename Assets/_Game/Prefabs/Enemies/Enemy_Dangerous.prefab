@@ -26,6 +26,7 @@ GameObject:
   - component: {fileID: 2754699182507264586}
   - component: {fileID: -6588217312537715425}
   - component: {fileID: -3506714476363173207}
+  - component: {fileID: -5625496678457724505}
   m_Layer: 6
   m_Name: Enemy_Dangerous
   m_TagString: Untagged
@@ -437,3 +438,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyWorldHPBarSpawner
   hpBarPrefab: {fileID: 5330655765378923595, guid: b71caf63512d7864eaa845aaf9837b70, type: 3}
+--- !u!114 &-5625496678457724505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8840222014455456102}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72029f401c82a3948ba587cf2b84a8ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHitFlash
+  flashColor: {r: 1, g: 1, b: 1, a: 1}
+  flashDuration: 0.08
+  renderers: []
