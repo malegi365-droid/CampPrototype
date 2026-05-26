@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(UnitStats))]
@@ -17,6 +18,8 @@ public class HealthController : MonoBehaviour, IDamageable
     [SerializeField] private Vector3 deathEffectOffset = new Vector3(0f, 0.35f, 0f);
     [SerializeField] private AudioClip deathSound;
     [SerializeField] private float deathSoundVolume = 1f;
+    [SerializeField] private bool shrinkEnemyOnDeath = true;
+    [SerializeField] private float deathShrinkDuration = 0.45f;
 
     [Header("Player Damage Feedback")]
     [SerializeField] private bool enablePlayerDamageFeedback = true;
@@ -123,7 +126,63 @@ public class HealthController : MonoBehaviour, IDamageable
 
         SpawnDeathEffect();
         PlayDeathSound();
-        HideIfEnemy();
+        HandleDeathCleanup();
+    }
+
+    private void HandleDeathCleanup()
+    {
+        if (stats != null && stats.role == UnitRole.Enemy)
+        {
+            DisableEnemyCollisionAndCombat();
+
+            if (shrinkEnemyOnDeath)
+                StartCoroutine(ShrinkAndHideEnemy());
+            else
+                HideIfEnemy();
+
+            return;
+        }
+
+        gameObject.SetActive(false);
+    }
+
+    private void DisableEnemyCollisionAndCombat()
+    {
+        EnemyAIController enemyAI = GetComponent<EnemyAIController>();
+        if (enemyAI != null)
+            enemyAI.enabled = false;
+
+        EnemyRoamingController roaming = GetComponent<EnemyRoamingController>();
+        if (roaming != null)
+            roaming.enabled = false;
+
+        AutoAttackController autoAttack = GetComponent<AutoAttackController>();
+        if (autoAttack != null)
+            autoAttack.enabled = false;
+
+        Collider[] colliders = GetComponentsInChildren<Collider>();
+        foreach (Collider c in colliders)
+            c.enabled = false;
+    }
+
+    private IEnumerator ShrinkAndHideEnemy()
+    {
+        Vector3 startScale = transform.localScale;
+        float elapsed = 0f;
+
+        while (elapsed < deathShrinkDuration)
+        {
+            elapsed += Time.deltaTime;
+
+            float t = Mathf.Clamp01(elapsed / deathShrinkDuration);
+            transform.localScale = Vector3.Lerp(startScale, Vector3.zero, t);
+
+            yield return null;
+        }
+
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        foreach (Renderer r in renderers)
+            r.enabled = false;
     }
 
     private void SpawnDeathEffect()
@@ -169,6 +228,8 @@ public class HealthController : MonoBehaviour, IDamageable
         dead = false;
         stats.currentHP = stats.maxHP;
 
+        transform.localScale = Vector3.one;
+
         Renderer[] renderers = GetComponentsInChildren<Renderer>();
         foreach (Renderer r in renderers)
             r.enabled = true;
@@ -176,6 +237,18 @@ public class HealthController : MonoBehaviour, IDamageable
         Collider[] colliders = GetComponentsInChildren<Collider>();
         foreach (Collider c in colliders)
             c.enabled = true;
+
+        EnemyAIController enemyAI = GetComponent<EnemyAIController>();
+        if (enemyAI != null)
+            enemyAI.enabled = true;
+
+        EnemyRoamingController roaming = GetComponent<EnemyRoamingController>();
+        if (roaming != null)
+            roaming.enabled = true;
+
+        AutoAttackController autoAttack = GetComponent<AutoAttackController>();
+        if (autoAttack != null)
+            autoAttack.enabled = true;
 
         OnHealthChanged?.Invoke(stats.currentHP, stats.maxHP);
     }
