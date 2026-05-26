@@ -18,6 +18,7 @@ public class DPSProjectileFireController : MonoBehaviour
     [SerializeField] private AudioSource fireAudioSource;
     [SerializeField] private AudioClip piercingFireSound;
     [SerializeField] private AudioClip explosiveFireSound;
+    [SerializeField] private AudioClip overchargeFireSound;
 
     [Header("Animation")]
     [SerializeField] private Animator characterAnimator;
@@ -38,6 +39,9 @@ public class DPSProjectileFireController : MonoBehaviour
     [SerializeField] private float explosiveShakeDuration = 0.12f;
     [SerializeField] private float explosiveShakeStrength = 0.10f;
 
+    [SerializeField] private float overchargeShakeDuration = 0.05f;
+    [SerializeField] private float overchargeShakeStrength = 0.07f;
+
     [Header("Aiming")]
     [SerializeField] private Camera aimCamera;
     [SerializeField] private Transform aimDebugMarker;
@@ -49,9 +53,20 @@ public class DPSProjectileFireController : MonoBehaviour
     [SerializeField] private float piercingCooldown = 3f;
     [SerializeField] private float explosiveCooldown = 5f;
 
+    [Header("Overcharge")]
+    [SerializeField] private bool allowOvercharge = true;
+    [SerializeField] private float overchargeDuration = 6f;
+    [SerializeField] private float overchargeCooldown = 12f;
+    [SerializeField] private float overchargeFireRate = 0.08f;
+
     private float nextFireTime;
     private float nextPiercingTime;
     private float nextExplosiveTime;
+
+    private float nextOverchargeTime;
+    private float overchargeEndTime;
+
+    private bool overchargeActive = false;
 
     private UnitStats shooterStats;
     private TargetingController shooterTargeting;
@@ -66,6 +81,9 @@ public class DPSProjectileFireController : MonoBehaviour
 
         if (aimCamera == null)
             aimCamera = Camera.main;
+
+        if (abilityHUD == null)
+            abilityHUD = FindAnyObjectByType<DPSAbilityHUDController>();
     }
 
     private void Update()
@@ -78,7 +96,29 @@ public class DPSProjectileFireController : MonoBehaviour
 
         Vector2 mousePosition = mouse.position.ReadValue();
 
-        // BASIC SHOT
+        HandleOverchargeState(keyboard);
+
+        if (overchargeActive)
+        {
+            if (mouse.leftButton.isPressed &&
+                Time.time >= nextFireTime)
+            {
+                FireProjectile(
+                    piercingProjectilePrefab,
+                    mousePosition,
+                    overchargeFireSound != null
+                        ? overchargeFireSound
+                        : piercingFireSound,
+                    overchargeShakeDuration,
+                    overchargeShakeStrength
+                );
+
+                nextFireTime = Time.time + overchargeFireRate;
+            }
+
+            return;
+        }
+
         if (mouse.leftButton.wasPressedThisFrame &&
             Time.time >= nextFireTime)
         {
@@ -93,7 +133,6 @@ public class DPSProjectileFireController : MonoBehaviour
             nextFireTime = Time.time + fireCooldown;
         }
 
-        // PIERCING SHOT
         if (keyboard != null &&
             keyboard.qKey.wasPressedThisFrame &&
             Time.time >= nextPiercingTime)
@@ -116,7 +155,6 @@ public class DPSProjectileFireController : MonoBehaviour
                 abilityHUD.TriggerPiercingCooldown();
         }
 
-        // EXPLOSIVE SHOT
         if (keyboard != null &&
             keyboard.eKey.wasPressedThisFrame &&
             Time.time >= nextExplosiveTime)
@@ -140,6 +178,53 @@ public class DPSProjectileFireController : MonoBehaviour
         }
     }
 
+    private void HandleOverchargeState(Keyboard keyboard)
+    {
+        if (!allowOvercharge)
+            return;
+
+        if (overchargeActive &&
+            Time.time >= overchargeEndTime)
+        {
+            overchargeActive = false;
+
+            if (abilityHUD != null)
+                abilityHUD.SetOverchargeState(false);
+
+            Debug.Log("Overcharge ended.");
+        }
+
+        if (keyboard == null)
+            return;
+
+        if (keyboard.rKey.wasPressedThisFrame &&
+            Time.time >= nextOverchargeTime)
+        {
+            ActivateOvercharge();
+        }
+    }
+
+    private void ActivateOvercharge()
+    {
+        overchargeActive = true;
+
+        overchargeEndTime = Time.time + overchargeDuration;
+        nextOverchargeTime = Time.time + overchargeCooldown;
+
+        if (abilityHUD != null)
+        {
+            abilityHUD.TriggerOverchargeCooldown();
+            abilityHUD.SetOverchargeState(true);
+        }
+
+        Debug.Log("Overcharge activated.");
+    }
+
+    public bool IsOverchargeActive()
+    {
+        return overchargeActive;
+    }
+
     private void FireProjectile(
         GameObject selectedProjectilePrefab,
         Vector2 mouseScreenPosition,
@@ -151,10 +236,7 @@ public class DPSProjectileFireController : MonoBehaviour
         if (selectedProjectilePrefab == null ||
             projectileSpawnPoint == null)
         {
-            Debug.LogWarning(
-                "[DPSProjectileFireController] Missing projectile prefab or spawn point."
-            );
-
+            Debug.LogWarning("[DPSProjectileFireController] Missing projectile prefab or spawn point.");
             return;
         }
 
@@ -165,16 +247,11 @@ public class DPSProjectileFireController : MonoBehaviour
             fireAudioSource.PlayOneShot(fireSound);
 
         if (cameraShake != null)
-            cameraShake.Shake(
-                selectedShakeDuration,
-                selectedShakeStrength
-            );
+            cameraShake.Shake(selectedShakeDuration, selectedShakeStrength);
 
         Vector3 targetPoint = GetAimPoint(mouseScreenPosition);
 
-        Vector3 fireDirection =
-            targetPoint - projectileSpawnPoint.position;
-
+        Vector3 fireDirection = targetPoint - projectileSpawnPoint.position;
         fireDirection.y = 0f;
 
         if (fireDirection.sqrMagnitude <= 0.001f)
@@ -182,8 +259,7 @@ public class DPSProjectileFireController : MonoBehaviour
 
         fireDirection.Normalize();
 
-        Quaternion fireRotation =
-            Quaternion.LookRotation(fireDirection, Vector3.up);
+        Quaternion fireRotation = Quaternion.LookRotation(fireDirection, Vector3.up);
 
         SpawnMuzzleFlash(fireRotation);
 
@@ -197,11 +273,7 @@ public class DPSProjectileFireController : MonoBehaviour
             projectileObject.GetComponent<DPSInjectorProjectile>();
 
         if (projectile != null)
-            projectile.Initialize(
-                fireDirection,
-                shooterStats,
-                shooterTargeting
-            );
+            projectile.Initialize(fireDirection, shooterStats, shooterTargeting);
     }
 
     private Vector3 GetAimPoint(Vector2 mouseScreenPosition)
@@ -215,19 +287,15 @@ public class DPSProjectileFireController : MonoBehaviour
 
         if (aimCamera != null)
         {
-            Ray ray =
-                aimCamera.ScreenPointToRay(mouseScreenPosition);
-
-            Plane groundPlane =
-                new Plane(Vector3.up, Vector3.zero);
+            Ray ray = aimCamera.ScreenPointToRay(mouseScreenPosition);
+            Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
 
             if (groundPlane.Raycast(ray, out float enter))
             {
                 cursorWorldPoint = ray.GetPoint(enter);
 
                 if (aimDebugMarker != null)
-                    aimDebugMarker.position =
-                        cursorWorldPoint;
+                    aimDebugMarker.position = cursorWorldPoint;
             }
         }
 
