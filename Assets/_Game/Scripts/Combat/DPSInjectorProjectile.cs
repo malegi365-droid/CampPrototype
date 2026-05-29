@@ -17,6 +17,7 @@ public class DPSInjectorProjectile : MonoBehaviour
 
     [Header("Impact")]
     [SerializeField] private GameObject impactEffectPrefab;
+    [SerializeField] private GameObject hitSparkEffectPrefab;
     [SerializeField] private AudioClip impactSound;
     [SerializeField] private float impactVolume = 1f;
 
@@ -99,8 +100,7 @@ public class DPSInjectorProjectile : MonoBehaviour
             alreadyHitRoots.Add(enemyRoot);
         }
 
-        if (impactEffectPrefab != null)
-            Instantiate(impactEffectPrefab, hit.point, Quaternion.identity);
+        SpawnImpactEffects(hit);
 
         if (impactSound != null)
             AudioSource.PlayClipAtPoint(impactSound, hit.point, impactVolume);
@@ -156,6 +156,30 @@ public class DPSInjectorProjectile : MonoBehaviour
         }
 
         return false;
+    }
+
+    private void SpawnImpactEffects(RaycastHit hit)
+    {
+        if (impactEffectPrefab != null)
+        {
+            Instantiate(
+                impactEffectPrefab,
+                hit.point,
+                Quaternion.identity
+            );
+        }
+
+        if (hitSparkEffectPrefab != null)
+        {
+            Quaternion sparkRotation =
+                Quaternion.LookRotation(hit.normal);
+
+            Instantiate(
+                hitSparkEffectPrefab,
+                hit.point,
+                sparkRotation
+            );
+        }
     }
 
     private void Explode(Vector3 centerPoint, Transform directHitEnemyRoot)

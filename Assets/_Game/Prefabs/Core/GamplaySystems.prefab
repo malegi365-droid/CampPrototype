@@ -663,6 +663,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3772962406135786767}
+  - component: {fileID: 8958841829865343996}
   m_Layer: 0
   m_Name: GamplaySystems
   m_TagString: Untagged
@@ -693,6 +694,22 @@ Transform:
   - {fileID: 5572020325525284250}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8958841829865343996
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1149500052506942523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60287449b1ddf5946adbcc8b98e67fc1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DamageNumberSpawner
+  damageNumberPrefab: {fileID: 5599083588720015460, guid: 0847138635b57c147bf40b39f294cfca, type: 3}
+  targetCanvas: {fileID: 1655668263007462325}
+  worldCamera: {fileID: 0}
+  worldOffset: {x: 0, y: 1.8, z: 0}
 --- !u!1 &1261921994815893649
 GameObject:
   m_ObjectHideFlags: 0

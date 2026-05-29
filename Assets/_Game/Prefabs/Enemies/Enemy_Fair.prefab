@@ -164,13 +164,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd4d235e661802c4e8d26cf80a4d19ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthController
-  deathEffectPrefab: {fileID: 0}
+  deathEffectPrefab: {fileID: 3496347181593965592, guid: 8871f9b64349515439a8ae3bb2d41809, type: 3}
   deathEffectOffset: {x: 0, y: 0.35, z: 0}
   deathSound: {fileID: 0}
   deathSoundVolume: 1
+  shrinkEnemyOnDeath: 1
+  deathShrinkDuration: 0.45
+  temporaryCritThreshold: 20
   enablePlayerDamageFeedback: 1
-  playerHitShakeDuration: 0.04
-  playerHitShakeMagnitude: 0.02
   logPlayerDamageFeedback: 1
 --- !u!114 &3466149665126315761
 MonoBehaviour:

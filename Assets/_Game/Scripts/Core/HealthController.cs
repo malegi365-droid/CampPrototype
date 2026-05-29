@@ -21,6 +21,9 @@ public class HealthController : MonoBehaviour, IDamageable
     [SerializeField] private bool shrinkEnemyOnDeath = true;
     [SerializeField] private float deathShrinkDuration = 0.45f;
 
+    [Header("Damage Number Settings")]
+    [SerializeField] private float temporaryCritThreshold = 20f;
+
     [Header("Player Damage Feedback")]
     [SerializeField] private bool enablePlayerDamageFeedback = true;
     [SerializeField] private bool logPlayerDamageFeedback = true;
@@ -45,6 +48,17 @@ public class HealthController : MonoBehaviour, IDamageable
 
         float reducedDamage = Mathf.Max(1f, incomingDamage - stats.defense);
         stats.currentHP = Mathf.Max(0f, stats.currentHP - reducedDamage);
+
+        if (stats.role == UnitRole.Enemy)
+        {
+            bool crit = reducedDamage >= temporaryCritThreshold;
+
+            DamageNumberSpawner.ShowDamage(
+                transform.position,
+                reducedDamage,
+                crit
+            );
+        }
 
         TriggerEnemyHitFlash();
         TriggerDamageFeedback(reducedDamage);
@@ -200,14 +214,17 @@ public class HealthController : MonoBehaviour, IDamageable
             return;
 
         Vector3 soundPosition = transform.position + deathEffectOffset;
-        AudioSource.PlayClipAtPoint(deathSound, soundPosition, deathSoundVolume);
+
+        AudioSource.PlayClipAtPoint(
+            deathSound,
+            soundPosition,
+            deathSoundVolume
+        );
     }
 
     private void HideIfEnemy()
     {
-        UnitStats unitStats = GetComponent<UnitStats>();
-
-        if (unitStats != null && unitStats.role == UnitRole.Enemy)
+        if (stats != null && stats.role == UnitRole.Enemy)
         {
             Renderer[] renderers = GetComponentsInChildren<Renderer>();
             foreach (Renderer r in renderers)
