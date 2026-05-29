@@ -458,6 +458,52 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
+--- !u!1 &485370663
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 485370664}
+  - component: {fileID: 485370665}
+  m_Layer: 0
+  m_Name: CellResourceManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &485370664
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 485370663}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 622164749}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &485370665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 485370663}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a3016a44592d87449c8fabdeef4ff67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CellResourceManager
+  currentCells: 0
+  cellText: {fileID: 734639090}
 --- !u!1 &622164748
 GameObject:
   m_ObjectHideFlags: 0
@@ -508,6 +554,7 @@ Transform:
   - {fileID: 1965704037}
   - {fileID: 156987484}
   - {fileID: 1762673013}
+  - {fileID: 485370664}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &674754882
@@ -622,6 +669,17 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 674754882}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &734639090 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3054789527198965265, guid: 787c2eb2cbf40e54eae650513ea2fe61, type: 3}
+  m_PrefabInstance: {fileID: 952455664}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!4 &750306902 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1795778698461927134, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
@@ -909,10 +967,6 @@ PrefabInstance:
     - target: {fileID: 3772962406135786767, guid: 787c2eb2cbf40e54eae650513ea2fe61, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8448275044762576571, guid: 787c2eb2cbf40e54eae650513ea2fe61, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8644510896254163061, guid: 787c2eb2cbf40e54eae650513ea2fe61, type: 3}
       propertyPath: playerHealth

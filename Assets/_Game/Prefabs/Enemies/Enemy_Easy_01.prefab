@@ -27,6 +27,7 @@ GameObject:
   - component: {fileID: 2539290880966639913}
   - component: {fileID: -8739419464656913405}
   - component: {fileID: -3000613930934502291}
+  - component: {fileID: -2087619410900731942}
   m_Layer: 6
   m_Name: Enemy_Easy_01
   m_TagString: Untagged
@@ -454,3 +455,20 @@ MonoBehaviour:
   flashColor: {r: 1, g: 1, b: 1, a: 1}
   flashDuration: 0.08
   renderers: []
+--- !u!114 &-2087619410900731942
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8832387531288768741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5974de635d8cd954bb6fd1da07884419, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyDropOnDeath
+  pickupPrefab: {fileID: 1414403604405715510, guid: 95726e460779ee2488cd448bee905e2a, type: 3}
+  dropAmount: 1
+  dropChance: 1
+  dropOffset: {x: 0, y: 0.6, z: 0}
+  scatterRadius: 0.35
