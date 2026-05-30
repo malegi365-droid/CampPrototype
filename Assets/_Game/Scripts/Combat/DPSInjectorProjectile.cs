@@ -21,6 +21,13 @@ public class DPSInjectorProjectile : MonoBehaviour
     [SerializeField] private AudioClip impactSound;
     [SerializeField] private float impactVolume = 1f;
 
+    [Header("Impact Camera Shake")]
+    [SerializeField] private bool enableImpactCameraShake = true;
+    [SerializeField] private float impactShakeDuration = 0.05f;
+    [SerializeField] private float impactShakeStrength = 0.05f;
+    [SerializeField] private float explosiveImpactShakeDuration = 0.12f;
+    [SerializeField] private float explosiveImpactShakeStrength = 0.12f;
+
     [Header("Piercing")]
     [SerializeField] private bool piercing = false;
     [SerializeField] private int maxPierceHits = 3;
@@ -40,6 +47,7 @@ public class DPSInjectorProjectile : MonoBehaviour
     private float spawnTime;
     private UnitStats shooterStats;
     private TargetingController shooterTargeting;
+    private CameraShakeController cameraShake;
 
     private readonly HashSet<Transform> alreadyHitRoots = new HashSet<Transform>();
     private int pierceHits = 0;
@@ -50,6 +58,8 @@ public class DPSInjectorProjectile : MonoBehaviour
         shooterStats = ownerStats;
         shooterTargeting = ownerTargeting;
         spawnTime = Time.time;
+
+        cameraShake = FindAnyObjectByType<CameraShakeController>();
 
         Destroy(gameObject, lifetime);
     }
@@ -101,6 +111,7 @@ public class DPSInjectorProjectile : MonoBehaviour
         }
 
         SpawnImpactEffects(hit);
+        TriggerImpactCameraShake();
 
         if (impactSound != null)
             AudioSource.PlayClipAtPoint(impactSound, hit.point, impactVolume);
@@ -156,6 +167,27 @@ public class DPSInjectorProjectile : MonoBehaviour
         }
 
         return false;
+    }
+
+    private void TriggerImpactCameraShake()
+    {
+        if (!enableImpactCameraShake || cameraShake == null)
+            return;
+
+        if (explosive)
+        {
+            cameraShake.Shake(
+                explosiveImpactShakeDuration,
+                explosiveImpactShakeStrength
+            );
+        }
+        else
+        {
+            cameraShake.Shake(
+                impactShakeDuration,
+                impactShakeStrength
+            );
+        }
     }
 
     private void SpawnImpactEffects(RaycastHit hit)

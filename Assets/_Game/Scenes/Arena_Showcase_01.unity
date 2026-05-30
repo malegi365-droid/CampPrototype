@@ -14,17 +14,17 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 10
-  m_Fog: 0
-  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  m_Fog: 1
+  m_FogColor: {r: 0.18431373, g: 0.20784314, b: 0.2509804, a: 1}
   m_FogMode: 3
-  m_FogDensity: 0.01
+  m_FogDensity: 0.015
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
+  m_AmbientSkyColor: {r: 0.18431373, g: 0.2509804, b: 0.34117648, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
-  m_AmbientIntensity: 1
-  m_AmbientMode: 0
+  m_AmbientIntensity: 0.6
+  m_AmbientMode: 3
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
   m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
   m_HaloStrength: 0.5
@@ -405,6 +405,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerSystem
       objectReference: {fileID: 0}
+    - target: {fileID: 398255843076309086, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
+      propertyPath: defaultDuration
+      value: 0.18
+      objectReference: {fileID: 0}
+    - target: {fileID: 398255843076309086, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
+      propertyPath: defaultStrength
+      value: 0.28
+      objectReference: {fileID: 0}
     - target: {fileID: 1795778698461927134, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 5.67906
@@ -449,10 +457,6 @@ PrefabInstance:
       propertyPath: target
       value: 
       objectReference: {fileID: 414913762}
-    - target: {fileID: 8287292446188345514, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
-      propertyPath: field of view
-      value: 70
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -504,6 +508,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CellResourceManager
   currentCells: 0
   cellText: {fileID: 734639090}
+--- !u!114 &577140210 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 398255843076309086, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
+  m_PrefabInstance: {fileID: 450790197}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c121c70954742c142bb1d2e60ae947e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraShakeController
 --- !u!1 &622164748
 GameObject:
   m_ObjectHideFlags: 0
@@ -555,6 +570,7 @@ Transform:
   - {fileID: 156987484}
   - {fileID: 1762673013}
   - {fileID: 485370664}
+  - {fileID: 1685859543}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &674754882
@@ -975,7 +991,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1149500052506942523, guid: 787c2eb2cbf40e54eae650513ea2fe61, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1922302581}
   m_SourcePrefab: {fileID: 100100000, guid: 787c2eb2cbf40e54eae650513ea2fe61, type: 3}
 --- !u!1 &1013259428
 GameObject:
@@ -1519,6 +1538,55 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3772962406135786767, guid: 787c2eb2cbf40e54eae650513ea2fe61, type: 3}
   m_PrefabInstance: {fileID: 952455664}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1685859542
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1685859543}
+  - component: {fileID: 1685859544}
+  m_Layer: 0
+  m_Name: GlobalVolume
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1685859543
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1685859542}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 622164749}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1685859544
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1685859542}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: 1e75a25023ca77241a985f9ab44bae01, type: 2}
 --- !u!1 &1694536166
 GameObject:
   m_ObjectHideFlags: 0
@@ -1690,8 +1758,8 @@ Light:
   m_Enabled: 1
   serializedVersion: 13
   m_Type: 1
-  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 1
+  m_Color: {r: 0.4392157, g: 0.5019608, b: 0.5647059, a: 1}
+  m_Intensity: 1.2
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -1860,6 +1928,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpawnPoint
   gizmoRadius: 0.4
+--- !u!1 &1922302579 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1149500052506942523, guid: 787c2eb2cbf40e54eae650513ea2fe61, type: 3}
+  m_PrefabInstance: {fileID: 952455664}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1922302581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1922302579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31ae8486f15df41428053ecdf05dc91a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraShakeTester
+  cameraShake: {fileID: 577140210}
 --- !u!1 &1945792967
 GameObject:
   m_ObjectHideFlags: 0

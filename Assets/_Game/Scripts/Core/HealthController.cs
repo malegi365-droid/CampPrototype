@@ -8,6 +8,7 @@ public class HealthController : MonoBehaviour, IDamageable
     private UnitStats stats;
     private BossArmorController bossArmor;
     private EnemyHitFlash enemyHitFlash;
+    private CameraShakeController cameraShake;
     private bool dead = false;
 
     public event Action<HealthController> OnDied;
@@ -21,6 +22,11 @@ public class HealthController : MonoBehaviour, IDamageable
     [SerializeField] private bool shrinkEnemyOnDeath = true;
     [SerializeField] private float deathShrinkDuration = 0.45f;
 
+    [Header("Death Camera Shake")]
+    [SerializeField] private bool enableDeathCameraShake = true;
+    [SerializeField] private float deathShakeDuration = 0.08f;
+    [SerializeField] private float deathShakeStrength = 0.08f;
+
     [Header("Damage Number Settings")]
     [SerializeField] private float temporaryCritThreshold = 20f;
 
@@ -33,6 +39,7 @@ public class HealthController : MonoBehaviour, IDamageable
         stats = GetComponent<UnitStats>();
         bossArmor = GetComponent<BossArmorController>();
         enemyHitFlash = GetComponent<EnemyHitFlash>();
+        cameraShake = FindAnyObjectByType<CameraShakeController>();
 
         ResetHealth();
     }
@@ -139,8 +146,23 @@ public class HealthController : MonoBehaviour, IDamageable
         Debug.Log($"{gameObject.name} died.");
 
         SpawnDeathEffect();
+        TriggerDeathCameraShake();
         PlayDeathSound();
         HandleDeathCleanup();
+    }
+
+    private void TriggerDeathCameraShake()
+    {
+        if (!enableDeathCameraShake)
+            return;
+
+        if (cameraShake == null)
+            return;
+
+        if (stats == null || stats.role != UnitRole.Enemy)
+            return;
+
+        cameraShake.Shake(deathShakeDuration, deathShakeStrength);
     }
 
     private void HandleDeathCleanup()

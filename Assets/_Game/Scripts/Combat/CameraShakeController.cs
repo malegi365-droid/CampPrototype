@@ -6,13 +6,7 @@ public class CameraShakeController : MonoBehaviour
     [SerializeField] private float defaultDuration = 0.08f;
     [SerializeField] private float defaultStrength = 0.08f;
 
-    private Vector3 originalLocalPosition;
     private Coroutine shakeRoutine;
-
-    private void Awake()
-    {
-        originalLocalPosition = transform.localPosition;
-    }
 
     public void Shake()
     {
@@ -24,25 +18,30 @@ public class CameraShakeController : MonoBehaviour
         if (shakeRoutine != null)
             StopCoroutine(shakeRoutine);
 
-        shakeRoutine = StartCoroutine(ShakeRoutine(duration, strength));
+        shakeRoutine = StartCoroutine(ShakeRoutine(duration, strength, transform.localPosition));
     }
 
-    private IEnumerator ShakeRoutine(float duration, float strength)
+    private IEnumerator ShakeRoutine(float duration, float strength, Vector3 baseLocalPosition)
     {
         float elapsed = 0f;
 
         while (elapsed < duration)
         {
-            Vector3 offset = Random.insideUnitSphere * strength;
-            offset.z = 0f;
+            Vector2 randomCircle = Random.insideUnitCircle * strength;
 
-            transform.localPosition = originalLocalPosition + offset;
+            Vector3 offset = new Vector3(
+                randomCircle.x,
+                randomCircle.y,
+                0f
+            );
+
+            transform.localPosition = baseLocalPosition + offset;
 
             elapsed += Time.deltaTime;
             yield return null;
         }
 
-        transform.localPosition = originalLocalPosition;
+        transform.localPosition = baseLocalPosition;
         shakeRoutine = null;
     }
 }
