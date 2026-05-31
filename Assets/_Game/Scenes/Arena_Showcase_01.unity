@@ -405,14 +405,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerSystem
       objectReference: {fileID: 0}
-    - target: {fileID: 398255843076309086, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
-      propertyPath: defaultDuration
-      value: 0.18
-      objectReference: {fileID: 0}
-    - target: {fileID: 398255843076309086, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
-      propertyPath: defaultStrength
-      value: 0.28
-      objectReference: {fileID: 0}
     - target: {fileID: 1795778698461927134, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 5.67906
@@ -452,6 +444,26 @@ PrefabInstance:
     - target: {fileID: 1795778698461927134, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5844219683133708871, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
+      propertyPath: overchargeProjectilePrefab
+      value: 
+      objectReference: {fileID: 1750164435413093665, guid: 1ae806d7d58f05a498e715621f08efaa, type: 3}
+    - target: {fileID: 6892599986833221322, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
+      propertyPath: globalVolume
+      value: 
+      objectReference: {fileID: 1685859544}
+    - target: {fileID: 6892599986833221322, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
+      propertyPath: targetCamera
+      value: 
+      objectReference: {fileID: 889640993}
+    - target: {fileID: 6892599986833221322, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
+      propertyPath: overchargeVignetteIntensity
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892599986833221322, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
+      propertyPath: overchargeChromaticIntensity
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 7848615516531898793, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
       propertyPath: target
@@ -928,6 +940,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 804497189}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!20 &889640993 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 8287292446188345514, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
+  m_PrefabInstance: {fileID: 450790197}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &952455664
 PrefabInstance:
   m_ObjectHideFlags: 0

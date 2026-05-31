@@ -10,6 +10,7 @@ public class DPSProjectileFireController : MonoBehaviour
     [Header("Ability Projectiles")]
     [SerializeField] private GameObject piercingProjectilePrefab;
     [SerializeField] private GameObject explosiveProjectilePrefab;
+    [SerializeField] private GameObject overchargeProjectilePrefab;
 
     [Header("Muzzle Flash")]
     [SerializeField] private GameObject muzzleFlashPrefab;
@@ -26,6 +27,9 @@ public class DPSProjectileFireController : MonoBehaviour
 
     [Header("HUD")]
     [SerializeField] private DPSAbilityHUDController abilityHUD;
+
+    [Header("Overcharge Visuals")]
+    [SerializeField] private OverchargeVisualController overchargeVisuals;
 
     [Header("Camera Feedback")]
     [SerializeField] private CameraShakeController cameraShake;
@@ -84,6 +88,9 @@ public class DPSProjectileFireController : MonoBehaviour
 
         if (abilityHUD == null)
             abilityHUD = FindAnyObjectByType<DPSAbilityHUDController>();
+
+        if (overchargeVisuals == null)
+            overchargeVisuals = GetComponent<OverchargeVisualController>();
     }
 
     private void Update()
@@ -103,8 +110,13 @@ public class DPSProjectileFireController : MonoBehaviour
             if (mouse.leftButton.isPressed &&
                 Time.time >= nextFireTime)
             {
+                GameObject selectedOverchargeProjectile =
+                    overchargeProjectilePrefab != null
+                        ? overchargeProjectilePrefab
+                        : piercingProjectilePrefab;
+
                 FireProjectile(
-                    piercingProjectilePrefab,
+                    selectedOverchargeProjectile,
                     mousePosition,
                     overchargeFireSound != null
                         ? overchargeFireSound
@@ -191,6 +203,9 @@ public class DPSProjectileFireController : MonoBehaviour
             if (abilityHUD != null)
                 abilityHUD.SetOverchargeState(false);
 
+            if (overchargeVisuals != null)
+                overchargeVisuals.DisableOverchargeVisuals();
+
             Debug.Log("Overcharge ended.");
         }
 
@@ -216,6 +231,9 @@ public class DPSProjectileFireController : MonoBehaviour
             abilityHUD.TriggerOverchargeCooldown();
             abilityHUD.SetOverchargeState(true);
         }
+
+        if (overchargeVisuals != null)
+            overchargeVisuals.EnableOverchargeVisuals();
 
         Debug.Log("Overcharge activated.");
     }
