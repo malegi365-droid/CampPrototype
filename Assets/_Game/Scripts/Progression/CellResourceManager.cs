@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -10,6 +11,14 @@ public class CellResourceManager : MonoBehaviour
 
     [Header("UI")]
     [SerializeField] private TMP_Text cellText;
+    [SerializeField] private RectTransform cellTextTransform;
+
+    [Header("UI Pulse")]
+    [SerializeField] private float pulseScale = 1.25f;
+    [SerializeField] private float pulseDuration = 0.1f;
+
+    private Coroutine pulseRoutine;
+    private Vector3 originalScale;
 
     private void Awake()
     {
@@ -23,7 +32,13 @@ public class CellResourceManager : MonoBehaviour
             return;
         }
 
-        UpdateUI();
+        if (cellTextTransform == null && cellText != null)
+            cellTextTransform = cellText.GetComponent<RectTransform>();
+
+        if (cellTextTransform != null)
+            originalScale = cellTextTransform.localScale;
+
+        UpdateUI(false);
     }
 
     public void AddCells(int amount)
@@ -32,14 +47,60 @@ public class CellResourceManager : MonoBehaviour
 
         Debug.Log($"Cells gained: {amount} | Total: {currentCells}");
 
-        UpdateUI();
+        UpdateUI(true);
     }
 
-    private void UpdateUI()
+    private void UpdateUI(bool pulse)
     {
         if (cellText != null)
-        {
             cellText.text = $"CELLS: {currentCells:00}";
+
+        if (pulse)
+            PulseCellsUI();
+    }
+
+    private void PulseCellsUI()
+    {
+        if (cellTextTransform == null)
+            return;
+
+        if (pulseRoutine != null)
+            StopCoroutine(pulseRoutine);
+
+        pulseRoutine = StartCoroutine(PulseRoutine());
+    }
+
+    private IEnumerator PulseRoutine()
+    {
+        float elapsed = 0f;
+
+        while (elapsed < pulseDuration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+
+            float t = Mathf.Clamp01(elapsed / pulseDuration);
+            float scale = Mathf.Lerp(1f, pulseScale, t);
+
+            cellTextTransform.localScale = originalScale * scale;
+
+            yield return null;
         }
+
+        elapsed = 0f;
+
+        while (elapsed < pulseDuration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+
+            float t = Mathf.Clamp01(elapsed / pulseDuration);
+            float scale = Mathf.Lerp(pulseScale, 1f, t);
+
+            cellTextTransform.localScale = originalScale * scale;
+
+            yield return null;
+        }
+
+        cellTextTransform.localScale = originalScale;
+        pulseRoutine = null;
     }
 }

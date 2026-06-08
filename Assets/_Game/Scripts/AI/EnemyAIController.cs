@@ -83,7 +83,6 @@ public class EnemyAIController : MonoBehaviour
         if (highestThreatTarget != null)
         {
             currentState = EnemyState.Combat;
-
             Debug.Log($"{gameObject.name} entered combat with {highestThreatTarget.name}");
         }
     }
@@ -99,12 +98,10 @@ public class EnemyAIController : MonoBehaviour
 
         foreach (Collider hit in hits)
         {
-            UnitStats targetStats =
-                hit.GetComponent<UnitStats>();
+            UnitStats targetStats = hit.GetComponent<UnitStats>();
 
             if (targetStats == null)
-                targetStats =
-                    hit.GetComponentInParent<UnitStats>();
+                targetStats = hit.GetComponentInParent<UnitStats>();
 
             if (targetStats == null)
                 continue;
@@ -113,7 +110,6 @@ public class EnemyAIController : MonoBehaviour
                 continue;
 
             threatTable.AddThreat(targetStats.gameObject, 1f);
-
             Debug.Log($"{gameObject.name} detected player proximity: {targetStats.gameObject.name}");
 
             return;
@@ -124,8 +120,7 @@ public class EnemyAIController : MonoBehaviour
     {
         retargetTimer += Time.deltaTime;
 
-        GameObject highestThreatTarget =
-            threatTable.GetHighestThreatTarget();
+        GameObject highestThreatTarget = threatTable.GetHighestThreatTarget();
 
         if (highestThreatTarget == null)
         {
@@ -133,11 +128,10 @@ public class EnemyAIController : MonoBehaviour
             return;
         }
 
-        float targetDistanceFromHome =
-            Vector3.Distance(
-                homePosition,
-                highestThreatTarget.transform.position
-            );
+        float targetDistanceFromHome = Vector3.Distance(
+            homePosition,
+            highestThreatTarget.transform.position
+        );
 
         if (targetDistanceFromHome > leashDistance)
         {
@@ -149,16 +143,13 @@ public class EnemyAIController : MonoBehaviour
         if (retargetTimer >= retargetInterval)
         {
             retargetTimer = 0f;
-            autoAttackController.SetTarget(
-                highestThreatTarget.transform
-            );
+            autoAttackController.SetTarget(highestThreatTarget.transform);
         }
 
-        float distanceToTarget =
-            Vector3.Distance(
-                transform.position,
-                highestThreatTarget.transform.position
-            );
+        float distanceToTarget = Vector3.Distance(
+            transform.position,
+            highestThreatTarget.transform.position
+        );
 
         if (distanceToTarget > stats.attackRange)
         {
@@ -170,8 +161,7 @@ public class EnemyAIController : MonoBehaviour
     {
         autoAttackController.SetTarget(null);
 
-        float distanceToHome =
-            Vector3.Distance(transform.position, homePosition);
+        float distanceToHome = Vector3.Distance(transform.position, homePosition);
 
         if (distanceToHome > returnStopDistance)
         {
@@ -207,15 +197,13 @@ public class EnemyAIController : MonoBehaviour
 
         transform.position += dir * moveSpeed * Time.deltaTime;
 
-        Quaternion targetRotation =
-            Quaternion.LookRotation(dir, Vector3.up);
+        Quaternion targetRotation = Quaternion.LookRotation(dir, Vector3.up);
 
-        transform.rotation =
-            Quaternion.Slerp(
-                transform.rotation,
-                targetRotation,
-                10f * Time.deltaTime
-            );
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation,
+            targetRotation,
+            10f * Time.deltaTime
+        );
     }
 
     public void ForceEngage(GameObject target, float startingThreat = 5f)
@@ -230,8 +218,7 @@ public class EnemyAIController : MonoBehaviour
 
     public bool IsDead()
     {
-        return healthController != null &&
-               healthController.IsDead();
+        return healthController != null && healthController.IsDead();
     }
 
     public bool IsBusy()

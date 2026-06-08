@@ -21,7 +21,6 @@ GameObject:
   - component: {fileID: 3173848401627822621}
   - component: {fileID: 3358473398099925446}
   - component: {fileID: 834231450226965800}
-  - component: {fileID: 7385935491592191315}
   - component: {fileID: -8350706401820139638}
   - component: {fileID: 2754699182507264586}
   - component: {fileID: -6588217312537715425}
@@ -170,6 +169,9 @@ MonoBehaviour:
   deathSoundVolume: 1
   shrinkEnemyOnDeath: 1
   deathShrinkDuration: 0.45
+  enableDeathCameraShake: 1
+  deathShakeDuration: 0.08
+  deathShakeStrength: 0.08
   temporaryCritThreshold: 20
   enablePlayerDamageFeedback: 1
   logPlayerDamageFeedback: 1
@@ -279,21 +281,6 @@ MonoBehaviour:
   minPauseTime: 1.5
   maxPauseTime: 3.5
   waypointTolerance: 0.15
---- !u!114 &7385935491592191315
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8840222014455456102}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6915ff18765792542a5ac8d480ff5aa7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HitFlashController
-  targetRenderer: {fileID: 0}
-  flashColor: {r: 1, g: 1, b: 1, a: 1}
-  flashDuration: 0.1
 --- !u!82 &-8350706401820139638
 AudioSource:
   m_ObjectHideFlags: 0
@@ -426,6 +413,8 @@ MonoBehaviour:
   staggerResistance: 0.6
   immuneToStagger: 0
   immuneToKnockback: 0
+  overchargeKnockbackMultiplier: 1.35
+  overchargeStaggerMultiplier: 1.25
 --- !u!114 &-3506714476363173207
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -451,6 +440,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72029f401c82a3948ba587cf2b84a8ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHitFlash
-  flashColor: {r: 1, g: 1, b: 1, a: 1}
-  flashDuration: 0.08
+  flashColor: {r: 0, g: 1, b: 1, a: 1}
+  flashDuration: 0.07
+  flashBlend: 0.45
   renderers: []

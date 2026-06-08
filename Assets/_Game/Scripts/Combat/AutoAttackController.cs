@@ -13,11 +13,13 @@ public class AutoAttackController : MonoBehaviour
     private UnitStats stats;
     private float attackTimer = 0f;
     private HealthController myHealth;
+    private EnemyAnimationBridge animationBridge;
 
     private void Awake()
     {
         stats = GetComponent<UnitStats>();
         myHealth = GetComponent<HealthController>();
+        animationBridge = GetComponent<EnemyAnimationBridge>();
 
         attackTimer = initialAttackDelay;
     }
@@ -59,8 +61,6 @@ public class AutoAttackController : MonoBehaviour
 
     public void SetTarget(Transform target)
     {
-        // Prevent constantly resetting attack timing
-        // when EnemyAIController refreshes the same target.
         if (currentTarget == target)
             return;
 
@@ -86,11 +86,13 @@ public class AutoAttackController : MonoBehaviour
         if (direction.sqrMagnitude <= 0.0001f)
             return;
 
-        Quaternion targetRotation =
-            Quaternion.LookRotation(direction.normalized, Vector3.up);
+        Quaternion targetRotation = Quaternion.LookRotation(direction.normalized, Vector3.up);
 
-        transform.rotation =
-            Quaternion.Slerp(transform.rotation, targetRotation, 12f * Time.deltaTime);
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation,
+            targetRotation,
+            12f * Time.deltaTime
+        );
     }
 
     private void PerformAttack()
@@ -98,8 +100,10 @@ public class AutoAttackController : MonoBehaviour
         if (currentTarget == null)
             return;
 
-        IDamageable damageable =
-            currentTarget.GetComponent<IDamageable>();
+        if (animationBridge != null)
+            animationBridge.PlayAttack();
+
+        IDamageable damageable = currentTarget.GetComponent<IDamageable>();
 
         if (damageable == null)
             damageable = currentTarget.GetComponentInParent<IDamageable>();
@@ -109,17 +113,14 @@ public class AutoAttackController : MonoBehaviour
 
         damageable.TakeDamage(stats.attack, stats);
 
-        ThreatTable threatTable =
-            currentTarget.GetComponent<ThreatTable>();
+        ThreatTable threatTable = currentTarget.GetComponent<ThreatTable>();
 
         if (threatTable == null)
             threatTable = currentTarget.GetComponentInParent<ThreatTable>();
 
         if (threatTable != null)
         {
-            float generatedThreat =
-                stats.attack * stats.threatMultiplier;
-
+            float generatedThreat = stats.attack * stats.threatMultiplier;
             threatTable.AddThreat(gameObject, generatedThreat);
         }
 

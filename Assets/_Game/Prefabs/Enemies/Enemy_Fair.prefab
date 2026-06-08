@@ -24,7 +24,6 @@ GameObject:
   - component: {fileID: 1305215600926534560}
   - component: {fileID: -2620928102447972453}
   - component: {fileID: -4460845464469346827}
-  - component: {fileID: -2351557446309573505}
   - component: {fileID: 919837042017577628}
   - component: {fileID: 3127525745271945968}
   m_Layer: 6
@@ -170,6 +169,9 @@ MonoBehaviour:
   deathSoundVolume: 1
   shrinkEnemyOnDeath: 1
   deathShrinkDuration: 0.45
+  enableDeathCameraShake: 1
+  deathShakeDuration: 0.08
+  deathShakeStrength: 0.08
   temporaryCritThreshold: 20
   enablePlayerDamageFeedback: 1
   logPlayerDamageFeedback: 1
@@ -407,25 +409,6 @@ MonoBehaviour:
   volume: 0.55
   minIntervalBetweenHits: 0.08
   logWhenPlayed: 0
---- !u!114 &-2351557446309573505
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2185591147798516472}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e649e45f78ee78408501e6eacbca7f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyHitReactionController
-  knockbackDuration: 0.12
-  knockbackSpeed: 8
-  knockbackResistance: 0.35
-  defaultStaggerDuration: 0.18
-  staggerResistance: 0.25
-  immuneToStagger: 0
-  immuneToKnockback: 0
 --- !u!114 &919837042017577628
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -451,6 +434,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72029f401c82a3948ba587cf2b84a8ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHitFlash
-  flashColor: {r: 1, g: 1, b: 1, a: 1}
-  flashDuration: 0.08
+  flashColor: {r: 0.38431376, g: 0.9960785, b: 0.9960785, a: 1}
+  flashDuration: 0.07
+  flashBlend: 0.45
   renderers: []

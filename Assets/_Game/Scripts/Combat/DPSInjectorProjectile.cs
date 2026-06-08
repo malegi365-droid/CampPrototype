@@ -15,6 +15,9 @@ public class DPSInjectorProjectile : MonoBehaviour
     [Header("Damage")]
     [SerializeField] private float damageMultiplier = 1f;
 
+    [Header("Projectile Type")]
+    [SerializeField] private bool overchargeProjectile = false;
+
     [Header("Impact")]
     [SerializeField] private GameObject impactEffectPrefab;
     [SerializeField] private GameObject hitSparkEffectPrefab;
@@ -27,6 +30,14 @@ public class DPSInjectorProjectile : MonoBehaviour
     [SerializeField] private float impactShakeStrength = 0.05f;
     [SerializeField] private float explosiveImpactShakeDuration = 0.12f;
     [SerializeField] private float explosiveImpactShakeStrength = 0.12f;
+    [SerializeField] private float overchargeImpactShakeDuration = 0.08f;
+    [SerializeField] private float overchargeImpactShakeStrength = 0.08f;
+
+    [Header("Hit Stop")]
+    [SerializeField] private bool enableHitStop = true;
+    [SerializeField] private float normalHitStopDuration = 0.025f;
+    [SerializeField] private float overchargeHitStopDuration = 0.045f;
+    [SerializeField] private float explosiveHitStopDuration = 0.04f;
 
     [Header("Piercing")]
     [SerializeField] private bool piercing = false;
@@ -40,8 +51,10 @@ public class DPSInjectorProjectile : MonoBehaviour
     [SerializeField] private GameObject explosionEffectPrefab;
 
     [Header("Hit Reaction")]
-    [SerializeField] private float staggerDuration = 0.12f;
-    [SerializeField] private float knockbackStrength = 0.35f;
+    [SerializeField] private float staggerDuration = 0.2f;
+    [SerializeField] private float knockbackStrength = 1f;
+    [SerializeField] private float explosiveStaggerMultiplier = 1.5f;
+    [SerializeField] private float explosiveKnockbackMultiplier = 2f;
 
     private Vector3 travelDirection;
     private float spawnTime;
@@ -135,21 +148,8 @@ public class DPSInjectorProjectile : MonoBehaviour
                 damageAmount *= Mathf.Pow(piercingDamageFalloff, pierceHits);
 
             damageable.TakeDamage(damageAmount, shooterStats);
-        }
 
-        EnemyHitReactionController reaction =
-            hit.collider.GetComponent<EnemyHitReactionController>();
-
-        if (reaction == null)
-            reaction = hit.collider.GetComponentInParent<EnemyHitReactionController>();
-
-        if (reaction == null)
-            reaction = hit.collider.GetComponentInChildren<EnemyHitReactionController>();
-
-        if (reaction != null && !explosive)
-        {
-            reaction.ApplyStagger(staggerDuration);
-            reaction.ApplyKnockback(travelDirection, knockbackStrength);
+            ApplyCombatPolish(hit.collider.transform, travelDirection, false);
         }
 
         if (!piercing)
@@ -169,6 +169,66 @@ public class DPSInjectorProjectile : MonoBehaviour
         return false;
     }
 
+    private void ApplyCombatPolish(Transform hitTransform, Vector3 direction, bool explosionHit)
+    {
+        if (hitTransform == null)
+            return;
+
+        EnemyHitFlash hitFlash =
+            hitTransform.GetComponentInParent<EnemyHitFlash>();
+
+        if (hitFlash == null)
+            hitFlash = hitTransform.GetComponentInChildren<EnemyHitFlash>();
+
+        if (hitFlash != null)
+            hitFlash.TriggerFlash();
+
+        EnemyHitReactionController reaction =
+            hitTransform.GetComponentInParent<EnemyHitReactionController>();
+
+        if (reaction == null)
+            reaction = hitTransform.GetComponentInChildren<EnemyHitReactionController>();
+
+        if (reaction != null)
+        {
+            float selectedStagger = staggerDuration;
+            float selectedKnockback = knockbackStrength;
+
+            if (explosionHit)
+            {
+                selectedStagger *= explosiveStaggerMultiplier;
+                selectedKnockback *= explosiveKnockbackMultiplier;
+            }
+
+            reaction.ApplyHitReaction(
+                direction,
+                selectedKnockback,
+                selectedStagger,
+                overchargeProjectile
+            );
+        }
+
+        TriggerHitStop(explosionHit);
+    }
+
+    private void TriggerHitStop(bool explosionHit)
+    {
+        if (!enableHitStop || HitStopManager.Instance == null)
+            return;
+
+        if (explosionHit)
+        {
+            HitStopManager.Instance.DoHitStop(explosiveHitStopDuration);
+            return;
+        }
+
+        HitStopManager.Instance.DoHitStop(
+            overchargeProjectile
+                ? overchargeHitStopDuration
+                : normalHitStopDuration
+        );
+    }
+
     private void TriggerImpactCameraShake()
     {
         if (!enableImpactCameraShake || cameraShake == null)
@@ -179,6 +239,13 @@ public class DPSInjectorProjectile : MonoBehaviour
             cameraShake.Shake(
                 explosiveImpactShakeDuration,
                 explosiveImpactShakeStrength
+            );
+        }
+        else if (overchargeProjectile)
+        {
+            cameraShake.Shake(
+                overchargeImpactShakeDuration,
+                overchargeImpactShakeStrength
             );
         }
         else
@@ -245,7 +312,7 @@ public class DPSInjectorProjectile : MonoBehaviour
             if (damageable == null)
                 damageable = enemyRoot.GetComponentInParent<IDamageable>();
 
-            if (damageable == null)
+            if (damageable == null || shooterStats == null)
                 continue;
 
             float damageAmount =
@@ -258,27 +325,15 @@ public class DPSInjectorProjectile : MonoBehaviour
 
             damageable.TakeDamage(damageAmount, shooterStats);
 
-            EnemyHitReactionController reaction =
-                enemyRoot.GetComponent<EnemyHitReactionController>();
+            Vector3 knockDirection = enemyRoot.position - centerPoint;
+            knockDirection.y = 0f;
 
-            if (reaction == null)
-                reaction = enemyRoot.GetComponentInChildren<EnemyHitReactionController>();
+            if (knockDirection.sqrMagnitude <= 0.001f)
+                knockDirection = travelDirection;
 
-            if (reaction != null)
-            {
-                Vector3 knockDirection =
-                    enemyRoot.position - centerPoint;
+            knockDirection.Normalize();
 
-                knockDirection.y = 0f;
-
-                if (knockDirection.sqrMagnitude <= 0.001f)
-                    knockDirection = travelDirection;
-
-                knockDirection.Normalize();
-
-                reaction.ApplyStagger(staggerDuration * 1.5f);
-                reaction.ApplyKnockback(knockDirection, knockbackStrength * 2f);
-            }
+            ApplyCombatPolish(enemyRoot, knockDirection, true);
 
             if (enemyRoot != null && shooterTargeting != null)
                 shooterTargeting.SetTarget(enemyRoot);

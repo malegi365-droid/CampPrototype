@@ -4,95 +4,84 @@ using UnityEngine;
 public class EnemyHitFlash : MonoBehaviour
 {
     [Header("Flash")]
-    [SerializeField] private Color flashColor = Color.white;
-
-    [SerializeField] private float flashDuration = 0.08f;
+    [SerializeField] private Color flashColor = new Color(0.75f, 1f, 1f, 1f);
+    [SerializeField] private float flashDuration = 0.07f;
+    [SerializeField] private float flashBlend = 0.65f;
 
     [Header("Renderers")]
     [SerializeField] private Renderer[] renderers;
 
-    private MaterialPropertyBlock propertyBlock;
-
-    private static readonly int BaseColorID =
-        Shader.PropertyToID("_BaseColor");
-
+    private Material[][] materials;
     private Color[][] originalColors;
+    private Coroutine flashRoutine;
 
     private void Awake()
     {
         if (renderers == null || renderers.Length == 0)
             renderers = GetComponentsInChildren<Renderer>();
 
-        propertyBlock = new MaterialPropertyBlock();
-
-        CacheOriginalColors();
+        CacheMaterialsAndColors();
     }
 
-    private void CacheOriginalColors()
+    private void CacheMaterialsAndColors()
     {
+        materials = new Material[renderers.Length][];
         originalColors = new Color[renderers.Length][];
 
         for (int i = 0; i < renderers.Length; i++)
         {
-            Material[] mats = renderers[i].materials;
+            if (renderers[i] == null)
+                continue;
 
-            originalColors[i] = new Color[mats.Length];
+            materials[i] = renderers[i].materials;
+            originalColors[i] = new Color[materials[i].Length];
 
-            for (int j = 0; j < mats.Length; j++)
+            for (int j = 0; j < materials[i].Length; j++)
             {
-                if (mats[j].HasProperty(BaseColorID))
-                    originalColors[i][j] =
-                        mats[j].GetColor(BaseColorID);
-                else
-                    originalColors[i][j] = Color.white;
+                originalColors[i][j] = materials[i][j].color;
             }
         }
     }
 
     public void TriggerFlash()
     {
-        StopAllCoroutines();
-        StartCoroutine(FlashRoutine());
+        if (flashRoutine != null)
+            StopCoroutine(flashRoutine);
+
+        flashRoutine = StartCoroutine(FlashRoutine());
+    }
+
+    public void Flash()
+    {
+        TriggerFlash();
     }
 
     private IEnumerator FlashRoutine()
     {
-        SetColor(flashColor);
+        SetFlash(true);
 
         yield return new WaitForSeconds(flashDuration);
 
-        RestoreOriginalColors();
+        SetFlash(false);
+
+        flashRoutine = null;
     }
 
-    private void SetColor(Color color)
+    private void SetFlash(bool active)
     {
-        for (int i = 0; i < renderers.Length; i++)
+        for (int i = 0; i < materials.Length; i++)
         {
-            Material[] mats = renderers[i].materials;
+            if (materials[i] == null)
+                continue;
 
-            for (int j = 0; j < mats.Length; j++)
+            for (int j = 0; j < materials[i].Length; j++)
             {
-                if (mats[j].HasProperty(BaseColorID))
-                    mats[j].SetColor(BaseColorID, color);
-            }
-        }
-    }
+                if (materials[i][j] == null)
+                    continue;
 
-    private void RestoreOriginalColors()
-    {
-        for (int i = 0; i < renderers.Length; i++)
-        {
-            Material[] mats = renderers[i].materials;
-
-            for (int j = 0; j < mats.Length; j++)
-            {
-                if (mats[j].HasProperty(BaseColorID))
-                {
-                    mats[j].SetColor(
-                        BaseColorID,
-                        originalColors[i][j]
-                    );
-                }
+                materials[i][j].color = active
+                    ? Color.Lerp(originalColors[i][j], flashColor, flashBlend)
+                    : originalColors[i][j];
             }
         }
     }

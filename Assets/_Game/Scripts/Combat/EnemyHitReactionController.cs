@@ -4,14 +4,14 @@ using System.Collections;
 public class EnemyHitReactionController : MonoBehaviour
 {
     [Header("Knockback")]
-    [SerializeField] private float knockbackDuration = 0.12f;
-    [SerializeField] private float knockbackSpeed = 8f;
+    [SerializeField] private float knockbackDuration = 0.14f;
+    [SerializeField] private float knockbackSpeed = 10f;
 
     [Range(0f, 1f)]
     [SerializeField] private float knockbackResistance = 0f;
 
     [Header("Stagger")]
-    [SerializeField] private float defaultStaggerDuration = 0.18f;
+    [SerializeField] private float defaultStaggerDuration = 0.2f;
 
     [Range(0f, 1f)]
     [SerializeField] private float staggerResistance = 0f;
@@ -19,12 +19,17 @@ public class EnemyHitReactionController : MonoBehaviour
     [SerializeField] private bool immuneToStagger = false;
     [SerializeField] private bool immuneToKnockback = false;
 
+    [Header("Overcharge Reaction Boost")]
+    [SerializeField] private float overchargeKnockbackMultiplier = 1.35f;
+    [SerializeField] private float overchargeStaggerMultiplier = 1.25f;
+
     private Coroutine knockbackRoutine;
     private Coroutine staggerRoutine;
 
     private EnemyAIController enemyAI;
     private EnemyRoamingController roaming;
     private AutoAttackController autoAttack;
+    private EnemyAnimationBridge animationBridge;
 
     private int controlLocks = 0;
 
@@ -37,14 +42,24 @@ public class EnemyHitReactionController : MonoBehaviour
         enemyAI = GetComponent<EnemyAIController>();
         roaming = GetComponent<EnemyRoamingController>();
         autoAttack = GetComponent<AutoAttackController>();
+        animationBridge = GetComponent<EnemyAnimationBridge>();
     }
 
     public void ApplyKnockback(Vector3 direction, float strength)
     {
+        ApplyKnockback(direction, strength, false);
+    }
+
+    public void ApplyKnockback(Vector3 direction, float strength, bool isOverchargeHit)
+    {
         if (immuneToKnockback)
             return;
 
-        float finalStrength = strength * (1f - knockbackResistance);
+        float boostedStrength = isOverchargeHit
+            ? strength * overchargeKnockbackMultiplier
+            : strength;
+
+        float finalStrength = boostedStrength * (1f - knockbackResistance);
 
         if (finalStrength <= 0.01f)
             return;
@@ -57,10 +72,20 @@ public class EnemyHitReactionController : MonoBehaviour
 
     public void ApplyStagger(float duration)
     {
+        ApplyStagger(duration, false);
+    }
+
+    public void ApplyStagger(float duration, bool isOverchargeHit)
+    {
         if (immuneToStagger)
             return;
 
-        float finalDuration = duration * (1f - staggerResistance);
+        float selectedDuration = duration > 0f ? duration : defaultStaggerDuration;
+
+        if (isOverchargeHit)
+            selectedDuration *= overchargeStaggerMultiplier;
+
+        float finalDuration = selectedDuration * (1f - staggerResistance);
 
         if (finalDuration <= 0.03f)
             return;
@@ -69,6 +94,15 @@ public class EnemyHitReactionController : MonoBehaviour
             StopCoroutine(staggerRoutine);
 
         staggerRoutine = StartCoroutine(StaggerRoutine(finalDuration));
+    }
+
+    public void ApplyHitReaction(Vector3 direction, float knockbackStrength, float staggerDuration, bool isOverchargeHit = false)
+    {
+        if (animationBridge != null)
+            animationBridge.PlayHit();
+
+        ApplyKnockback(direction, knockbackStrength, isOverchargeHit);
+        ApplyStagger(staggerDuration, isOverchargeHit);
     }
 
     private IEnumerator KnockbackRoutine(Vector3 direction, float strength)
@@ -103,7 +137,7 @@ public class EnemyHitReactionController : MonoBehaviour
         IsStaggered = true;
         AddControlLock();
 
-        yield return new WaitForSeconds(duration > 0f ? duration : defaultStaggerDuration);
+        yield return new WaitForSeconds(duration);
 
         IsStaggered = false;
         RemoveControlLock();

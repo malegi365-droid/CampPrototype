@@ -9,6 +9,7 @@ public class HealthController : MonoBehaviour, IDamageable
     private BossArmorController bossArmor;
     private EnemyHitFlash enemyHitFlash;
     private CameraShakeController cameraShake;
+    private EnemyAnimationBridge animationBridge;
     private bool dead = false;
 
     public event Action<HealthController> OnDied;
@@ -20,7 +21,9 @@ public class HealthController : MonoBehaviour, IDamageable
     [SerializeField] private AudioClip deathSound;
     [SerializeField] private float deathSoundVolume = 1f;
     [SerializeField] private bool shrinkEnemyOnDeath = true;
+    [SerializeField] private float deathShrinkDelay = 1.25f;
     [SerializeField] private float deathShrinkDuration = 0.45f;
+    [SerializeField] private float deathLiftAmount = 0.15f;
 
     [Header("Death Camera Shake")]
     [SerializeField] private bool enableDeathCameraShake = true;
@@ -39,6 +42,7 @@ public class HealthController : MonoBehaviour, IDamageable
         stats = GetComponent<UnitStats>();
         bossArmor = GetComponent<BossArmorController>();
         enemyHitFlash = GetComponent<EnemyHitFlash>();
+        animationBridge = GetComponent<EnemyAnimationBridge>();
         cameraShake = FindAnyObjectByType<CameraShakeController>();
 
         ResetHealth();
@@ -59,12 +63,7 @@ public class HealthController : MonoBehaviour, IDamageable
         if (stats.role == UnitRole.Enemy)
         {
             bool crit = reducedDamage >= temporaryCritThreshold;
-
-            DamageNumberSpawner.ShowDamage(
-                transform.position,
-                reducedDamage,
-                crit
-            );
+            DamageNumberSpawner.ShowDamage(transform.position, reducedDamage, crit);
         }
 
         TriggerEnemyHitFlash();
@@ -141,6 +140,10 @@ public class HealthController : MonoBehaviour, IDamageable
         if (dead) return;
 
         dead = true;
+
+        if (animationBridge != null)
+            animationBridge.PlayDeath();
+
         OnDied?.Invoke(this);
 
         Debug.Log($"{gameObject.name} died.");
@@ -148,7 +151,28 @@ public class HealthController : MonoBehaviour, IDamageable
         SpawnDeathEffect();
         TriggerDeathCameraShake();
         PlayDeathSound();
-        HandleDeathCleanup();
+
+        StartCoroutine(DelayedDeathCleanup());
+    }
+
+    private IEnumerator DelayedDeathCleanup()
+    {
+        if (stats != null && stats.role == UnitRole.Enemy)
+        {
+            DisableEnemyCollisionAndCombat();
+
+            yield return new WaitForSeconds(deathShrinkDelay);
+
+            if (shrinkEnemyOnDeath)
+                yield return StartCoroutine(ShrinkAndHideEnemy());
+            else
+                HideIfEnemy();
+
+            yield break;
+        }
+
+        yield return new WaitForSeconds(deathShrinkDelay);
+        gameObject.SetActive(false);
     }
 
     private void TriggerDeathCameraShake()
@@ -163,23 +187,6 @@ public class HealthController : MonoBehaviour, IDamageable
             return;
 
         cameraShake.Shake(deathShakeDuration, deathShakeStrength);
-    }
-
-    private void HandleDeathCleanup()
-    {
-        if (stats != null && stats.role == UnitRole.Enemy)
-        {
-            DisableEnemyCollisionAndCombat();
-
-            if (shrinkEnemyOnDeath)
-                StartCoroutine(ShrinkAndHideEnemy());
-            else
-                HideIfEnemy();
-
-            return;
-        }
-
-        gameObject.SetActive(false);
     }
 
     private void DisableEnemyCollisionAndCombat()
@@ -204,14 +211,25 @@ public class HealthController : MonoBehaviour, IDamageable
     private IEnumerator ShrinkAndHideEnemy()
     {
         Vector3 startScale = transform.localScale;
+        Vector3 startPosition = transform.position;
+
         float elapsed = 0f;
+
+        if (enemyHitFlash != null)
+            enemyHitFlash.TriggerFlash();
 
         while (elapsed < deathShrinkDuration)
         {
             elapsed += Time.deltaTime;
 
             float t = Mathf.Clamp01(elapsed / deathShrinkDuration);
-            transform.localScale = Vector3.Lerp(startScale, Vector3.zero, t);
+            float collapseCurve = 1f - Mathf.Pow(1f - t, 3f);
+
+            transform.position =
+                startPosition + Vector3.up * (collapseCurve * deathLiftAmount);
+
+            transform.localScale =
+                Vector3.Lerp(startScale, Vector3.zero, collapseCurve);
 
             yield return null;
         }

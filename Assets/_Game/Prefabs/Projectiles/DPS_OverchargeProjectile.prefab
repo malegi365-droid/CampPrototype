@@ -56,6 +56,7 @@ MonoBehaviour:
     m_Bits: 4294967295
   armTime: 0.1
   damageMultiplier: 1.25
+  overchargeProjectile: 1
   impactEffectPrefab: {fileID: 6731236443730300185, guid: 3469330221830ad48ad88a113db8d35e, type: 3}
   hitSparkEffectPrefab: {fileID: 0}
   impactSound: {fileID: 8300000, guid: 5ca3183ad1ff1374a8e6bb54d91d2abb, type: 3}
@@ -65,6 +66,12 @@ MonoBehaviour:
   impactShakeStrength: 0.05
   explosiveImpactShakeDuration: 0.12
   explosiveImpactShakeStrength: 0.12
+  overchargeImpactShakeDuration: 0.08
+  overchargeImpactShakeStrength: 0.08
+  enableHitStop: 1
+  normalHitStopDuration: 0.025
+  overchargeHitStopDuration: 0.045
+  explosiveHitStopDuration: 0.04
   piercing: 1
   maxPierceHits: 3
   piercingDamageFalloff: 0.85
@@ -74,6 +81,8 @@ MonoBehaviour:
   explosionEffectPrefab: {fileID: 0}
   staggerDuration: 0.12
   knockbackStrength: 0.35
+  explosiveStaggerMultiplier: 1.5
+  explosiveKnockbackMultiplier: 2
 --- !u!136 &5619016915570850485
 CapsuleCollider:
   m_ObjectHideFlags: 0

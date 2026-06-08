@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 6422887614867655033}
   - component: {fileID: 575303435918076081}
   - component: {fileID: -636419033662157082}
+  - component: {fileID: -8715379572223585772}
+  - component: {fileID: -9189446191932031963}
   m_Layer: 0
   m_Name: CellPickup
   m_TagString: Untagged
@@ -143,3 +145,35 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CellPickup
   cellValue: 1
   rotateSpeed: 90
+  pickupBurstPrefab: {fileID: 9206109492810069571, guid: faaaa89b6bbb2684a97789bcd22657bd, type: 3}
+  pickupSound: {fileID: 0}
+  pickupSoundVolume: 0.8
+--- !u!114 &-8715379572223585772
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1414403604405715510}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd4e6b3db79060540bed2b9f4ed9ca60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CellPickupMagnet
+  magnetRange: 4
+  moveSpeed: 6
+  acceleration: 20
+--- !u!114 &-9189446191932031963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1414403604405715510}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7419778020b88c444a169ce8145ae815, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PickupHoverMotion
+  hoverHeight: 0.2
+  hoverSpeed: 2
