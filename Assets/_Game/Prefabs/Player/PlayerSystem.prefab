@@ -635,8 +635,9 @@ MonoBehaviour:
   piercingFireSound: {fileID: 0}
   explosiveFireSound: {fileID: 0}
   overchargeFireSound: {fileID: 0}
-  characterAnimator: {fileID: 7989618881009263022}
-  fireTriggerName: Fire
+  characterAnimator: {fileID: 8895819547219230193}
+  bowAnimator: {fileID: 6611267479852918931}
+  fireTriggerName: Attack
   animationBridge: {fileID: 0}
   abilityHUD: {fileID: 0}
   overchargeVisuals: {fileID: 6892599986833221322}
@@ -6840,6 +6841,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8064807323211247524, guid: 699d0b25b1f7cc94c87ec5c550804720, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 566f21993c14ba94eba8d2394a6d73ab, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6848,6 +6853,11 @@ PrefabInstance:
 --- !u!4 &868692383977826986 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4060615361846177181, guid: 699d0b25b1f7cc94c87ec5c550804720, type: 3}
+  m_PrefabInstance: {fileID: 3770642321469605687}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &6611267479852918931 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 8064807323211247524, guid: 699d0b25b1f7cc94c87ec5c550804720, type: 3}
   m_PrefabInstance: {fileID: 3770642321469605687}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4578544141231660095
@@ -6935,10 +6945,5 @@ Transform:
 --- !u!4 &4035498898896354260 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 20c7faa0a7ebaf9439a6aa12a6dba19e, type: 3}
-  m_PrefabInstance: {fileID: 4578544141231660095}
-  m_PrefabAsset: {fileID: 0}
---- !u!95 &7989618881009263022 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 20c7faa0a7ebaf9439a6aa12a6dba19e, type: 3}
   m_PrefabInstance: {fileID: 4578544141231660095}
   m_PrefabAsset: {fileID: 0}

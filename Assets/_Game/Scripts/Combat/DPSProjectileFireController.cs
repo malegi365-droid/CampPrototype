@@ -23,7 +23,8 @@ public class DPSProjectileFireController : MonoBehaviour
 
     [Header("Animation")]
     [SerializeField] private Animator characterAnimator;
-    [SerializeField] private string fireTriggerName = "Fire";
+    [SerializeField] private Animator bowAnimator;
+    [SerializeField] private string fireTriggerName = "Attack";
     [SerializeField] private PlayerAnimationBridge animationBridge;
 
     [Header("HUD")]
@@ -67,7 +68,6 @@ public class DPSProjectileFireController : MonoBehaviour
     private float nextFireTime;
     private float nextPiercingTime;
     private float nextExplosiveTime;
-
     private float nextOverchargeTime;
     private float overchargeEndTime;
 
@@ -148,16 +148,12 @@ public class DPSProjectileFireController : MonoBehaviour
             nextFireTime = Time.time + fireCooldown;
         }
 
-        if (keyboard != null &&
-            keyboard.qKey.wasPressedThisFrame &&
-            Time.time >= nextPiercingTime)
+        if (keyboard != null && keyboard.qKey.wasPressedThisFrame && Time.time >= nextPiercingTime)
         {
             FireProjectile(
                 piercingProjectilePrefab,
                 mousePosition,
-                piercingFireSound != null
-                    ? piercingFireSound
-                    : fireAudioSource != null ? fireAudioSource.clip : null,
+                piercingFireSound != null ? piercingFireSound : fireAudioSource != null ? fireAudioSource.clip : null,
                 piercingShakeDuration,
                 piercingShakeStrength
             );
@@ -166,16 +162,12 @@ public class DPSProjectileFireController : MonoBehaviour
             abilityHUD?.TriggerPiercingCooldown();
         }
 
-        if (keyboard != null &&
-            keyboard.eKey.wasPressedThisFrame &&
-            Time.time >= nextExplosiveTime)
+        if (keyboard != null && keyboard.eKey.wasPressedThisFrame && Time.time >= nextExplosiveTime)
         {
             FireProjectile(
                 explosiveProjectilePrefab,
                 mousePosition,
-                explosiveFireSound != null
-                    ? explosiveFireSound
-                    : fireAudioSource != null ? fireAudioSource.clip : null,
+                explosiveFireSound != null ? explosiveFireSound : fireAudioSource != null ? fireAudioSource.clip : null,
                 explosiveShakeDuration,
                 explosiveShakeStrength
             );
@@ -193,10 +185,8 @@ public class DPSProjectileFireController : MonoBehaviour
         if (overchargeActive && Time.time >= overchargeEndTime)
         {
             overchargeActive = false;
-
             abilityHUD?.SetOverchargeState(false);
             overchargeVisuals?.DisableOverchargeVisuals();
-
             Debug.Log("Overcharge ended.");
         }
 
@@ -210,16 +200,11 @@ public class DPSProjectileFireController : MonoBehaviour
     private void ActivateOvercharge()
     {
         overchargeActive = true;
-
         overchargeEndTime = Time.time + overchargeDuration;
         nextOverchargeTime = Time.time + overchargeCooldown;
 
-        if (abilityHUD != null)
-        {
-            abilityHUD.TriggerOverchargeCooldown();
-            abilityHUD.SetOverchargeState(true);
-        }
-
+        abilityHUD?.TriggerOverchargeCooldown();
+        abilityHUD?.SetOverchargeState(true);
         overchargeVisuals?.EnableOverchargeVisuals();
 
         Debug.Log("Overcharge activated.");
@@ -257,7 +242,7 @@ public class DPSProjectileFireController : MonoBehaviour
         fireDirection.y = 0f;
 
         if (fireDirection.sqrMagnitude <= 0.001f)
-            fireDirection = transform.forward;
+            fireDirection = projectileSpawnPoint.forward;
 
         fireDirection.Normalize();
 
@@ -271,8 +256,7 @@ public class DPSProjectileFireController : MonoBehaviour
             fireRotation
         );
 
-        DPSInjectorProjectile projectile =
-            projectileObject.GetComponent<DPSInjectorProjectile>();
+        DPSInjectorProjectile projectile = projectileObject.GetComponent<DPSInjectorProjectile>();
 
         if (projectile != null)
             projectile.Initialize(fireDirection, shooterStats, shooterTargeting);
@@ -283,8 +267,11 @@ public class DPSProjectileFireController : MonoBehaviour
         if (animationBridge != null)
             animationBridge.PlayAttack();
 
-        if (characterAnimator != null && !string.IsNullOrWhiteSpace(fireTriggerName))
-            characterAnimator.SetTrigger(fireTriggerName);
+        if (!string.IsNullOrWhiteSpace(fireTriggerName))
+        {
+            characterAnimator?.SetTrigger(fireTriggerName);
+            bowAnimator?.SetTrigger(fireTriggerName);
+        }
     }
 
     private Vector3 GetAimPoint(Vector2 mouseScreenPosition)
