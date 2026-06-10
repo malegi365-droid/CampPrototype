@@ -30,10 +30,11 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 12, y: 12, z: 12}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1225660006146382485}
+  - {fileID: 760217770897125600}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7536526821108106257
@@ -56,10 +57,22 @@ MonoBehaviour:
     m_Bits: 4294967295
   armTime: 0.1
   damageMultiplier: 1
+  overchargeProjectile: 0
   impactEffectPrefab: {fileID: 6731236443730300185, guid: 3469330221830ad48ad88a113db8d35e, type: 3}
   hitSparkEffectPrefab: {fileID: 2075061897180629668, guid: 3b9c45268e4cea442a4948c022dbf42b, type: 3}
   impactSound: {fileID: 8300000, guid: 5ca3183ad1ff1374a8e6bb54d91d2abb, type: 3}
   impactVolume: 1
+  enableImpactCameraShake: 1
+  impactShakeDuration: 0.05
+  impactShakeStrength: 0.05
+  explosiveImpactShakeDuration: 0.12
+  explosiveImpactShakeStrength: 0.12
+  overchargeImpactShakeDuration: 0.08
+  overchargeImpactShakeStrength: 0.08
+  enableHitStop: 1
+  normalHitStopDuration: 0.025
+  overchargeHitStopDuration: 0.045
+  explosiveHitStopDuration: 0.04
   piercing: 0
   maxPierceHits: 3
   piercingDamageFalloff: 0.85
@@ -69,6 +82,8 @@ MonoBehaviour:
   explosionEffectPrefab: {fileID: 0}
   staggerDuration: 0.12
   knockbackStrength: 0.35
+  explosiveStaggerMultiplier: 1.5
+  explosiveKnockbackMultiplier: 2
 --- !u!136 &5619016915570850485
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -238,6 +253,68 @@ TrailRenderer:
   m_Autodestruct: 0
   m_Emitting: 1
   m_ApplyActiveColorSpace: 1
+--- !u!1001 &5660773448351957900
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 4972370075732805622}
+    m_Modifications:
+    - target: {fileID: 4900986757953647468, guid: 75bfd6032949b6f41b9b4eac9abe23e0, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.0070300004
+      objectReference: {fileID: 0}
+    - target: {fileID: 4900986757953647468, guid: 75bfd6032949b6f41b9b4eac9abe23e0, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4900986757953647468, guid: 75bfd6032949b6f41b9b4eac9abe23e0, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.0027300003
+      objectReference: {fileID: 0}
+    - target: {fileID: 4900986757953647468, guid: 75bfd6032949b6f41b9b4eac9abe23e0, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 4900986757953647468, guid: 75bfd6032949b6f41b9b4eac9abe23e0, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 4900986757953647468, guid: 75bfd6032949b6f41b9b4eac9abe23e0, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4900986757953647468, guid: 75bfd6032949b6f41b9b4eac9abe23e0, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4900986757953647468, guid: 75bfd6032949b6f41b9b4eac9abe23e0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 4900986757953647468, guid: 75bfd6032949b6f41b9b4eac9abe23e0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4900986757953647468, guid: 75bfd6032949b6f41b9b4eac9abe23e0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5712848915066792406, guid: 75bfd6032949b6f41b9b4eac9abe23e0, type: 3}
+      propertyPath: m_Name
+      value: Wep_Arrow_Scifi_01
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 75bfd6032949b6f41b9b4eac9abe23e0, type: 3}
+--- !u!4 &760217770897125600 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4900986757953647468, guid: 75bfd6032949b6f41b9b4eac9abe23e0, type: 3}
+  m_PrefabInstance: {fileID: 5660773448351957900}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7264117786339758437
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -289,6 +366,10 @@ PrefabInstance:
     - target: {fileID: 9117237585995010378, guid: d96665d46331bc04e81854fa766b41dd, type: 3}
       propertyPath: m_Name
       value: Meshy_AI_Stylized_sci_fi_injec_0516173630_generate
+      objectReference: {fileID: 0}
+    - target: {fileID: 9117237585995010378, guid: d96665d46331bc04e81854fa766b41dd, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
