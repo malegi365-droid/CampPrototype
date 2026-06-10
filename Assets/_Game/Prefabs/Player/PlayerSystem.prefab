@@ -265,6 +265,7 @@ Transform:
   m_Children:
   - {fileID: 4035498898896354260}
   - {fileID: 6457568896492100111}
+  - {fileID: 7416090041507125767}
   m_Father: {fileID: 1795778698461927134}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &5543184507664221056
@@ -330,7 +331,9 @@ MonoBehaviour:
   deathSound: {fileID: 0}
   deathSoundVolume: 1
   shrinkEnemyOnDeath: 1
+  deathShrinkDelay: 1.25
   deathShrinkDuration: 0.45
+  deathLiftAmount: 0.15
   enableDeathCameraShake: 1
   deathShakeDuration: 0.08
   deathShakeStrength: 0.08
@@ -443,6 +446,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovementController
   runSpeed: 7
   walkSpeed: 3.5
+  visualRoot: {fileID: 7416090041507125767}
+  visualRotationSpeed: 18
+  visualYawOffset: 0
   projectileFireController: {fileID: 0}
   overchargeMoveSpeedMultiplier: 1.25
   abilityHUD: {fileID: 0}
@@ -450,8 +456,10 @@ MonoBehaviour:
   dashDuration: 0.16
   dashCooldown: 2.5
   allowDash: 1
-  characterAnimator: {fileID: 7989618881009263022}
+  characterAnimator: {fileID: 8895819547219230193}
   speedParameterName: Speed
+  moveXParameterName: MoveX
+  moveYParameterName: MoveY
   animationDampTime: 0.1
   dashTriggerName: Dash
   aimCamera: {fileID: 8287292446188345514}
@@ -621,6 +629,7 @@ MonoBehaviour:
   projectileSpawnPoint: {fileID: 8071004249762229253}
   piercingProjectilePrefab: {fileID: 1750164435413093665, guid: 9f6e05471f9d5a0478241d7be9d6642c, type: 3}
   explosiveProjectilePrefab: {fileID: 1750164435413093665, guid: 58ca0f20f2c81ee4bac7a1e4436f937c, type: 3}
+  overchargeProjectilePrefab: {fileID: 0}
   muzzleFlashPrefab: {fileID: 2356583063401529875, guid: 4d97ee2a15261354c908ecac3c535235, type: 3}
   fireAudioSource: {fileID: 266132463162431964}
   piercingFireSound: {fileID: 0}
@@ -628,6 +637,7 @@ MonoBehaviour:
   overchargeFireSound: {fileID: 0}
   characterAnimator: {fileID: 7989618881009263022}
   fireTriggerName: Fire
+  animationBridge: {fileID: 0}
   abilityHUD: {fileID: 0}
   overchargeVisuals: {fileID: 6892599986833221322}
   cameraShake: {fileID: 0}
@@ -763,6 +773,14 @@ MonoBehaviour:
   overchargeEmissionColor: {r: 0.2, g: 1, b: 1, a: 1}
   overchargeEmissionIntensity: 3
   overchargeAuraObject: {fileID: 7765176402368059294}
+  targetCamera: {fileID: 0}
+  normalFOV: 70
+  overchargeFOV: 82
+  fovTransitionSpeed: 6
+  globalVolume: {fileID: 0}
+  overchargeChromaticIntensity: 0.25
+  overchargeVignetteIntensity: 0.28
+  postFXTransitionSpeed: 6
 --- !u!1 &4999484797406438308
 GameObject:
   m_ObjectHideFlags: 0
@@ -796,7 +814,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8433865464782109160
 Transform:
   m_ObjectHideFlags: 0
@@ -930,7 +948,9 @@ MonoBehaviour:
   deathSound: {fileID: 0}
   deathSoundVolume: 1
   shrinkEnemyOnDeath: 1
+  deathShrinkDelay: 1.25
   deathShrinkDuration: 0.45
+  deathLiftAmount: 0.15
   enableDeathCameraShake: 1
   deathShakeDuration: 0.08
   deathShakeStrength: 0.08
@@ -1049,6 +1069,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovementController
   runSpeed: 7
   walkSpeed: 3.5
+  visualRoot: {fileID: 0}
+  visualRotationSpeed: 18
+  visualYawOffset: 0
   projectileFireController: {fileID: 0}
   overchargeMoveSpeedMultiplier: 1.25
   abilityHUD: {fileID: 0}
@@ -1058,6 +1081,8 @@ MonoBehaviour:
   allowDash: 1
   characterAnimator: {fileID: 0}
   speedParameterName: Speed
+  moveXParameterName: MoveX
+  moveYParameterName: MoveY
   animationDampTime: 0.1
   dashTriggerName: Dash
   aimCamera: {fileID: 0}
@@ -1356,7 +1381,9 @@ MonoBehaviour:
   deathSound: {fileID: 0}
   deathSoundVolume: 1
   shrinkEnemyOnDeath: 1
+  deathShrinkDelay: 1.25
   deathShrinkDuration: 0.45
+  deathLiftAmount: 0.15
   enableDeathCameraShake: 1
   deathShakeDuration: 0.08
   deathShakeStrength: 0.08
@@ -1474,6 +1501,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovementController
   runSpeed: 7
   walkSpeed: 3.5
+  visualRoot: {fileID: 0}
+  visualRotationSpeed: 18
+  visualYawOffset: 0
   projectileFireController: {fileID: 0}
   overchargeMoveSpeedMultiplier: 1.25
   abilityHUD: {fileID: 0}
@@ -1483,6 +1513,8 @@ MonoBehaviour:
   allowDash: 1
   characterAnimator: {fileID: 0}
   speedParameterName: Speed
+  moveXParameterName: MoveX
+  moveYParameterName: MoveY
   animationDampTime: 0.1
   dashTriggerName: Dash
   aimCamera: {fileID: 0}
@@ -1692,7 +1724,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36f7b5506d06af24c97696593252aec3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SimpleCameraFollow
-  target: {fileID: 0}
+  target: {fileID: 5276390403324045266}
   offset: {x: 0, y: 2.5, z: -3}
   followSpeed: 4
   lookSpeed: 5
@@ -6681,6 +6713,143 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 59b4fee36ae3b9d48a2f80511941ecee, type: 3}
   m_PrefabInstance: {fileID: 1823265515540550587}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &2970864144969534925
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 5276390403324045266}
+    m_Modifications:
+    - target: {fileID: 5623122633581860439, guid: 50178aa2b4109d544ba6d0b11e5a9db1, type: 3}
+      propertyPath: m_Name
+      value: DPS_Hero_V1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5751553755220973514, guid: 50178aa2b4109d544ba6d0b11e5a9db1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.22746754
+      objectReference: {fileID: 0}
+    - target: {fileID: 5751553755220973514, guid: 50178aa2b4109d544ba6d0b11e5a9db1, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5751553755220973514, guid: 50178aa2b4109d544ba6d0b11e5a9db1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1.5241168
+      objectReference: {fileID: 0}
+    - target: {fileID: 5751553755220973514, guid: 50178aa2b4109d544ba6d0b11e5a9db1, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5751553755220973514, guid: 50178aa2b4109d544ba6d0b11e5a9db1, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5751553755220973514, guid: 50178aa2b4109d544ba6d0b11e5a9db1, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5751553755220973514, guid: 50178aa2b4109d544ba6d0b11e5a9db1, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5751553755220973514, guid: 50178aa2b4109d544ba6d0b11e5a9db1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5751553755220973514, guid: 50178aa2b4109d544ba6d0b11e5a9db1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5751553755220973514, guid: 50178aa2b4109d544ba6d0b11e5a9db1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 4449146312081307584, guid: 50178aa2b4109d544ba6d0b11e5a9db1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 868692383977826986}
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 50178aa2b4109d544ba6d0b11e5a9db1, type: 3}
+--- !u!4 &1478354735433185805 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4449146312081307584, guid: 50178aa2b4109d544ba6d0b11e5a9db1, type: 3}
+  m_PrefabInstance: {fileID: 2970864144969534925}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7416090041507125767 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5751553755220973514, guid: 50178aa2b4109d544ba6d0b11e5a9db1, type: 3}
+  m_PrefabInstance: {fileID: 2970864144969534925}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &8895819547219230193 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5930938945199206460, guid: 50178aa2b4109d544ba6d0b11e5a9db1, type: 3}
+  m_PrefabInstance: {fileID: 2970864144969534925}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &3770642321469605687
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1478354735433185805}
+    m_Modifications:
+    - target: {fileID: 3679973629596383015, guid: 699d0b25b1f7cc94c87ec5c550804720, type: 3}
+      propertyPath: m_Name
+      value: Wep_CompoundBow_03
+      objectReference: {fileID: 0}
+    - target: {fileID: 4060615361846177181, guid: 699d0b25b1f7cc94c87ec5c550804720, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4060615361846177181, guid: 699d0b25b1f7cc94c87ec5c550804720, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4060615361846177181, guid: 699d0b25b1f7cc94c87ec5c550804720, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4060615361846177181, guid: 699d0b25b1f7cc94c87ec5c550804720, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4060615361846177181, guid: 699d0b25b1f7cc94c87ec5c550804720, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4060615361846177181, guid: 699d0b25b1f7cc94c87ec5c550804720, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4060615361846177181, guid: 699d0b25b1f7cc94c87ec5c550804720, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4060615361846177181, guid: 699d0b25b1f7cc94c87ec5c550804720, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4060615361846177181, guid: 699d0b25b1f7cc94c87ec5c550804720, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4060615361846177181, guid: 699d0b25b1f7cc94c87ec5c550804720, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 699d0b25b1f7cc94c87ec5c550804720, type: 3}
+--- !u!4 &868692383977826986 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4060615361846177181, guid: 699d0b25b1f7cc94c87ec5c550804720, type: 3}
+  m_PrefabInstance: {fileID: 3770642321469605687}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4578544141231660095
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6732,6 +6901,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 20c7faa0a7ebaf9439a6aa12a6dba19e, type: 3}
       propertyPath: m_Name
       value: Meshy_AI_Stylized_humanoid_adv_0510005705_generate (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 20c7faa0a7ebaf9439a6aa12a6dba19e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: 20c7faa0a7ebaf9439a6aa12a6dba19e, type: 3}
       propertyPath: m_Controller

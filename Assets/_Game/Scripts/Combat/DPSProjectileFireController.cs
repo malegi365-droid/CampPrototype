@@ -24,6 +24,7 @@ public class DPSProjectileFireController : MonoBehaviour
     [Header("Animation")]
     [SerializeField] private Animator characterAnimator;
     [SerializeField] private string fireTriggerName = "Fire";
+    [SerializeField] private PlayerAnimationBridge animationBridge;
 
     [Header("HUD")]
     [SerializeField] private DPSAbilityHUDController abilityHUD;
@@ -91,6 +92,12 @@ public class DPSProjectileFireController : MonoBehaviour
 
         if (overchargeVisuals == null)
             overchargeVisuals = GetComponent<OverchargeVisualController>();
+
+        if (animationBridge == null)
+            animationBridge = GetComponentInChildren<PlayerAnimationBridge>();
+
+        if (characterAnimator == null)
+            characterAnimator = GetComponentInChildren<Animator>();
     }
 
     private void Update()
@@ -107,8 +114,7 @@ public class DPSProjectileFireController : MonoBehaviour
 
         if (overchargeActive)
         {
-            if (mouse.leftButton.isPressed &&
-                Time.time >= nextFireTime)
+            if (mouse.leftButton.isPressed && Time.time >= nextFireTime)
             {
                 GameObject selectedOverchargeProjectile =
                     overchargeProjectilePrefab != null
@@ -118,9 +124,7 @@ public class DPSProjectileFireController : MonoBehaviour
                 FireProjectile(
                     selectedOverchargeProjectile,
                     mousePosition,
-                    overchargeFireSound != null
-                        ? overchargeFireSound
-                        : piercingFireSound,
+                    overchargeFireSound != null ? overchargeFireSound : piercingFireSound,
                     overchargeShakeDuration,
                     overchargeShakeStrength
                 );
@@ -131,8 +135,7 @@ public class DPSProjectileFireController : MonoBehaviour
             return;
         }
 
-        if (mouse.leftButton.wasPressedThisFrame &&
-            Time.time >= nextFireTime)
+        if (mouse.leftButton.wasPressedThisFrame && Time.time >= nextFireTime)
         {
             FireProjectile(
                 projectilePrefab,
@@ -154,17 +157,13 @@ public class DPSProjectileFireController : MonoBehaviour
                 mousePosition,
                 piercingFireSound != null
                     ? piercingFireSound
-                    : fireAudioSource != null
-                        ? fireAudioSource.clip
-                        : null,
+                    : fireAudioSource != null ? fireAudioSource.clip : null,
                 piercingShakeDuration,
                 piercingShakeStrength
             );
 
             nextPiercingTime = Time.time + piercingCooldown;
-
-            if (abilityHUD != null)
-                abilityHUD.TriggerPiercingCooldown();
+            abilityHUD?.TriggerPiercingCooldown();
         }
 
         if (keyboard != null &&
@@ -176,17 +175,13 @@ public class DPSProjectileFireController : MonoBehaviour
                 mousePosition,
                 explosiveFireSound != null
                     ? explosiveFireSound
-                    : fireAudioSource != null
-                        ? fireAudioSource.clip
-                        : null,
+                    : fireAudioSource != null ? fireAudioSource.clip : null,
                 explosiveShakeDuration,
                 explosiveShakeStrength
             );
 
             nextExplosiveTime = Time.time + explosiveCooldown;
-
-            if (abilityHUD != null)
-                abilityHUD.TriggerExplosiveCooldown();
+            abilityHUD?.TriggerExplosiveCooldown();
         }
     }
 
@@ -195,16 +190,12 @@ public class DPSProjectileFireController : MonoBehaviour
         if (!allowOvercharge)
             return;
 
-        if (overchargeActive &&
-            Time.time >= overchargeEndTime)
+        if (overchargeActive && Time.time >= overchargeEndTime)
         {
             overchargeActive = false;
 
-            if (abilityHUD != null)
-                abilityHUD.SetOverchargeState(false);
-
-            if (overchargeVisuals != null)
-                overchargeVisuals.DisableOverchargeVisuals();
+            abilityHUD?.SetOverchargeState(false);
+            overchargeVisuals?.DisableOverchargeVisuals();
 
             Debug.Log("Overcharge ended.");
         }
@@ -212,11 +203,8 @@ public class DPSProjectileFireController : MonoBehaviour
         if (keyboard == null)
             return;
 
-        if (keyboard.rKey.wasPressedThisFrame &&
-            Time.time >= nextOverchargeTime)
-        {
+        if (keyboard.rKey.wasPressedThisFrame && Time.time >= nextOverchargeTime)
             ActivateOvercharge();
-        }
     }
 
     private void ActivateOvercharge()
@@ -232,8 +220,7 @@ public class DPSProjectileFireController : MonoBehaviour
             abilityHUD.SetOverchargeState(true);
         }
 
-        if (overchargeVisuals != null)
-            overchargeVisuals.EnableOverchargeVisuals();
+        overchargeVisuals?.EnableOverchargeVisuals();
 
         Debug.Log("Overcharge activated.");
     }
@@ -251,21 +238,18 @@ public class DPSProjectileFireController : MonoBehaviour
         float selectedShakeStrength
     )
     {
-        if (selectedProjectilePrefab == null ||
-            projectileSpawnPoint == null)
+        if (selectedProjectilePrefab == null || projectileSpawnPoint == null)
         {
             Debug.LogWarning("[DPSProjectileFireController] Missing projectile prefab or spawn point.");
             return;
         }
 
-        if (characterAnimator != null)
-            characterAnimator.SetTrigger(fireTriggerName);
+        PlayFireAnimation();
 
         if (fireAudioSource != null && fireSound != null)
             fireAudioSource.PlayOneShot(fireSound);
 
-        if (cameraShake != null)
-            cameraShake.Shake(selectedShakeDuration, selectedShakeStrength);
+        cameraShake?.Shake(selectedShakeDuration, selectedShakeStrength);
 
         Vector3 targetPoint = GetAimPoint(mouseScreenPosition);
 
@@ -292,6 +276,15 @@ public class DPSProjectileFireController : MonoBehaviour
 
         if (projectile != null)
             projectile.Initialize(fireDirection, shooterStats, shooterTargeting);
+    }
+
+    private void PlayFireAnimation()
+    {
+        if (animationBridge != null)
+            animationBridge.PlayAttack();
+
+        if (characterAnimator != null && !string.IsNullOrWhiteSpace(fireTriggerName))
+            characterAnimator.SetTrigger(fireTriggerName);
     }
 
     private Vector3 GetAimPoint(Vector2 mouseScreenPosition)

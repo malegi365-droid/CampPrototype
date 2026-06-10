@@ -9,6 +9,11 @@ public class PlayerMovementController : MonoBehaviour
     [SerializeField] private float runSpeed = 7f;
     [SerializeField] private float walkSpeed = 3.5f;
 
+    [Header("Visual Aiming")]
+    [SerializeField] private Transform visualRoot;
+    [SerializeField] private float visualRotationSpeed = 18f;
+    [SerializeField] private float visualYawOffset = 0f;
+
     [Header("Overcharge Movement")]
     [SerializeField] private DPSProjectileFireController projectileFireController;
     [SerializeField] private float overchargeMoveSpeedMultiplier = 1.25f;
@@ -25,6 +30,8 @@ public class PlayerMovementController : MonoBehaviour
     [Header("Animation")]
     [SerializeField] private Animator characterAnimator;
     [SerializeField] private string speedParameterName = "Speed";
+    [SerializeField] private string moveXParameterName = "MoveX";
+    [SerializeField] private string moveYParameterName = "MoveY";
     [SerializeField] private float animationDampTime = 0.1f;
     [SerializeField] private string dashTriggerName = "Dash";
 
@@ -49,6 +56,12 @@ public class PlayerMovementController : MonoBehaviour
 
         if (abilityHUD == null)
             abilityHUD = FindAnyObjectByType<DPSAbilityHUDController>();
+
+        if (characterAnimator == null)
+            characterAnimator = GetComponentInChildren<Animator>();
+
+        if (visualRoot == null && characterAnimator != null)
+            visualRoot = characterAnimator.transform;
     }
 
     private void Update()
@@ -58,64 +71,76 @@ public class PlayerMovementController : MonoBehaviour
         if (!isDashing)
         {
             HandleMovement();
-            HandleMouseFacing();
+            HandleVisualMouseFacing();
         }
     }
 
     private void HandleMovement()
     {
-        Vector3 move = GetMovementInput();
+        Vector3 worldMove = GetMovementInput();
 
-        if (move.sqrMagnitude > 1f)
-            move.Normalize();
+        if (worldMove.sqrMagnitude > 1f)
+            worldMove.Normalize();
 
-        if (move.sqrMagnitude > 0.001f)
-            lastMoveDirection = move.normalized;
+        bool isMoving = worldMove.sqrMagnitude > 0.001f;
 
-        Keyboard kb = Keyboard.current;
-        bool isWalking = false;
+        if (isMoving)
+            lastMoveDirection = worldMove.normalized;
 
-        if (kb != null)
-            isWalking =
-                kb.leftShiftKey.isPressed ||
-                kb.rightShiftKey.isPressed;
-
-        float currentSpeed =
-            isWalking ? walkSpeed : runSpeed;
+        bool isWalking = IsWalkHeld();
+        float currentSpeed = isWalking ? walkSpeed : runSpeed;
 
         if (IsOvercharged())
             currentSpeed *= overchargeMoveSpeedMultiplier;
 
-        float animationSpeed = 0f;
+        // World/map movement. This does NOT depend on facing direction.
+        controller.Move(worldMove * currentSpeed * Time.deltaTime);
 
-        if (move.sqrMagnitude > 0.001f)
-            animationSpeed = isWalking ? 0.5f : 1f;
-
-        if (characterAnimator != null)
-        {
-            characterAnimator.SetFloat(
-                speedParameterName,
-                animationSpeed,
-                animationDampTime,
-                Time.deltaTime
-            );
-        }
-
-        controller.Move(
-            move * currentSpeed * Time.deltaTime
-        );
+        UpdateAnimation(worldMove, isMoving, currentSpeed);
     }
 
-    private bool IsOvercharged()
+    private void UpdateAnimation(Vector3 worldMove, bool isMoving, float currentSpeed)
     {
-        return projectileFireController != null &&
-               projectileFireController.IsOverchargeActive();
+        if (characterAnimator == null)
+            return;
+
+        float animatorSpeed = isMoving ? currentSpeed : 0f;
+
+        Vector3 relativeMove = Vector3.zero;
+
+        if (visualRoot != null && isMoving)
+            relativeMove = visualRoot.InverseTransformDirection(worldMove);
+
+        relativeMove.y = 0f;
+
+        if (relativeMove.sqrMagnitude > 1f)
+            relativeMove.Normalize();
+
+        characterAnimator.SetFloat(
+            speedParameterName,
+            animatorSpeed,
+            animationDampTime,
+            Time.deltaTime
+        );
+
+        characterAnimator.SetFloat(
+            moveXParameterName,
+            relativeMove.x,
+            animationDampTime,
+            Time.deltaTime
+        );
+
+        characterAnimator.SetFloat(
+            moveYParameterName,
+            relativeMove.z,
+            animationDampTime,
+            Time.deltaTime
+        );
     }
 
     private Vector3 GetMovementInput()
     {
         Vector3 move = Vector3.zero;
-
         Keyboard kb = Keyboard.current;
 
         if (kb != null)
@@ -136,6 +161,54 @@ public class PlayerMovementController : MonoBehaviour
         return move;
     }
 
+    private void HandleVisualMouseFacing()
+    {
+        if (visualRoot == null || aimCamera == null)
+            return;
+
+        Mouse mouse = Mouse.current;
+
+        if (mouse == null)
+            return;
+
+        Ray ray = aimCamera.ScreenPointToRay(mouse.position.ReadValue());
+        Plane groundPlane = new Plane(Vector3.up, transform.position);
+
+        if (!groundPlane.Raycast(ray, out float enter))
+            return;
+
+        Vector3 point = ray.GetPoint(enter);
+        Vector3 direction = point - transform.position;
+        direction.y = 0f;
+
+        if (direction.sqrMagnitude <= 0.001f)
+            return;
+
+        Quaternion targetRotation =
+            Quaternion.LookRotation(direction.normalized, Vector3.up) *
+            Quaternion.Euler(0f, visualYawOffset, 0f);
+
+        visualRoot.rotation = Quaternion.Slerp(
+            visualRoot.rotation,
+            targetRotation,
+            visualRotationSpeed * Time.deltaTime
+        );
+    }
+
+    private bool IsWalkHeld()
+    {
+        Keyboard kb = Keyboard.current;
+
+        return kb != null &&
+               (kb.leftShiftKey.isPressed || kb.rightShiftKey.isPressed);
+    }
+
+    private bool IsOvercharged()
+    {
+        return projectileFireController != null &&
+               projectileFireController.IsOverchargeActive();
+    }
+
     private void HandleDashInput()
     {
         if (!allowDash || isDashing)
@@ -146,8 +219,7 @@ public class PlayerMovementController : MonoBehaviour
         if (kb == null)
             return;
 
-        if (kb.spaceKey.wasPressedThisFrame &&
-            Time.time >= nextDashTime)
+        if (kb.spaceKey.wasPressedThisFrame && Time.time >= nextDashTime)
         {
             Vector3 dashDirection = GetMovementInput();
 
@@ -155,89 +227,34 @@ public class PlayerMovementController : MonoBehaviour
                 dashDirection.Normalize();
 
             if (dashDirection.sqrMagnitude <= 0.001f)
-                dashDirection = transform.forward;
+                dashDirection = lastMoveDirection;
 
-            StartCoroutine(
-                DashRoutine(dashDirection.normalized)
-            );
+            StartCoroutine(DashRoutine(dashDirection.normalized));
 
-            nextDashTime =
-                Time.time + dashCooldown;
+            nextDashTime = Time.time + dashCooldown;
 
-            if (abilityHUD != null)
-                abilityHUD.TriggerDashCooldown();
+            abilityHUD?.TriggerDashCooldown();
         }
     }
 
-    private IEnumerator DashRoutine(
-        Vector3 dashDirection
-    )
+    private IEnumerator DashRoutine(Vector3 dashDirection)
     {
         isDashing = true;
 
-        if (characterAnimator != null &&
-            !string.IsNullOrWhiteSpace(dashTriggerName))
-        {
-            characterAnimator.SetTrigger(
-                dashTriggerName
-            );
-        }
+        if (characterAnimator != null && !string.IsNullOrWhiteSpace(dashTriggerName))
+            characterAnimator.SetTrigger(dashTriggerName);
 
         float elapsed = 0f;
-        float dashSpeed =
-            dashDistance / dashDuration;
+        float dashSpeed = dashDistance / dashDuration;
 
         while (elapsed < dashDuration)
         {
-            controller.Move(
-                dashDirection *
-                dashSpeed *
-                Time.deltaTime
-            );
+            controller.Move(dashDirection * dashSpeed * Time.deltaTime);
 
             elapsed += Time.deltaTime;
-
             yield return null;
         }
 
         isDashing = false;
-    }
-
-    private void HandleMouseFacing()
-    {
-        if (aimCamera == null)
-            return;
-
-        Mouse mouse = Mouse.current;
-
-        if (mouse == null)
-            return;
-
-        Ray ray =
-            aimCamera.ScreenPointToRay(
-                mouse.position.ReadValue()
-            );
-
-        Plane groundPlane =
-            new Plane(Vector3.up, Vector3.zero);
-
-        if (!groundPlane.Raycast(ray, out float enter))
-            return;
-
-        Vector3 point = ray.GetPoint(enter);
-
-        Vector3 direction =
-            point - transform.position;
-
-        direction.y = 0f;
-
-        if (direction.sqrMagnitude <= 0.001f)
-            return;
-
-        transform.rotation =
-            Quaternion.LookRotation(
-                direction.normalized,
-                Vector3.up
-            );
     }
 }
