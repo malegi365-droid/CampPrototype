@@ -58,6 +58,7 @@ GameObject:
   - component: {fileID: -3000613930934502291}
   - component: {fileID: -2087619410900731942}
   - component: {fileID: 7298098220224579416}
+  - component: {fileID: 6261662716258187858}
   m_Layer: 6
   m_Name: Enemy_Easy_01
   m_TagString: Untagged
@@ -453,6 +454,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAnimationBridge
   animator: {fileID: 4702576634372464072}
   movementRoot: {fileID: 0}
+--- !u!114 &6261662716258187858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8832387531288768741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 255b450dd0f0bc24fb63827471366eef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PoisonStatusEffect
+  tickInterval: 0.5
 --- !u!1001 &2818937320421741505
 PrefabInstance:
   m_ObjectHideFlags: 0

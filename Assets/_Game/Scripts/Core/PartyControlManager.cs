@@ -21,12 +21,24 @@ public class PartyControlManager : MonoBehaviour
     [Header("Switch Settings")]
     [SerializeField] private bool transferTargetOnSwitch = true;
 
+    [Header("Switch VFX")]
+    [SerializeField] private GameObject classSwitchVFXPrefab;
+    [SerializeField] private float switchVFXLifetime = 1.5f;
+    [SerializeField] private bool spawnVFXBeforeSwitch = true;
+    [SerializeField] private bool spawnVFXAfterSwitch = true;
+
+    [Header("Switch Screen FX")]
+    [SerializeField] private ClassSwitchScreenFX classSwitchScreenFX;
+
     public PartyMemberControlBridge CurrentMember { get; private set; }
 
     private void Start()
     {
         if (startingMember == null)
             startingMember = dps;
+
+        if (classSwitchScreenFX == null)
+            classSwitchScreenFX = FindAnyObjectByType<ClassSwitchScreenFX>();
 
         ActivateOnly(startingMember, true, true);
     }
@@ -85,6 +97,9 @@ public class PartyControlManager : MonoBehaviour
             switchPosition = CurrentMember.transform.position;
             switchRotation = CurrentMember.transform.rotation;
 
+            if (spawnVFXBeforeSwitch)
+                SpawnClassSwitchVFX(switchPosition);
+
             TargetingController oldTargeting = CurrentMember.GetComponent<TargetingController>();
             if (oldTargeting != null)
                 previousTarget = oldTargeting.GetCurrentTarget();
@@ -101,6 +116,12 @@ public class PartyControlManager : MonoBehaviour
         newMember.SetPlayerControlled(true);
         newMember.ForceRefreshState();
 
+        if (spawnVFXAfterSwitch)
+            SpawnClassSwitchVFX(switchPosition);
+
+        if (classSwitchScreenFX != null)
+            classSwitchScreenFX.PlaySwitchPulse();
+
         if (transferTargetOnSwitch && previousTarget != null)
         {
             TargetingController newTargeting = newMember.GetComponent<TargetingController>();
@@ -114,6 +135,20 @@ public class PartyControlManager : MonoBehaviour
             cameraFollowProxy.SetTarget(CurrentMember.CameraFollowTarget, snapCamera);
 
         Debug.Log($"[PartyControlManager] Active class: {CurrentMember.RoleName}");
+    }
+
+    private void SpawnClassSwitchVFX(Vector3 position)
+    {
+        if (classSwitchVFXPrefab == null)
+            return;
+
+        GameObject effect = Instantiate(
+            classSwitchVFXPrefab,
+            position,
+            Quaternion.identity
+        );
+
+        Destroy(effect, switchVFXLifetime);
     }
 
     private PlayerClassType GetClassTypeForMember(PartyMemberControlBridge member)

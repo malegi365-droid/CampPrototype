@@ -62,10 +62,7 @@ public class ToxicologistProjectileFireController : MonoBehaviour
 
         if (mouse.leftButton.wasPressedThisFrame && Time.time >= nextFireTime)
         {
-            Debug.Log("[ToxicologistProjectileFireController] Left click received.");
-
             FireProjectile(mouse.position.ReadValue());
-
             nextFireTime = Time.time + fireCooldown;
         }
     }
@@ -111,19 +108,16 @@ public class ToxicologistProjectileFireController : MonoBehaviour
             fireRotation
         );
 
-        Debug.Log("[ToxicologistProjectileFireController] Toxic projectile spawned.");
-
-        DPSInjectorProjectile projectile =
-            projectileObject.GetComponent<DPSInjectorProjectile>();
+        ToxicProjectile projectile =
+            projectileObject.GetComponent<ToxicProjectile>();
 
         if (projectile != null)
         {
             projectile.Initialize(fireDirection, shooterStats, shooterTargeting);
-            Debug.Log("[ToxicologistProjectileFireController] Projectile initialized.");
         }
         else
         {
-            Debug.LogWarning("[ToxicologistProjectileFireController] Spawned projectile does not have DPSInjectorProjectile on the root.");
+            Debug.LogWarning("[ToxicologistProjectileFireController] Spawned projectile does not have ToxicProjectile on the root.");
         }
     }
 

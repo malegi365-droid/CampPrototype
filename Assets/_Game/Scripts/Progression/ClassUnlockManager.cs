@@ -11,6 +11,11 @@ public class ClassUnlockManager : MonoBehaviour
 {
     public static ClassUnlockManager Instance { get; private set; }
 
+    [Header("Development")]
+    [SerializeField] private bool unlockAllClassesForTesting = false;
+    [SerializeField] private KeyCode toggleUnlockOverrideKey = KeyCode.U;
+    [SerializeField] private KeyCode resetUnlocksKey = KeyCode.R;
+
     private const string DPS_KEY = "CLASS_UNLOCK_DPS";
     private const string TANK_KEY = "CLASS_UNLOCK_TANK";
     private const string HEALER_KEY = "CLASS_UNLOCK_HEALER";
@@ -33,8 +38,13 @@ public class ClassUnlockManager : MonoBehaviour
 
     private void Update()
     {
-        // TEMP DEV RESET
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(toggleUnlockOverrideKey))
+        {
+            unlockAllClassesForTesting = !unlockAllClassesForTesting;
+            Debug.Log($"[ClassUnlockManager] Unlock override: {unlockAllClassesForTesting}");
+        }
+
+        if (Input.GetKeyDown(resetUnlocksKey))
         {
             ResetUnlocks();
         }
@@ -49,6 +59,9 @@ public class ClassUnlockManager : MonoBehaviour
 
     public bool IsClassUnlocked(PlayerClassType classType)
     {
+        if (unlockAllClassesForTesting)
+            return true;
+
         switch (classType)
         {
             case PlayerClassType.DPS:

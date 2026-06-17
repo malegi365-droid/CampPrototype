@@ -154,7 +154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitStats
   unitName: Unit
-  role: 0
+  role: 2
   level: 1
   maxHP: 90
   currentHP: 90
@@ -350,11 +350,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2665302bcc955154ba6136297f1ee09f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PartyMemberControlBridge
-  roleName: DPS
+  roleName: Toxicologist
   playerControlledComponents:
   - {fileID: 8903264855185039863}
   - {fileID: 3029725584241639628}
   - {fileID: 1842089535371552290}
+  - {fileID: 2673029910522070987}
   aiControlledComponents: []
   playerControlledIndicator: {fileID: 0}
   cameraFollowTarget: {fileID: 0}
@@ -639,7 +640,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2320260435561171919}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b031da654d6d5844fb420c06990c735f, type: 3}
   m_Name: 
@@ -660,39 +661,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ToxicologistProjectileFireController
   projectilePrefab: {fileID: 1750164435413093665, guid: cb21362aa6ec6e040a90e0898fa77ea1, type: 3}
-  projectileSpawnPoint: {fileID: 0}
-  piercingProjectilePrefab: {fileID: 0}
-  explosiveProjectilePrefab: {fileID: 0}
-  overchargeProjectilePrefab: {fileID: 0}
+  projectileSpawnPoint: {fileID: 2789976644733808699}
   muzzleFlashPrefab: {fileID: 0}
   fireAudioSource: {fileID: 0}
-  piercingFireSound: {fileID: 0}
-  explosiveFireSound: {fileID: 0}
-  overchargeFireSound: {fileID: 0}
-  characterAnimator: {fileID: 0}
-  bowAnimator: {fileID: 0}
+  fireSound: {fileID: 0}
+  characterAnimator: {fileID: 4880174835211648940}
   fireTriggerName: Attack
   animationBridge: {fileID: 0}
-  abilityHUD: {fileID: 0}
-  overchargeVisuals: {fileID: 0}
   cameraShake: {fileID: 0}
   shakeDuration: 0.06
   shakeStrength: 0.04
-  piercingShakeDuration: 0.08
-  piercingShakeStrength: 0.06
-  explosiveShakeDuration: 0.12
-  explosiveShakeStrength: 0.1
-  overchargeShakeDuration: 0.05
-  overchargeShakeStrength: 0.07
-  aimCamera: {fileID: 0}
+  aimCamera: {fileID: 8287292446188345514}
   aimDebugMarker: {fileID: 0}
   fireCooldown: 0.25
-  piercingCooldown: 3
-  explosiveCooldown: 5
-  allowOvercharge: 1
-  overchargeDuration: 6
-  overchargeCooldown: 12
-  overchargeFireRate: 0.08
 --- !u!1 &2588973136520821322
 GameObject:
   m_ObjectHideFlags: 0
