@@ -768,6 +768,11 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 83758554275269752, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
   m_PrefabInstance: {fileID: 450790197}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &389393745 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4758352932267496135, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
+  m_PrefabInstance: {fileID: 450790197}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &414913762 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5572020325525284250, guid: 787c2eb2cbf40e54eae650513ea2fe61, type: 3}
@@ -1051,6 +1056,10 @@ PrefabInstance:
       propertyPath: classSwitchVFXPrefab
       value: 
       objectReference: {fileID: 6679674221456633185, guid: a4488f1897df5c6499315de9ec3ab68d, type: 3}
+    - target: {fileID: 4758352932267496135, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
+      propertyPath: m_Name
+      value: Ranger
+      objectReference: {fileID: 0}
     - target: {fileID: 5675819169638613698, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
       propertyPath: cameraFollowTarget
       value: 
@@ -1082,6 +1091,10 @@ PrefabInstance:
     - target: {fileID: 7416090041507125767, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7436561244145949594, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
+      propertyPath: m_Name
+      value: Ranger_Hero_V1
       objectReference: {fileID: 0}
     - target: {fileID: 7848615516531898793, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
       propertyPath: target
@@ -1139,6 +1152,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 9154892709958257820, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1430816788}
+    - targetCorrespondingSourceObject: {fileID: 4758352932267496135, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1808114347}
     - targetCorrespondingSourceObject: {fileID: 2320260435561171919, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1713471675}
@@ -2110,6 +2126,10 @@ PrefabInstance:
     - target: {fileID: 3772962406135786767, guid: 787c2eb2cbf40e54eae650513ea2fe61, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6075361923714552068, guid: 787c2eb2cbf40e54eae650513ea2fe61, type: 3}
+      propertyPath: m_Name
+      value: RangerAbilityHUD
       objectReference: {fileID: 0}
     - target: {fileID: 8381315031334858802, guid: 787c2eb2cbf40e54eae650513ea2fe61, type: 3}
       propertyPath: followSpeed
@@ -7826,7 +7846,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7902060030379050445, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
   m_PrefabInstance: {fileID: 450790197}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 389393745}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cd4d235e661802c4e8d26cf80a4d19ce, type: 3}
@@ -8237,6 +8257,28 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5276390403324045266, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
   m_PrefabInstance: {fileID: 450790197}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1808114347
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 389393745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5502c51499b3b0458219ae3d03e4474, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RangerOverwatchAbility
+  overwatchKey: 113
+  overwatchBowPrefab: {fileID: 7921235592178905189, guid: 2d79b012933db20479306d29bfcdb3f9, type: 3}
+  duration: 10
+  cooldown: 14
+  damageMultiplier: 0.65
+  fireInterval: 1
+  targetRange: 12
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1 &1919276570
 GameObject:
   m_ObjectHideFlags: 0
