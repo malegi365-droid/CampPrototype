@@ -6,7 +6,7 @@ public class RangerOverwatchAbility : MonoBehaviour
     [SerializeField] private KeyCode overwatchKey = KeyCode.Q;
 
     [Header("Overwatch Prefab")]
-    [SerializeField] private GameObject overwatchBowPrefab;
+    [SerializeField] private GameObject overwatchDronePrefab;
 
     [Header("Settings")]
     [SerializeField] private float duration = 10f;
@@ -35,24 +35,27 @@ public class RangerOverwatchAbility : MonoBehaviour
         if (Time.time < nextUseTime)
             return;
 
-        if (overwatchBowPrefab == null)
+        if (overwatchDronePrefab == null)
         {
-            Debug.LogWarning("[RangerOverwatchAbility] Missing overwatch bow prefab.");
+            Debug.LogWarning("[RangerOverwatchAbility] Missing overwatch drone prefab.");
             return;
         }
 
-        GameObject bowObject = Instantiate(
-            overwatchBowPrefab,
+        GameObject droneObject = Instantiate(
+            overwatchDronePrefab,
             transform.position + Vector3.up * 2f,
             Quaternion.identity
         );
 
-        OverwatchBowController bow =
-            bowObject.GetComponent<OverwatchBowController>();
+        OverwatchDroneController drone =
+            droneObject.GetComponent<OverwatchDroneController>();
 
-        if (bow != null)
+        if (drone == null)
+            drone = droneObject.GetComponentInChildren<OverwatchDroneController>();
+
+        if (drone != null)
         {
-            bow.Initialize(
+            drone.Initialize(
                 rangerStats,
                 duration,
                 damageMultiplier,
@@ -61,9 +64,13 @@ public class RangerOverwatchAbility : MonoBehaviour
                 enemyLayer
             );
         }
+        else
+        {
+            Debug.LogWarning("[RangerOverwatchAbility] Spawned prefab is missing OverwatchDroneController.");
+        }
 
         nextUseTime = Time.time + cooldown;
 
-        Debug.Log("[RangerOverwatchAbility] Overwatch activated.");
+        Debug.Log("[RangerOverwatchAbility] Overwatch drone activated.");
     }
 }

@@ -151,6 +151,9 @@ public class RangerProjectileFireController : MonoBehaviour
             nextFireTime = Time.time + fireCooldown;
         }
 
+        // Piercing Shot intentionally disabled for now.
+        // Q is currently reserved for Ranger Overwatch Drone.
+        /*
         if (keyboard != null && keyboard.qKey.wasPressedThisFrame && Time.time >= nextPiercingTime)
         {
             FireProjectile(
@@ -164,6 +167,7 @@ public class RangerProjectileFireController : MonoBehaviour
             nextPiercingTime = Time.time + piercingCooldown;
             abilityHUD?.TriggerPiercingCooldown();
         }
+        */
 
         if (keyboard != null && keyboard.eKey.wasPressedThisFrame && Time.time >= nextExplosiveTime)
         {
