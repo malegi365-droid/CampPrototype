@@ -33,6 +33,9 @@ public class HealthController : MonoBehaviour, IDamageable
     [Header("Damage Number Settings")]
     [SerializeField] private float temporaryCritThreshold = 20f;
 
+    [Header("Healing Number Settings")]
+    [SerializeField] private bool showHealingNumbers = true;
+
     [Header("Player Damage Feedback")]
     [SerializeField] private bool enablePlayerDamageFeedback = true;
     [SerializeField] private bool logPlayerDamageFeedback = true;
@@ -57,14 +60,13 @@ public class HealthController : MonoBehaviour, IDamageable
         if (bossArmor != null)
             incomingDamage = bossArmor.ModifyIncomingDamage(incomingDamage);
 
+        if (stats.role != UnitRole.Enemy && PlayerBuffController.Instance != null)
+            incomingDamage = PlayerBuffController.Instance.ModifyIncomingPlayerDamage(incomingDamage);
+
         float reducedDamage = Mathf.Max(1f, incomingDamage - stats.defense);
         stats.currentHP = Mathf.Max(0f, stats.currentHP - reducedDamage);
 
-        if (stats.role == UnitRole.Enemy)
-        {
-            bool crit = reducedDamage >= temporaryCritThreshold;
-            DamageNumberSpawner.ShowDamage(transform.position, reducedDamage, crit);
-        }
+        ShowDamageNumber(reducedDamage);
 
         TriggerEnemyHitFlash();
         TriggerDamageFeedback(reducedDamage);
@@ -74,6 +76,41 @@ public class HealthController : MonoBehaviour, IDamageable
 
         if (stats.currentHP <= 0f)
             Die();
+    }
+
+    public void ReceiveHealing(float amount)
+    {
+        if (dead) return;
+
+        float previousHP = stats.currentHP;
+
+        stats.currentHP = Mathf.Min(stats.maxHP, stats.currentHP + amount);
+
+        float actualHealing = stats.currentHP - previousHP;
+
+        if (actualHealing > 0f && showHealingNumbers)
+        {
+            DamageNumberSpawner.ShowHealing(
+                transform.position,
+                actualHealing
+            );
+        }
+
+        OnHealthChanged?.Invoke(stats.currentHP, stats.maxHP);
+    }
+
+    private void ShowDamageNumber(float reducedDamage)
+    {
+        if (stats.role != UnitRole.Enemy)
+            return;
+
+        bool crit = reducedDamage >= temporaryCritThreshold;
+
+        DamageNumberSpawner.ShowDamage(
+            transform.position,
+            reducedDamage,
+            crit
+        );
     }
 
     private void TriggerEnemyHitFlash()
@@ -120,14 +157,6 @@ public class HealthController : MonoBehaviour, IDamageable
 
         if (logPlayerDamageFeedback)
             Debug.Log($"{gameObject.name} took {damageTaken} damage. Player damage feedback triggered.");
-    }
-
-    public void ReceiveHealing(float amount)
-    {
-        if (dead) return;
-
-        stats.currentHP = Mathf.Min(stats.maxHP, stats.currentHP + amount);
-        OnHealthChanged?.Invoke(stats.currentHP, stats.maxHP);
     }
 
     public bool IsDead()

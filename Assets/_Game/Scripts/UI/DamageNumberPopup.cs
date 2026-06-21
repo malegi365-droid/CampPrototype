@@ -21,11 +21,11 @@ public class DamageNumberPopup : MonoBehaviour
     [Header("Colors")]
     [SerializeField] private Color normalColor = Color.white;
     [SerializeField] private Color critColor = new Color(1f, 0.75f, 0.15f);
+    [SerializeField] private Color healingColor = new Color(0.2f, 1f, 0.35f);
 
     private float timer;
     private Vector3 moveDirection;
     private Color currentColor;
-    private bool isCrit;
 
     private void Awake()
     {
@@ -41,15 +41,21 @@ public class DamageNumberPopup : MonoBehaviour
         transform.localScale = Vector3.one * startScale;
     }
 
-    public void Initialize(float damageAmount, bool crit = false)
+    public void Initialize(float amount, bool crit = false, bool healing = false)
     {
-        isCrit = crit;
-
         if (damageText != null)
         {
-            damageText.text = Mathf.CeilToInt(damageAmount).ToString();
+            int roundedAmount = Mathf.CeilToInt(amount);
 
-            currentColor = isCrit ? critColor : normalColor;
+            damageText.text = healing
+                ? $"+{roundedAmount}"
+                : roundedAmount.ToString();
+
+            if (healing)
+                currentColor = healingColor;
+            else
+                currentColor = crit ? critColor : normalColor;
+
             damageText.color = currentColor;
         }
     }
