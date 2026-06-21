@@ -33,7 +33,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: DPS_Hero_V1
+  m_Name: Ranger_Hero_V1
   m_Shader: {fileID: -6465566751694194690, guid: db628544640279b41a4a7aa5d75c0322, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0

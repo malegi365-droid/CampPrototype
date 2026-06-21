@@ -3,17 +3,17 @@ using UnityEngine;
 public class PartyControlManager : MonoBehaviour
 {
     [Header("Class Bodies")]
-    [SerializeField] private PartyMemberControlBridge tank;
-    [SerializeField] private PartyMemberControlBridge dps;
-    [SerializeField] private PartyMemberControlBridge healer;
+    [SerializeField] private PartyMemberControlBridge guardian;
+    [SerializeField] private PartyMemberControlBridge ranger;
+    [SerializeField] private PartyMemberControlBridge toxicologist;
 
     [Header("Starting Class")]
     [SerializeField] private PartyMemberControlBridge startingMember;
 
     [Header("Keybinds")]
-    [SerializeField] private KeyCode tankKey = KeyCode.F1;
-    [SerializeField] private KeyCode dpsKey = KeyCode.F2;
-    [SerializeField] private KeyCode healerKey = KeyCode.F3;
+    [SerializeField] private KeyCode guardianKey = KeyCode.F1;
+    [SerializeField] private KeyCode rangerKey = KeyCode.F2;
+    [SerializeField] private KeyCode toxicologistKey = KeyCode.F3;
 
     [Header("Camera")]
     [SerializeField] private CameraFollowProxy cameraFollowProxy;
@@ -35,24 +35,21 @@ public class PartyControlManager : MonoBehaviour
     private void Start()
     {
         if (startingMember == null)
-            startingMember = dps;
-
-        if (classSwitchScreenFX == null)
-            classSwitchScreenFX = FindAnyObjectByType<ClassSwitchScreenFX>();
+            startingMember = ranger;
 
         ActivateOnly(startingMember, true, true);
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(tankKey))
-            ActivateOnly(tank, false);
+        if (Input.GetKeyDown(guardianKey))
+            ActivateOnly(guardian, false);
 
-        if (Input.GetKeyDown(dpsKey))
-            ActivateOnly(dps, false);
+        if (Input.GetKeyDown(rangerKey))
+            ActivateOnly(ranger, false);
 
-        if (Input.GetKeyDown(healerKey))
-            ActivateOnly(healer, false);
+        if (Input.GetKeyDown(toxicologistKey))
+            ActivateOnly(toxicologist, false);
     }
 
     public void ActivateOnly(PartyMemberControlBridge newMember, bool snapCamera)
@@ -105,9 +102,9 @@ public class PartyControlManager : MonoBehaviour
                 previousTarget = oldTargeting.GetCurrentTarget();
         }
 
-        DeactivateMember(tank);
-        DeactivateMember(dps);
-        DeactivateMember(healer);
+        DeactivateMember(guardian);
+        DeactivateMember(ranger);
+        DeactivateMember(toxicologist);
 
         newMember.transform.position = switchPosition;
         newMember.transform.rotation = switchRotation;
@@ -119,9 +116,6 @@ public class PartyControlManager : MonoBehaviour
         if (spawnVFXAfterSwitch)
             SpawnClassSwitchVFX(switchPosition);
 
-        if (classSwitchScreenFX != null)
-            classSwitchScreenFX.PlaySwitchPulse();
-
         if (transferTargetOnSwitch && previousTarget != null)
         {
             TargetingController newTargeting = newMember.GetComponent<TargetingController>();
@@ -131,10 +125,28 @@ public class PartyControlManager : MonoBehaviour
 
         CurrentMember = newMember;
 
-        if (cameraFollowProxy != null)
-            cameraFollowProxy.SetTarget(CurrentMember.CameraFollowTarget, snapCamera);
+        UpdateCameraTarget(snapCamera);
+
+        if (classSwitchScreenFX != null)
+            classSwitchScreenFX.PlaySwitchPulse();
 
         Debug.Log($"[PartyControlManager] Active class: {CurrentMember.RoleName}");
+    }
+
+    private void UpdateCameraTarget(bool snapCamera)
+    {
+        if (cameraFollowProxy == null || CurrentMember == null)
+            return;
+
+        Transform followTarget = CurrentMember.CameraFollowTarget;
+
+        if (followTarget == null)
+        {
+            followTarget = CurrentMember.transform;
+            Debug.LogWarning($"[PartyControlManager] {CurrentMember.RoleName} has no CameraFollowTarget. Falling back to root transform.");
+        }
+
+        cameraFollowProxy.SetTarget(followTarget, snapCamera);
     }
 
     private void SpawnClassSwitchVFX(Vector3 position)
@@ -153,10 +165,10 @@ public class PartyControlManager : MonoBehaviour
 
     private PlayerClassType GetClassTypeForMember(PartyMemberControlBridge member)
     {
-        if (member == tank)
+        if (member == guardian)
             return PlayerClassType.Tank;
 
-        if (member == healer)
+        if (member == toxicologist)
             return PlayerClassType.Healer;
 
         return PlayerClassType.DPS;

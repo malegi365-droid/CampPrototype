@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6862083297387214058}
   - component: {fileID: 7153182359595763272}
   m_Layer: 0
-  m_Name: DPS_PiercingProjectile
+  m_Name: Ranger_OverchargeProjectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -56,14 +56,33 @@ MonoBehaviour:
     m_Bits: 4294967295
   armTime: 0.1
   damageMultiplier: 1.25
+  overchargeProjectile: 1
   impactEffectPrefab: {fileID: 6731236443730300185, guid: 3469330221830ad48ad88a113db8d35e, type: 3}
+  hitSparkEffectPrefab: {fileID: 0}
   impactSound: {fileID: 8300000, guid: 5ca3183ad1ff1374a8e6bb54d91d2abb, type: 3}
   impactVolume: 1
+  enableImpactCameraShake: 1
+  impactShakeDuration: 0.05
+  impactShakeStrength: 0.05
+  explosiveImpactShakeDuration: 0.12
+  explosiveImpactShakeStrength: 0.12
+  overchargeImpactShakeDuration: 0.08
+  overchargeImpactShakeStrength: 0.08
+  enableHitStop: 1
+  normalHitStopDuration: 0.025
+  overchargeHitStopDuration: 0.045
+  explosiveHitStopDuration: 0.04
   piercing: 1
   maxPierceHits: 3
   piercingDamageFalloff: 0.85
+  explosive: 0
+  explosionRadius: 4
+  explosionDamageMultiplier: 0.75
+  explosionEffectPrefab: {fileID: 0}
   staggerDuration: 0.12
   knockbackStrength: 0.35
+  explosiveStaggerMultiplier: 1.5
+  explosiveKnockbackMultiplier: 2
 --- !u!136 &5619016915570850485
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -140,7 +159,7 @@ TrailRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: da8cc3e5c53f56849b2efa6e0d583950, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -163,7 +182,7 @@ TrailRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Time: 0.15
+  m_Time: 0.18
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
@@ -173,7 +192,7 @@ TrailRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.008618742
+        value: 0.14786282
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -182,7 +201,7 @@ TrailRenderer:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 1
-        value: 0
+        value: 0.015879668
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -241,6 +260,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4972370075732805622}
     m_Modifications:
+    - target: {fileID: 7315555772874436767, guid: d96665d46331bc04e81854fa766b41dd, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4ab4618a00683b94e896dba59bde0141, type: 2}
     - target: {fileID: 8488511155048991728, guid: d96665d46331bc04e81854fa766b41dd, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

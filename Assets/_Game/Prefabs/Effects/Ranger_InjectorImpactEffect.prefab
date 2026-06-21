@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 734138634940212968}
   - component: {fileID: 8565964769204135986}
   m_Layer: 0
-  m_Name: DPS_InjectorImpactEffect
+  m_Name: Ranger_InjectorImpactEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

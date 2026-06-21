@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DPSAbilityHUDController : MonoBehaviour
+public class RangerAbilityHUDController : MonoBehaviour
 {
     [Header("Cooldown Overlays")]
     [SerializeField] private Image piercingCooldownOverlay;

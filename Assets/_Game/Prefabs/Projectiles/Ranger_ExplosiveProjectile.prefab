@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6862083297387214058}
   - component: {fileID: 7153182359595763272}
   m_Layer: 0
-  m_Name: DPS_ExplosiveProjectile
+  m_Name: Ranger_ExplosiveProjectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

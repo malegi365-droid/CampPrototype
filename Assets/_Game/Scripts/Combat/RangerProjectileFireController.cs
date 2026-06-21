@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class DPSProjectileFireController : MonoBehaviour
+public class RangerProjectileFireController : MonoBehaviour
 {
     [Header("Basic Projectile")]
     [SerializeField] private GameObject projectilePrefab;
@@ -28,7 +28,7 @@ public class DPSProjectileFireController : MonoBehaviour
     [SerializeField] private PlayerAnimationBridge animationBridge;
 
     [Header("HUD")]
-    [SerializeField] private DPSAbilityHUDController abilityHUD;
+    [SerializeField] private RangerAbilityHUDController abilityHUD;
 
     [Header("Overcharge Visuals")]
     [SerializeField] private OverchargeVisualController overchargeVisuals;
@@ -88,7 +88,7 @@ public class DPSProjectileFireController : MonoBehaviour
             aimCamera = Camera.main;
 
         if (abilityHUD == null)
-            abilityHUD = FindAnyObjectByType<DPSAbilityHUDController>();
+            abilityHUD = FindAnyObjectByType<RangerAbilityHUDController>();
 
         if (overchargeVisuals == null)
             overchargeVisuals = GetComponent<OverchargeVisualController>();
@@ -98,6 +98,9 @@ public class DPSProjectileFireController : MonoBehaviour
 
         if (characterAnimator == null)
             characterAnimator = GetComponentInChildren<Animator>();
+
+        if (cameraShake == null)
+            cameraShake = FindAnyObjectByType<CameraShakeController>();
     }
 
     private void Update()
@@ -225,7 +228,7 @@ public class DPSProjectileFireController : MonoBehaviour
     {
         if (selectedProjectilePrefab == null || projectileSpawnPoint == null)
         {
-            Debug.LogWarning("[DPSProjectileFireController] Missing projectile prefab or spawn point.");
+            Debug.LogWarning("[RangerProjectileFireController] Missing projectile prefab or spawn point.");
             return;
         }
 
@@ -256,10 +259,18 @@ public class DPSProjectileFireController : MonoBehaviour
             fireRotation
         );
 
-        DPSInjectorProjectile projectile = projectileObject.GetComponent<DPSInjectorProjectile>();
+        RangerInjectorProjectile projectile =
+            projectileObject.GetComponentInChildren<RangerInjectorProjectile>();
 
         if (projectile != null)
+        {
+            Debug.Log($"[RangerProjectileFireController] Initializing projectile. Direction={fireDirection}");
             projectile.Initialize(fireDirection, shooterStats, shooterTargeting);
+        }
+        else
+        {
+            Debug.LogWarning("[RangerProjectileFireController] Spawned projectile is missing RangerInjectorProjectile.");
+        }
     }
 
     private void PlayFireAnimation()

@@ -2253,7 +2253,7 @@ GameObject:
   - component: {fileID: 5930938945199206460}
   - component: {fileID: 7302474725034147677}
   m_Layer: 0
-  m_Name: DPS_Hero_V1
+  m_Name: Ranger_Hero_V1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

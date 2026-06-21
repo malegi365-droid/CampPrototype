@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DPSInjectorProjectile : MonoBehaviour
+public class RangerInjectorProjectile : MonoBehaviour
 {
     [Header("Movement")]
     [SerializeField] private float speed = 15f;
@@ -71,6 +71,8 @@ public class DPSInjectorProjectile : MonoBehaviour
         shooterStats = ownerStats;
         shooterTargeting = ownerTargeting;
         spawnTime = Time.time;
+
+        Debug.Log($"[RangerInjectorProjectile] Initialized. Direction={travelDirection}, Speed={speed}");
 
         cameraShake = FindAnyObjectByType<CameraShakeController>();
 

@@ -276,7 +276,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: DPS_Hero_Controller
+  m_Name: Ranger_Hero_Controller
   serializedVersion: 6
   m_AnimatorParameters:
   - m_Name: Speed

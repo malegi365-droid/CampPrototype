@@ -5,7 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(HealthController))]
 [RequireComponent(typeof(UnitStats))]
 [RequireComponent(typeof(CharacterController))]
-public class DPSAIController : MonoBehaviour
+public class RangerAIController : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private PartyControlManager partyControlManager;

@@ -15,11 +15,11 @@ public class PlayerMovementController : MonoBehaviour
     [SerializeField] private float visualYawOffset = 0f;
 
     [Header("Overcharge Movement")]
-    [SerializeField] private DPSProjectileFireController projectileFireController;
+    [SerializeField] private RangerProjectileFireController projectileFireController;
     [SerializeField] private float overchargeMoveSpeedMultiplier = 1.25f;
 
     [Header("HUD")]
-    [SerializeField] private DPSAbilityHUDController abilityHUD;
+    [SerializeField] private RangerAbilityHUDController abilityHUD;
 
     [Header("Dash")]
     [SerializeField] private float dashDistance = 5f;
@@ -52,10 +52,10 @@ public class PlayerMovementController : MonoBehaviour
             aimCamera = Camera.main;
 
         if (projectileFireController == null)
-            projectileFireController = GetComponent<DPSProjectileFireController>();
+            projectileFireController = GetComponent<RangerProjectileFireController>();
 
         if (abilityHUD == null)
-            abilityHUD = FindAnyObjectByType<DPSAbilityHUDController>();
+            abilityHUD = FindAnyObjectByType<RangerAbilityHUDController>();
 
         if (characterAnimator == null)
             characterAnimator = GetComponentInChildren<Animator>();

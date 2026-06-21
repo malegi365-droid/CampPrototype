@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 251278940614029883}
   - component: {fileID: 7279020706526427078}
   m_Layer: 6
-  m_Name: DPS_MuzzleFlash
+  m_Name: Ranger_MuzzleFlash
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
