@@ -16,12 +16,18 @@ public class RangerOverwatchAbility : MonoBehaviour
     [SerializeField] private float targetRange = 12f;
     [SerializeField] private LayerMask enemyLayer;
 
+    [Header("HUD")]
+    [SerializeField] private RangerAbilityHUDController abilityHUD;
+
     private float nextUseTime;
     private UnitStats rangerStats;
 
     private void Awake()
     {
         rangerStats = GetComponent<UnitStats>();
+
+        if (abilityHUD == null)
+            abilityHUD = FindAnyObjectByType<RangerAbilityHUDController>();
     }
 
     private void Update()
@@ -71,6 +77,16 @@ public class RangerOverwatchAbility : MonoBehaviour
 
         nextUseTime = Time.time + cooldown;
 
+        abilityHUD?.TriggerOverwatchCooldown();
+        abilityHUD?.SetOverwatchState(true);
+
+        Invoke(nameof(EndOverwatchHUDState), duration);
+
         Debug.Log("[RangerOverwatchAbility] Overwatch drone activated.");
+    }
+
+    private void EndOverwatchHUDState()
+    {
+        abilityHUD?.SetOverwatchState(false);
     }
 }
