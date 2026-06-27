@@ -3,7 +3,7 @@ using UnityEngine;
 public class ToxicologistPoisonCloudAbility : MonoBehaviour
 {
     [Header("Input")]
-    [SerializeField] private KeyCode cloudKey = KeyCode.Q;
+    [SerializeField] private KeyCode cloudKey = KeyCode.E;
 
     [Header("Cloud Prefab")]
     [SerializeField] private GameObject poisonCloudPrefab;
@@ -21,15 +21,30 @@ public class ToxicologistPoisonCloudAbility : MonoBehaviour
     [SerializeField] private float poisonDamagePerTick = 5f;
     [SerializeField] private float cooldown = 10f;
 
+    [Header("Containment Failure Boost")]
+    [SerializeField] private float containmentCloudDurationMultiplier = 1.5f;
+    [SerializeField] private float containmentPoisonDurationMultiplier = 1.5f;
+    [SerializeField] private float containmentDamageMultiplier = 1.5f;
+    [SerializeField] private float containmentScaleMultiplier = 1.4f;
+
     [Header("Targeting")]
     [SerializeField] private LayerMask enemyLayer;
 
+    [Header("HUD")]
+    [SerializeField] private RangerAbilityHUDController abilityHUD;
+
     private float nextCloudTime;
+    private ToxicologistContainmentFailureAbility containmentFailure;
 
     private void Awake()
     {
+        containmentFailure = GetComponent<ToxicologistContainmentFailureAbility>();
+
         if (aimCamera == null)
             aimCamera = Camera.main;
+
+        if (abilityHUD == null)
+            abilityHUD = FindHUDByName("ToxicologistAbilityHUD");
     }
 
     private void Update()
@@ -55,11 +70,27 @@ public class ToxicologistPoisonCloudAbility : MonoBehaviour
             return;
         }
 
+        float finalCloudDuration = cloudDuration;
+        float finalPoisonDuration = poisonDuration;
+        float finalPoisonDamagePerTick = poisonDamagePerTick;
+        float finalScaleMultiplier = 1f;
+
+        if (IsContainmentFailureActive())
+        {
+            finalCloudDuration *= containmentCloudDurationMultiplier;
+            finalPoisonDuration *= containmentPoisonDurationMultiplier;
+            finalPoisonDamagePerTick *= containmentDamageMultiplier;
+            finalScaleMultiplier = containmentScaleMultiplier;
+        }
+
         GameObject cloudObject = Instantiate(
             poisonCloudPrefab,
             spawnPosition,
             Quaternion.identity
         );
+
+        if (finalScaleMultiplier != 1f)
+            cloudObject.transform.localScale *= finalScaleMultiplier;
 
         PoisonCloudZone cloudZone =
             cloudObject.GetComponent<PoisonCloudZone>();
@@ -67,17 +98,26 @@ public class ToxicologistPoisonCloudAbility : MonoBehaviour
         if (cloudZone != null)
         {
             cloudZone.Initialize(
-                cloudDuration,
+                finalCloudDuration,
                 tickInterval,
-                poisonDuration,
-                poisonDamagePerTick,
+                finalPoisonDuration,
+                finalPoisonDamagePerTick,
                 enemyLayer
             );
         }
 
+        if (abilityHUD != null)
+            abilityHUD.TriggerSignatureCooldown();
+        else
+            Debug.LogWarning("[ToxicologistPoisonCloudAbility] Missing Ability HUD reference.");
+
         nextCloudTime = Time.time + cooldown;
 
-        Debug.Log("[ToxicologistPoisonCloudAbility] Poison cloud deployed.");
+        Debug.Log(
+            $"[ToxicologistPoisonCloudAbility] Poison cloud deployed. " +
+            $"Duration={finalCloudDuration}, PoisonDuration={finalPoisonDuration}, " +
+            $"Damage={finalPoisonDamagePerTick}, Scale={finalScaleMultiplier}"
+        );
     }
 
     private bool TryGetClickWorldPoint(out Vector3 worldPoint)
@@ -114,5 +154,27 @@ public class ToxicologistPoisonCloudAbility : MonoBehaviour
         }
 
         return false;
+    }
+
+    private bool IsContainmentFailureActive()
+    {
+        return containmentFailure != null &&
+               containmentFailure.IsContainmentFailureActive;
+    }
+
+    private RangerAbilityHUDController FindHUDByName(string hudName)
+    {
+        RangerAbilityHUDController[] huds =
+            FindObjectsByType<RangerAbilityHUDController>(
+                FindObjectsInactive.Include
+            );
+
+        foreach (RangerAbilityHUDController hud in huds)
+        {
+            if (hud.gameObject.name == hudName)
+                return hud;
+        }
+
+        return null;
     }
 }

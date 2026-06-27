@@ -7,6 +7,7 @@ public class ToxicologistThrusterAbility : MonoBehaviour
 
     [Header("Dash")]
     [SerializeField] private float cooldown = 4f;
+    [SerializeField] private float containmentCooldown = 1f;
     [SerializeField] private float dashDistance = 7f;
     [SerializeField] private float dashDuration = 0.18f;
     [SerializeField] private AnimationCurve dashCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
@@ -16,6 +17,7 @@ public class ToxicologistThrusterAbility : MonoBehaviour
     [SerializeField] private float trailSpawnInterval = 0.035f;
     [SerializeField] private float trailSpawnHeightOffset = 0.1f;
     [SerializeField] private float trailSideOffset = 0.45f;
+    [SerializeField] private float containmentTrailSideOffset = 0.75f;
     [SerializeField] private bool spawnSideTrails = true;
 
     [Header("VFX")]
@@ -32,6 +34,7 @@ public class ToxicologistThrusterAbility : MonoBehaviour
 
     private CharacterController characterController;
     private PlayerMovementController movementController;
+    private ToxicologistContainmentFailureAbility containmentFailure;
 
     private float nextUseTime;
     private bool isDashing;
@@ -43,9 +46,10 @@ public class ToxicologistThrusterAbility : MonoBehaviour
     {
         characterController = GetComponent<CharacterController>();
         movementController = GetComponent<PlayerMovementController>();
+        containmentFailure = GetComponent<ToxicologistContainmentFailureAbility>();
 
         if (abilityHUD == null)
-            abilityHUD = FindAnyObjectByType<RangerAbilityHUDController>();
+            abilityHUD = FindHUDByName("ToxicologistAbilityHUD");
     }
 
     private void Update()
@@ -108,7 +112,9 @@ public class ToxicologistThrusterAbility : MonoBehaviour
         isDashing = true;
         dashTimer = 0f;
         trailTimer = 0f;
-        nextUseTime = Time.time + cooldown;
+
+        float currentCooldown = GetCurrentCooldown();
+        nextUseTime = Time.time + currentCooldown;
 
         if (movementController != null)
             movementController.enabled = false;
@@ -122,7 +128,7 @@ public class ToxicologistThrusterAbility : MonoBehaviour
         if (abilityHUD != null)
             abilityHUD.TriggerMobilityCooldown();
 
-        Debug.Log("[ToxicologistThrusterAbility] Toxic Thrusters activated.");
+        Debug.Log($"[ToxicologistThrusterAbility] Toxic Thrusters activated. Cooldown={currentCooldown}");
     }
 
     private void UpdateDash()
@@ -181,16 +187,17 @@ public class ToxicologistThrusterAbility : MonoBehaviour
             return;
 
         Vector3 right = Vector3.Cross(Vector3.up, dashDirection).normalized;
+        float currentSideOffset = GetCurrentTrailSideOffset();
 
         Instantiate(
             poisonTrailPrefab,
-            basePosition + right * trailSideOffset,
+            basePosition + right * currentSideOffset,
             Quaternion.identity
         );
 
         Instantiate(
             poisonTrailPrefab,
-            basePosition - right * trailSideOffset,
+            basePosition - right * currentSideOffset,
             Quaternion.identity
         );
     }
@@ -206,5 +213,43 @@ public class ToxicologistThrusterAbility : MonoBehaviour
             spawnPosition = thrusterVFXSpawnPoint.position;
 
         Instantiate(prefab, spawnPosition, Quaternion.identity);
+    }
+
+    private float GetCurrentCooldown()
+    {
+        if (IsContainmentFailureActive())
+            return containmentCooldown;
+
+        return cooldown;
+    }
+
+    private float GetCurrentTrailSideOffset()
+    {
+        if (IsContainmentFailureActive())
+            return containmentTrailSideOffset;
+
+        return trailSideOffset;
+    }
+
+    private bool IsContainmentFailureActive()
+    {
+        return containmentFailure != null &&
+               containmentFailure.IsContainmentFailureActive;
+    }
+
+    private RangerAbilityHUDController FindHUDByName(string hudName)
+    {
+        RangerAbilityHUDController[] huds =
+            FindObjectsByType<RangerAbilityHUDController>(
+                FindObjectsInactive.Include
+            );
+
+        foreach (RangerAbilityHUDController hud in huds)
+        {
+            if (hud.gameObject.name == hudName)
+                return hud;
+        }
+
+        return null;
     }
 }

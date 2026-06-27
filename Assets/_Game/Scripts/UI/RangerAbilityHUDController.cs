@@ -3,6 +3,9 @@ using UnityEngine.UI;
 
 public class RangerAbilityHUDController : MonoBehaviour
 {
+    [Header("Debug")]
+    [SerializeField] private bool debugCooldowns = true;
+
     [Header("Cooldown Overlays")]
     [SerializeField] private Image overwatchCooldownOverlay;
     [SerializeField] private Image explosiveCooldownOverlay;
@@ -43,6 +46,17 @@ public class RangerAbilityHUDController : MonoBehaviour
         SetupOverlay(explosiveCooldownOverlay);
         SetupOverlay(mobilityCooldownOverlay);
         SetupOverlay(overdriveCooldownOverlay);
+
+        if (debugCooldowns)
+        {
+            Debug.Log(
+                $"[RangerAbilityHUDController] Awake on {gameObject.name}. " +
+                $"Up:{overwatchCooldownOverlay != null}, " +
+                $"Right:{explosiveCooldownOverlay != null}, " +
+                $"Left:{mobilityCooldownOverlay != null}, " +
+                $"Down:{overdriveCooldownOverlay != null}"
+            );
+        }
     }
 
     private void Update()
@@ -57,27 +71,46 @@ public class RangerAbilityHUDController : MonoBehaviour
 
     public void TriggerOverwatchCooldown()
     {
-        overwatchReadyTime = Time.time + overwatchCooldown;
+        TriggerPersistentCooldown();
     }
 
     public void TriggerExplosiveCooldown()
     {
-        explosiveReadyTime = Time.time + explosiveCooldown;
+        TriggerSignatureCooldown();
     }
 
     public void TriggerMobilityCooldown()
     {
         mobilityReadyTime = Time.time + mobilityCooldown;
+        LogCooldown("Mobility / Left / Shift", mobilityCooldown);
     }
 
     public void TriggerOverdriveCooldown()
     {
         overdriveReadyTime = Time.time + overdriveCooldown;
+        LogCooldown("Overdrive / Down / R", overdriveCooldown);
+    }
+
+    public void TriggerPersistentCooldown()
+    {
+        overwatchReadyTime = Time.time + overwatchCooldown;
+        LogCooldown("Persistent / Up / Q", overwatchCooldown);
+    }
+
+    public void TriggerSignatureCooldown()
+    {
+        explosiveReadyTime = Time.time + explosiveCooldown;
+        LogCooldown("Signature / Right / E", explosiveCooldown);
+    }
+
+    public void TriggerUltimateCooldown()
+    {
+        TriggerOverdriveCooldown();
     }
 
     public void TriggerPiercingCooldown()
     {
-        TriggerOverwatchCooldown();
+        TriggerPersistentCooldown();
     }
 
     public void TriggerDashCooldown()
@@ -93,12 +126,14 @@ public class RangerAbilityHUDController : MonoBehaviour
     public void SetOverwatchState(bool active)
     {
         // Intentionally blank for now.
-        // Overwatch uses cooldown feedback only.
     }
 
     public void SetOverdriveState(bool active)
     {
         overdriveActive = active;
+
+        if (debugCooldowns)
+            Debug.Log($"[RangerAbilityHUDController] {gameObject.name} overdrive active: {active}");
     }
 
     public void SetOverchargeState(bool active)
@@ -116,6 +151,8 @@ public class RangerAbilityHUDController : MonoBehaviour
         overlay.fillOrigin = 1; // Top
         overlay.fillClockwise = false;
         overlay.fillAmount = 0f;
+
+        overlay.raycastTarget = false;
 
         overlay.color = new Color(
             cooldownShadeColor.r,
@@ -163,6 +200,16 @@ public class RangerAbilityHUDController : MonoBehaviour
             normalIconColor,
             overdriveActiveColor,
             pulse
+        );
+    }
+
+    private void LogCooldown(string slotName, float duration)
+    {
+        if (!debugCooldowns)
+            return;
+
+        Debug.Log(
+            $"[RangerAbilityHUDController] {gameObject.name} triggered {slotName} cooldown for {duration} seconds."
         );
     }
 }

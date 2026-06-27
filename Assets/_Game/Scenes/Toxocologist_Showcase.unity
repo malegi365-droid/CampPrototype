@@ -653,6 +653,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 103a93b4decc6464593b0aa6f905ce45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RangerAbilityHUDController
+  debugCooldowns: 1
   overwatchCooldownOverlay: {fileID: 195501}
   explosiveCooldownOverlay: {fileID: 780140292}
   mobilityCooldownOverlay: {fileID: 902608094}
@@ -770,6 +771,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 103a93b4decc6464593b0aa6f905ce45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RangerAbilityHUDController
+  debugCooldowns: 1
   overwatchCooldownOverlay: {fileID: 119663795}
   explosiveCooldownOverlay: {fileID: 1158573891}
   mobilityCooldownOverlay: {fileID: 863300730}
@@ -1623,6 +1625,14 @@ PrefabInstance:
       propertyPath: followSpeed
       value: 12
       objectReference: {fileID: 0}
+    - target: {fileID: 8023088008399355895, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
+      propertyPath: tankStats
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8023088008399355895, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
+      propertyPath: healerStats
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 8255971622540927613, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
       propertyPath: roleName
       value: Guardian
@@ -1637,6 +1647,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 5844219683133708871, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
+    - {fileID: 8871672599188821347, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
     m_RemovedGameObjects:
     - {fileID: 4999484797406438308, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
     - {fileID: 5695442895470614063, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
@@ -1678,6 +1689,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2320260435561171919, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1713471676}
+    - targetCorrespondingSourceObject: {fileID: 2320260435561171919, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1713471699}
+    - targetCorrespondingSourceObject: {fileID: 2320260435561171919, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1713471700}
     - targetCorrespondingSourceObject: {fileID: 6654859332005510898, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
       insertIndex: -1
       addedObject: {fileID: 904548605}
@@ -9634,6 +9651,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 103a93b4decc6464593b0aa6f905ce45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RangerAbilityHUDController
+  debugCooldowns: 1
   overwatchCooldownOverlay: {fileID: 2085756528}
   explosiveCooldownOverlay: {fileID: 516730038}
   mobilityCooldownOverlay: {fileID: 1486815289}
@@ -10101,9 +10119,14 @@ MonoBehaviour:
   poisonDuration: 4
   poisonDamagePerTick: 5
   cooldown: 10
+  containmentCloudDurationMultiplier: 1.5
+  containmentPoisonDurationMultiplier: 1.5
+  containmentDamageMultiplier: 1.5
+  containmentScaleMultiplier: 1.4
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64
+  abilityHUD: {fileID: 0}
 --- !u!114 &1713471676
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10121,6 +10144,9 @@ MonoBehaviour:
   healPerTick: 5
   tickInterval: 1
   cooldown: 12
+  containmentHealMultiplier: 2
+  containmentTickIntervalMultiplier: 0.5
+  abilityHUD: {fileID: 0}
 --- !u!114 &1713471677 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5675819169638613698, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
@@ -10132,6 +10158,83 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2665302bcc955154ba6136297f1ee09f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PartyMemberControlBridge
+--- !u!114 &1713471699
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7522629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2559ae2051b1524cbaafd27f544036d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ToxicologistThrusterAbility
+  thrusterKey: 304
+  cooldown: 4
+  containmentCooldown: 1
+  dashDistance: 7
+  dashDuration: 0.18
+  dashCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  poisonTrailPrefab: {fileID: 4589941385727460689, guid: 7bce12ecbfdacf7419974bbf1e52e7f5, type: 3}
+  trailSpawnInterval: 0.035
+  trailSpawnHeightOffset: 0.1
+  trailSideOffset: 0.45
+  containmentTrailSideOffset: 0.75
+  spawnSideTrails: 1
+  startBurstVFXPrefab: {fileID: 0}
+  endBurstVFXPrefab: {fileID: 0}
+  thrusterVFXSpawnPoint: {fileID: 0}
+  audioSource: {fileID: 0}
+  thrusterSound: {fileID: 0}
+  abilityHUD: {fileID: 0}
+--- !u!114 &1713471700
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7522629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15689e69120572440b0fa855b25321bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ToxicologistContainmentFailureAbility
+  ultimateKey: 114
+  duration: 8
+  cooldown: 20
+  auraRadius: 5
+  damagePerTick: 6
+  tickInterval: 0.35
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  activeVFXPrefab: {fileID: 0}
+  vfxOffset: {x: 0, y: 1, z: 0}
+  abilityHUD: {fileID: 194228311}
 --- !u!1 &1733990432
 GameObject:
   m_ObjectHideFlags: 0
