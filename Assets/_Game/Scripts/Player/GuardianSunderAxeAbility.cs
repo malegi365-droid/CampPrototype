@@ -42,6 +42,9 @@ public class GuardianSunderAxeAbility : MonoBehaviour
     [SerializeField] private float impactVFXLifetime = 1f;
     [SerializeField] private Vector3 impactVFXOffset = new Vector3(0f, 0.4f, 0f);
 
+    [Header("HUD")]
+    [SerializeField] private RangerAbilityHUDController abilityHUD;
+
     [Header("Debug")]
     [SerializeField] private bool logCooldownBlocked = false;
     [SerializeField] private bool logHits = true;
@@ -61,6 +64,9 @@ public class GuardianSunderAxeAbility : MonoBehaviour
 
         if (cameraShake == null)
             cameraShake = FindAnyObjectByType<CameraShakeController>();
+
+        if (abilityHUD == null)
+            abilityHUD = FindHUDByName("GuardianAbilityHUD");
     }
 
     private void Update()
@@ -86,6 +92,12 @@ public class GuardianSunderAxeAbility : MonoBehaviour
         }
 
         nextSunderTime = Time.time + cooldown;
+
+        if (abilityHUD != null)
+            abilityHUD.TriggerSignatureCooldown();
+        else
+            Debug.LogWarning("[GuardianSunderAxeAbility] Missing Ability HUD reference.");
+
         StartCoroutine(SunderRoutine());
     }
 
@@ -219,6 +231,22 @@ public class GuardianSunderAxeAbility : MonoBehaviour
             return;
 
         cameraShake.Shake(shakeDuration, shakeStrength);
+    }
+
+    private RangerAbilityHUDController FindHUDByName(string hudName)
+    {
+        RangerAbilityHUDController[] huds =
+            FindObjectsByType<RangerAbilityHUDController>(
+                FindObjectsInactive.Include
+            );
+
+        foreach (RangerAbilityHUDController hud in huds)
+        {
+            if (hud.gameObject.name == hudName)
+                return hud;
+        }
+
+        return null;
     }
 
     private void OnDrawGizmosSelected()

@@ -55,7 +55,7 @@ public class PlayerMovementController : MonoBehaviour
             projectileFireController = GetComponent<RangerProjectileFireController>();
 
         if (abilityHUD == null)
-            abilityHUD = FindAnyObjectByType<RangerAbilityHUDController>();
+            abilityHUD = FindHUDByName("RangerAbilityHUD");
 
         if (characterAnimator == null)
             characterAnimator = GetComponentInChildren<Animator>();
@@ -93,7 +93,6 @@ public class PlayerMovementController : MonoBehaviour
         if (IsOvercharged())
             currentSpeed *= overchargeMoveSpeedMultiplier;
 
-        // World/map movement. This does NOT depend on facing direction.
         controller.Move(worldMove * currentSpeed * Time.deltaTime);
 
         UpdateAnimation(worldMove, isMoving, currentSpeed);
@@ -200,7 +199,7 @@ public class PlayerMovementController : MonoBehaviour
         Keyboard kb = Keyboard.current;
 
         return kb != null &&
-               (kb.leftShiftKey.isPressed || kb.rightShiftKey.isPressed);
+               (kb.leftCtrlKey.isPressed || kb.rightCtrlKey.isPressed);
     }
 
     private bool IsOvercharged()
@@ -219,7 +218,7 @@ public class PlayerMovementController : MonoBehaviour
         if (kb == null)
             return;
 
-        if (kb.spaceKey.wasPressedThisFrame && Time.time >= nextDashTime)
+        if (kb.leftShiftKey.wasPressedThisFrame && Time.time >= nextDashTime)
         {
             Vector3 dashDirection = GetMovementInput();
 
@@ -233,7 +232,10 @@ public class PlayerMovementController : MonoBehaviour
 
             nextDashTime = Time.time + dashCooldown;
 
-            abilityHUD?.TriggerDashCooldown();
+            if (abilityHUD != null)
+                abilityHUD.TriggerMobilityCooldown();
+            else
+                Debug.LogWarning("[PlayerMovementController] Missing Ability HUD reference.");
         }
     }
 
@@ -256,5 +258,21 @@ public class PlayerMovementController : MonoBehaviour
         }
 
         isDashing = false;
+    }
+
+    private RangerAbilityHUDController FindHUDByName(string hudName)
+    {
+        RangerAbilityHUDController[] huds =
+            FindObjectsByType<RangerAbilityHUDController>(
+                FindObjectsInactive.Include
+            );
+
+        foreach (RangerAbilityHUDController hud in huds)
+        {
+            if (hud.gameObject.name == hudName)
+                return hud;
+        }
+
+        return null;
     }
 }

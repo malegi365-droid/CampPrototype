@@ -29,6 +29,7 @@
 - [ ] Design
 - [ ] Build
 - [ ] Polish
+	- [ ] Bulwark Charge should use run/charge animation during movement
 
 ---
 

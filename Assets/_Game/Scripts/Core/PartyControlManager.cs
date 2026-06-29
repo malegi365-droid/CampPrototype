@@ -18,6 +18,9 @@ public class PartyControlManager : MonoBehaviour
     [Header("Camera")]
     [SerializeField] private CameraFollowProxy cameraFollowProxy;
 
+    [Header("HUD")]
+    [SerializeField] private ClassHUDManager classHUDManager;
+
     [Header("Switch Settings")]
     [SerializeField] private bool transferTargetOnSwitch = true;
 
@@ -83,7 +86,12 @@ public class PartyControlManager : MonoBehaviour
         }
 
         if (newMember == CurrentMember)
+        {
+            if (classHUDManager != null)
+                classHUDManager.ShowHUD(requestedClass);
+
             return;
+        }
 
         Vector3 switchPosition = newMember.transform.position;
         Quaternion switchRotation = newMember.transform.rotation;
@@ -124,6 +132,9 @@ public class PartyControlManager : MonoBehaviour
         }
 
         CurrentMember = newMember;
+
+        if (classHUDManager != null)
+            classHUDManager.ShowHUD(requestedClass);
 
         UpdateCameraTarget(snapCamera);
 

@@ -8,6 +8,10 @@ public class PlayerBuffController : MonoBehaviour
     [SerializeField] private bool guardianShieldActive = false;
     [SerializeField] private float guardianShieldDamageReduction = 0.5f;
 
+    [Header("Guardian Last Stand")]
+    [SerializeField] private bool guardianLastStandActive = false;
+    [SerializeField] private float guardianLastStandDamageReduction = 0.75f;
+
     [Header("Guardian Shield VFX")]
     [SerializeField] private GameObject guardianShieldVFXPrefab;
     [SerializeField] private Vector3 shieldVFXOffset = new Vector3(0f, 1f, 0f);
@@ -57,6 +61,14 @@ public class PlayerBuffController : MonoBehaviour
         Debug.Log("[PlayerBuffController] Guardian Shield active.");
     }
 
+    public void SetGuardianLastStandActive(bool active, float damageReduction = 0.75f)
+    {
+        guardianLastStandActive = active;
+        guardianLastStandDamageReduction = Mathf.Clamp01(damageReduction);
+
+        Debug.Log($"[PlayerBuffController] Guardian Last Stand active: {guardianLastStandActive}. DamageReduction={guardianLastStandDamageReduction}");
+    }
+
     public void ActivateRapidRegen(float duration, float healPerTick, float tickInterval)
     {
         rapidRegenActive = true;
@@ -72,15 +84,25 @@ public class PlayerBuffController : MonoBehaviour
 
     public float ModifyIncomingPlayerDamage(float damage)
     {
-        if (!guardianShieldActive)
-            return damage;
+        float modifiedDamage = damage;
 
-        return damage * (1f - guardianShieldDamageReduction);
+        if (guardianShieldActive)
+            modifiedDamage *= (1f - guardianShieldDamageReduction);
+
+        if (guardianLastStandActive)
+            modifiedDamage *= (1f - guardianLastStandDamageReduction);
+
+        return modifiedDamage;
     }
 
     public bool IsGuardianShieldActive()
     {
         return guardianShieldActive;
+    }
+
+    public bool IsGuardianLastStandActive()
+    {
+        return guardianLastStandActive;
     }
 
     public bool IsRapidRegenActive()

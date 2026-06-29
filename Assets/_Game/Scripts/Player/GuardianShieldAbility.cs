@@ -14,8 +14,17 @@ public class GuardianShieldAbility : MonoBehaviour
     [SerializeField] private GameObject shieldVFXPrefab;
     [SerializeField] private Transform shieldVFXAnchor;
 
+    [Header("HUD")]
+    [SerializeField] private RangerAbilityHUDController abilityHUD;
+
     private float nextShieldTime;
     private GameObject activeShieldVFX;
+
+    private void Awake()
+    {
+        if (abilityHUD == null)
+            abilityHUD = FindHUDByName("GuardianAbilityHUD");
+    }
 
     private void Update()
     {
@@ -41,6 +50,11 @@ public class GuardianShieldAbility : MonoBehaviour
 
         SpawnShieldVFX();
 
+        if (abilityHUD != null)
+            abilityHUD.TriggerPersistentCooldown();
+        else
+            Debug.LogWarning("[GuardianShieldAbility] Missing Ability HUD reference.");
+
         nextShieldTime = Time.time + cooldown;
 
         Debug.Log("[GuardianShieldAbility] Guardian Shield activated.");
@@ -64,5 +78,21 @@ public class GuardianShieldAbility : MonoBehaviour
         );
 
         Destroy(activeShieldVFX, shieldDuration);
+    }
+
+    private RangerAbilityHUDController FindHUDByName(string hudName)
+    {
+        RangerAbilityHUDController[] huds =
+            FindObjectsByType<RangerAbilityHUDController>(
+                FindObjectsInactive.Include
+            );
+
+        foreach (RangerAbilityHUDController hud in huds)
+        {
+            if (hud.gameObject.name == hudName)
+                return hud;
+        }
+
+        return null;
     }
 }

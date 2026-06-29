@@ -27,7 +27,7 @@ public class RangerOverwatchAbility : MonoBehaviour
         rangerStats = GetComponent<UnitStats>();
 
         if (abilityHUD == null)
-            abilityHUD = FindAnyObjectByType<RangerAbilityHUDController>();
+            abilityHUD = FindHUDByName("RangerAbilityHUD");
     }
 
     private void Update()
@@ -77,8 +77,15 @@ public class RangerOverwatchAbility : MonoBehaviour
 
         nextUseTime = Time.time + cooldown;
 
-        abilityHUD?.TriggerOverwatchCooldown();
-        abilityHUD?.SetOverwatchState(true);
+        if (abilityHUD != null)
+        {
+            abilityHUD.TriggerPersistentCooldown();
+            abilityHUD.SetOverwatchState(true);
+        }
+        else
+        {
+            Debug.LogWarning("[RangerOverwatchAbility] Missing Ability HUD reference.");
+        }
 
         Invoke(nameof(EndOverwatchHUDState), duration);
 
@@ -87,6 +94,23 @@ public class RangerOverwatchAbility : MonoBehaviour
 
     private void EndOverwatchHUDState()
     {
-        abilityHUD?.SetOverwatchState(false);
+        if (abilityHUD != null)
+            abilityHUD.SetOverwatchState(false);
+    }
+
+    private RangerAbilityHUDController FindHUDByName(string hudName)
+    {
+        RangerAbilityHUDController[] huds =
+            FindObjectsByType<RangerAbilityHUDController>(
+                FindObjectsInactive.Include
+            );
+
+        foreach (RangerAbilityHUDController hud in huds)
+        {
+            if (hud.gameObject.name == hudName)
+                return hud;
+        }
+
+        return null;
     }
 }

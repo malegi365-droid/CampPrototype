@@ -616,7 +616,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &194228310
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1433,6 +1433,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerSystem
       objectReference: {fileID: 0}
+    - target: {fileID: 848948859962603301, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
+      propertyPath: tankStats
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 848948859962603301, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
+      propertyPath: healerStats
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 1075406216934342743, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0
@@ -1525,6 +1533,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2963227738640560359, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
+      propertyPath: hitLayers.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
     - target: {fileID: 2981864271326529693, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
       propertyPath: ranger
       value: 
@@ -1542,6 +1554,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 904548601}
     - target: {fileID: 2981864271326529693, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
+      propertyPath: classHUDManager
+      value: 
+      objectReference: {fileID: 616870985}
+    - target: {fileID: 2981864271326529693, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
       propertyPath: cameraFollowProxy
       value: 
       objectReference: {fileID: 856916653}
@@ -1553,6 +1569,14 @@ PrefabInstance:
       propertyPath: classSwitchVFXPrefab
       value: 
       objectReference: {fileID: 6679674221456633185, guid: a4488f1897df5c6499315de9ec3ab68d, type: 3}
+    - target: {fileID: 4458316946086702334, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
+      propertyPath: tankStats
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4458316946086702334, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
+      propertyPath: healerStats
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 4758352932267496135, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
       propertyPath: m_Name
       value: Ranger
@@ -1573,6 +1597,14 @@ PrefabInstance:
       propertyPath: overchargeProjectilePrefab
       value: 
       objectReference: {fileID: 1750164435413093665, guid: 1ae806d7d58f05a498e715621f08efaa, type: 3}
+    - target: {fileID: 6269633026088960478, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
+      propertyPath: abilityHUD
+      value: 
+      objectReference: {fileID: 218854648}
+    - target: {fileID: 6269633026088960478, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
+      propertyPath: projectileFireController
+      value: 
+      objectReference: {fileID: 1808114348}
     - target: {fileID: 6892599986833221322, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
       propertyPath: globalVolume
       value: 
@@ -1701,6 +1733,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6654859332005510898, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
       insertIndex: -1
       addedObject: {fileID: 904548623}
+    - targetCorrespondingSourceObject: {fileID: 6654859332005510898, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 904548644}
+    - targetCorrespondingSourceObject: {fileID: 6654859332005510898, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 904548645}
   m_SourcePrefab: {fileID: 100100000, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
 --- !u!1 &485370663
 GameObject:
@@ -1975,6 +2013,53 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c121c70954742c142bb1d2e60ae947e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraShakeController
+--- !u!1 &616870983
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 616870984}
+  - component: {fileID: 616870985}
+  m_Layer: 0
+  m_Name: ClassHUDManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &616870984
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 616870983}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 622164749}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &616870985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 616870983}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57aaed7909199684195dab49a8a92f67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ClassHUDManager
+  guardianHUD: {fileID: 1563824793}
+  rangerHUD: {fileID: 218854643}
+  toxicologistHUD: {fileID: 194228309}
 --- !u!1 &622164748
 GameObject:
   m_ObjectHideFlags: 0
@@ -2033,6 +2118,7 @@ Transform:
   - {fileID: 187416338}
   - {fileID: 292642357}
   - {fileID: 737073381}
+  - {fileID: 616870984}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &674754882
@@ -2400,6 +2486,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerBuffController
   guardianShieldActive: 0
   guardianShieldDamageReduction: 0.5
+  guardianLastStandActive: 0
+  guardianLastStandDamageReduction: 0.75
   guardianShieldVFXPrefab: {fileID: 1809864350574065785, guid: f27e4fc6314263b4f908edddc29d80f9, type: 3}
   shieldVFXOffset: {x: 0, y: 0, z: 0}
   rapidRegenActive: 0
@@ -2407,6 +2495,11 @@ MonoBehaviour:
   rapidRegenTickInterval: 1
   rapidRegenVFXPrefab: {fileID: 2545534474828058220, guid: ae246b8b8f5d0204cab355df76607f4d, type: 3}
   rapidRegenVFXOffset: {x: 0, y: 0, z: 0}
+--- !u!4 &753399855 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2785057974311680227, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
+  m_PrefabInstance: {fileID: 450790197}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &768285820
 GameObject:
   m_ObjectHideFlags: 0
@@ -3125,6 +3218,7 @@ MonoBehaviour:
   cooldown: 12
   shieldVFXPrefab: {fileID: 0}
   shieldVFXAnchor: {fileID: 0}
+  abilityHUD: {fileID: 1563824795}
 --- !u!114 &904548623
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3161,8 +3255,83 @@ MonoBehaviour:
   impactVFXPrefab: {fileID: 0}
   impactVFXLifetime: 1
   impactVFXOffset: {x: 0, y: 0.4, z: 0}
+  abilityHUD: {fileID: 1563824795}
   logCooldownBlocked: 1
   logHits: 1
+--- !u!114 &904548644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 277833715}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a907ca1b5214d2e4689dd5f4745da204, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GuardianBulwarkChargeAbility
+  chargeKey: 304
+  cooldown: 5
+  chargeDistance: 9
+  chargeDuration: 0.5
+  chargeCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  hitRadius: 1.25
+  hitForwardOffset: 1.1
+  damage: 25
+  pushDistance: 2.5
+  staggerDuration: 0.25
+  facingReference: {fileID: 753399855}
+  abilityHUD: {fileID: 1563824795}
+--- !u!114 &904548645
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 277833715}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ca6124642d70e4468856f794582f802, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GuardianLastStandAbility
+  ultimateKey: 114
+  duration: 8
+  cooldown: 20
+  damageReduction: 0.75
+  shockwaveRadius: 5
+  shockwaveDamage: 35
+  shockwavePushDistance: 3
+  shockwaveStaggerDuration: 0.45
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  abilityHUD: {fileID: 1563824795}
 --- !u!1001 &952455664
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9614,7 +9783,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1563824794
 RectTransform:
   m_ObjectHideFlags: 0
@@ -10232,8 +10401,8 @@ MonoBehaviour:
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64
-  activeVFXPrefab: {fileID: 0}
-  vfxOffset: {x: 0, y: 1, z: 0}
+  activeVFXPrefab: {fileID: 607488071933365989, guid: 5d04791469e3477429e27f517d85204a, type: 3}
+  vfxOffset: {x: 0, y: 0, z: 0}
   abilityHUD: {fileID: 194228311}
 --- !u!1 &1733990432
 GameObject:
@@ -10532,7 +10701,7 @@ MonoBehaviour:
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64
-  abilityHUD: {fileID: 0}
+  abilityHUD: {fileID: 218854648}
 --- !u!114 &1808114348
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10559,8 +10728,8 @@ MonoBehaviour:
   bowAnimator: {fileID: 980588101}
   fireTriggerName: Attack
   animationBridge: {fileID: 1638516226}
-  abilityHUD: {fileID: 0}
-  overchargeVisuals: {fileID: 0}
+  abilityHUD: {fileID: 218854648}
+  overchargeVisuals: {fileID: 1808114349}
   cameraShake: {fileID: 1378499423}
   shakeDuration: 0.06
   shakeStrength: 0.04
@@ -10579,6 +10748,17 @@ MonoBehaviour:
   overchargeDuration: 6
   overchargeCooldown: 12
   overchargeFireRate: 0.08
+--- !u!114 &1808114349 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6892599986833221322, guid: 2aa907baf9b83be4581baa0880ad2fe8, type: 3}
+  m_PrefabInstance: {fileID: 450790197}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 389393745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e00af0683101eb4a938dbce6ded03a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OverchargeVisualController
 --- !u!1 &1828806064
 GameObject:
   m_ObjectHideFlags: 0
