@@ -74,6 +74,11 @@ public class GuardianLastStandAbility : MonoBehaviour
             Debug.LogWarning("[GuardianLastStandAbility] Missing Ability HUD reference.");
         }
 
+        AbilityWeaveManager.Instance?.RecordAbilityUsed(
+            CombatClassType.Guardian,
+            AbilitySlotType.Ultimate
+        );
+
         Debug.Log("[GuardianLastStandAbility] Last Stand activated.");
     }
 

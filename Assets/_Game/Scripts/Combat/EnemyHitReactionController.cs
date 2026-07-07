@@ -10,6 +10,17 @@ public class EnemyHitReactionController : MonoBehaviour
     [Range(0f, 1f)]
     [SerializeField] private float knockbackResistance = 0f;
 
+    [Header("Launch")]
+    [SerializeField] private float launchDuration = 0.42f;
+    [SerializeField] private float launchHorizontalSpeed = 8f;
+    [SerializeField] private float launchHeight = 1.4f;
+    [SerializeField] private AnimationCurve launchHeightCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 0f);
+
+    [Range(0f, 1f)]
+    [SerializeField] private float launchResistance = 0f;
+
+    [SerializeField] private bool immuneToLaunch = false;
+
     [Header("Stagger")]
     [SerializeField] private float defaultStaggerDuration = 0.2f;
 
@@ -25,17 +36,20 @@ public class EnemyHitReactionController : MonoBehaviour
 
     private Coroutine knockbackRoutine;
     private Coroutine staggerRoutine;
+    private Coroutine launchRoutine;
 
     private EnemyAIController enemyAI;
     private EnemyRoamingController roaming;
     private AutoAttackController autoAttack;
     private EnemyAnimationBridge animationBridge;
+    private CharacterController characterController;
 
     private int controlLocks = 0;
 
     public bool IsStaggered { get; private set; }
     public bool IsKnockedBack { get; private set; }
-    public bool IsReacting => IsStaggered || IsKnockedBack;
+    public bool IsLaunched { get; private set; }
+    public bool IsReacting => IsStaggered || IsKnockedBack || IsLaunched;
 
     private void Awake()
     {
@@ -43,6 +57,7 @@ public class EnemyHitReactionController : MonoBehaviour
         roaming = GetComponent<EnemyRoamingController>();
         autoAttack = GetComponent<AutoAttackController>();
         animationBridge = GetComponent<EnemyAnimationBridge>();
+        characterController = GetComponent<CharacterController>();
     }
 
     public void ApplyKnockback(Vector3 direction, float strength)
@@ -68,6 +83,34 @@ public class EnemyHitReactionController : MonoBehaviour
             StopCoroutine(knockbackRoutine);
 
         knockbackRoutine = StartCoroutine(KnockbackRoutine(direction, finalStrength));
+    }
+
+    public void ApplyLaunch(Vector3 direction, float strength = 1f)
+    {
+        if (immuneToLaunch)
+            return;
+
+        float finalStrength = strength * (1f - launchResistance);
+
+        if (finalStrength <= 0.01f)
+            return;
+
+        if (launchRoutine != null)
+            StopCoroutine(launchRoutine);
+
+        if (knockbackRoutine != null)
+        {
+            StopCoroutine(knockbackRoutine);
+            knockbackRoutine = null;
+
+            if (IsKnockedBack)
+            {
+                IsKnockedBack = false;
+                RemoveControlLock();
+            }
+        }
+
+        launchRoutine = StartCoroutine(LaunchRoutine(direction, finalStrength));
     }
 
     public void ApplyStagger(float duration)
@@ -105,6 +148,15 @@ public class EnemyHitReactionController : MonoBehaviour
         ApplyStagger(staggerDuration, isOverchargeHit);
     }
 
+    public void ApplyLaunchReaction(Vector3 direction, float launchStrength, float staggerDuration)
+    {
+        if (animationBridge != null)
+            animationBridge.PlayHit();
+
+        ApplyLaunch(direction, launchStrength);
+        ApplyStagger(staggerDuration);
+    }
+
     private IEnumerator KnockbackRoutine(Vector3 direction, float strength)
     {
         IsKnockedBack = true;
@@ -121,7 +173,7 @@ public class EnemyHitReactionController : MonoBehaviour
 
             while (elapsed < knockbackDuration)
             {
-                transform.position += direction * speed * Time.deltaTime;
+                MoveEnemy(direction * speed * Time.deltaTime);
                 elapsed += Time.deltaTime;
                 yield return null;
             }
@@ -130,6 +182,51 @@ public class EnemyHitReactionController : MonoBehaviour
         IsKnockedBack = false;
         RemoveControlLock();
         knockbackRoutine = null;
+    }
+
+    private IEnumerator LaunchRoutine(Vector3 direction, float strength)
+    {
+        IsLaunched = true;
+        AddControlLock();
+
+        direction.y = 0f;
+
+        if (direction.sqrMagnitude <= 0.001f)
+            direction = transform.forward;
+
+        direction.Normalize();
+
+        Vector3 startPosition = transform.position;
+
+        float elapsed = 0f;
+        float previousHeight = 0f;
+        float horizontalSpeed = launchHorizontalSpeed * strength;
+        float height = launchHeight * strength;
+
+        while (elapsed < launchDuration)
+        {
+            elapsed += Time.deltaTime;
+
+            float normalizedTime = Mathf.Clamp01(elapsed / launchDuration);
+            float currentHeight = launchHeightCurve.Evaluate(normalizedTime) * height;
+            float heightDelta = currentHeight - previousHeight;
+            previousHeight = currentHeight;
+
+            Vector3 horizontalMove = direction * horizontalSpeed * Time.deltaTime;
+            Vector3 verticalMove = Vector3.up * heightDelta;
+
+            MoveEnemy(horizontalMove + verticalMove);
+
+            yield return null;
+        }
+
+        Vector3 finalPosition = transform.position;
+        finalPosition.y = startPosition.y;
+        transform.position = finalPosition;
+
+        IsLaunched = false;
+        RemoveControlLock();
+        launchRoutine = null;
     }
 
     private IEnumerator StaggerRoutine(float duration)
@@ -142,6 +239,14 @@ public class EnemyHitReactionController : MonoBehaviour
         IsStaggered = false;
         RemoveControlLock();
         staggerRoutine = null;
+    }
+
+    private void MoveEnemy(Vector3 movement)
+    {
+        if (characterController != null && characterController.enabled)
+            characterController.Move(movement);
+        else
+            transform.position += movement;
     }
 
     private void AddControlLock()

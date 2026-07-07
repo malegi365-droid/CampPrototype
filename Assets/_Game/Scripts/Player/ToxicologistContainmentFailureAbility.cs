@@ -70,6 +70,11 @@ public class ToxicologistContainmentFailureAbility : MonoBehaviour
             Debug.LogWarning("[ToxicologistContainmentFailureAbility] Missing Ability HUD reference.");
         }
 
+        AbilityWeaveManager.Instance?.RecordAbilityUsed(
+            CombatClassType.Toxicologist,
+            AbilitySlotType.Ultimate
+        );
+
         Debug.Log("[ToxicologistContainmentFailureAbility] Containment Failure activated.");
     }
 

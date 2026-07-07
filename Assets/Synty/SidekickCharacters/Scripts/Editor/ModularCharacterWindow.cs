@@ -25,6 +25,9 @@ using System.Threading.Tasks;
 using Unity.VisualScripting.YamlDotNet.Serialization;
 using UnityEditor;
 using UnityEditor.Animations;
+#if FBX_EXPORTER_AVAILABLE
+using UnityEditor.Formats.Fbx.Exporter;
+#endif
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -223,7 +226,9 @@ namespace Synty.SidekickCharacters
         /// <inheritdoc cref="Update" />
         private void Update()
         {
-            if (_loadingContent)
+            // _loadingImage is only created once the UI is built; Update() can tick before that (notably in Unity 6),
+            // so guard against it still being null while _loadingContent defaults to true.
+            if (_loadingContent && _loadingImage != null)
             {
                 Vector3 rotation = _loadingImage.transform.rotation.eulerAngles;
                 rotation += new Vector3(0, 0, 0.5f * Time.deltaTime);
@@ -793,7 +798,7 @@ namespace Synty.SidekickCharacters
 
             Button createCharacterButton = new Button(CreateCharacterPrefab)
             {
-                text = "Export Character as Prefab",
+                text = "Export Character as FBX",
                 style =
                 {
                     minHeight = 50,
@@ -4878,7 +4883,7 @@ namespace Synty.SidekickCharacters
         }
 
         /// <summary>
-        ///     Saves a created character as a prefab.
+        ///     Exports a created character as a Humanoid FBX model, along with its textures, material and .sk definition.
         /// </summary>
         private void CreateCharacterPrefab()
         {
@@ -4895,24 +4900,26 @@ namespace Synty.SidekickCharacters
                 string baseFilename = Path.GetFileNameWithoutExtension(savePath);
                 string directoryBase = Path.GetDirectoryName(savePath) ?? string.Empty;
                 string directory = Path.Combine(directoryBase, baseFilename);
-                savePath = Path.Combine(directory, Path.GetFileName(savePath));
                 string textureDirectory = Path.Combine(directory, "Textures");
-                string meshDirectory = Path.Combine(directory, "Meshes");
                 string materialDirectory = Path.Combine(directory, "Materials");
+                string meshDirectory = Path.Combine(directory, "Meshes");
+
+                string fbxPath = Path.Combine(meshDirectory, baseFilename + ".fbx");
+                string prefabPath = Path.Combine(directory, baseFilename + ".prefab");
 
                 if (!Directory.Exists(directory))
                 {
                     Directory.CreateDirectory(directory);
                 }
 
-                if (!Directory.Exists(meshDirectory))
-                {
-                    Directory.CreateDirectory(meshDirectory);
-                }
-
                 if (!Directory.Exists(materialDirectory))
                 {
                     Directory.CreateDirectory(materialDirectory);
+                }
+
+                if (!Directory.Exists(meshDirectory))
+                {
+                    Directory.CreateDirectory(meshDirectory);
                 }
 
                 string savedCharacterPath = Path.Combine(directory, baseFilename + ".sk");
@@ -4953,7 +4960,7 @@ namespace Synty.SidekickCharacters
                     renderer.sharedMaterial = newMaterial;
                 }
 
-                CreatePrefab(clonedModel, meshDirectory, savePath, baseFilename);
+                ExportCharacterModel(clonedModel, fbxPath, prefabPath, newMaterial);
                 DestroyImmediate(clonedModel);
             }
             catch
@@ -4968,13 +4975,13 @@ namespace Synty.SidekickCharacters
         /// <returns>The path and filename to use to save the prefab to.</returns>
         private string SelectPrefabSaveLocation()
         {
-            string defaultName = _currentSpecies.Name + "-" + _currentColorSet.Name + ".prefab";
+            string defaultName = _currentSpecies.Name + "-" + _currentColorSet.Name + ".fbx";
 
             string savePath = EditorUtility.SaveFilePanelInProject(
-                "Save Character Prefab",
+                "Save Character Model",
                 defaultName,
-                "prefab",
-                "Select where to save the prefab"
+                "fbx",
+                "Select where to save the FBX"
             );
 
             return savePath;
@@ -5078,52 +5085,181 @@ namespace Synty.SidekickCharacters
         }
 
         /// <summary>
-        ///     Creates a prefab and the required assets for the model to work as an independent asset.
+        ///     Exports the combined character to an FBX (mesh + skeleton) in the Meshes folder, imports it as a Humanoid
+        ///     model (giving a configurable Avatar sub-asset with the Rig "Configure..." button), then creates a plain
+        ///     prefab that references the imported FBX.
         /// </summary>
-        /// <param name="rootGameObject">Root game object for the prefab.</param>
-        /// <param name="meshDirectory">The directory to save the mesh and avatar assets to.</param>
-        /// <param name="savePath">The path to save the prefab to.</param>
-        /// <param name="baseFilename">The base filename to use for all assets.</param>
-        private void CreatePrefab(
+        /// <param name="rootGameObject">Root game object of the combined character (mesh + bone hierarchy).</param>
+        /// <param name="fbxPath">The project-relative path (ending in .fbx) to save the model to.</param>
+        /// <param name="prefabPath">The project-relative path (ending in .prefab) to save the prefab to.</param>
+        /// <param name="characterMaterial">The generated material to remap the imported model to.</param>
+        private void ExportCharacterModel(
             GameObject rootGameObject,
-            string meshDirectory,
-            string savePath,
-            string baseFilename
+            string fbxPath,
+            string prefabPath,
+            Material characterMaterial
         )
         {
-            List<SkinnedMeshRenderer> renderers = rootGameObject.GetComponentsInChildren<SkinnedMeshRenderer>().ToList();
-            foreach (SkinnedMeshRenderer renderer in renderers)
+#if FBX_EXPORTER_AVAILABLE
+            // Export the mesh + skeleton hierarchy to FBX. Components such as the Animator are not exported; the rig is
+            // rebuilt by the model importer below.
+            string exportedPath = ModelExporter.ExportObject(fbxPath, rootGameObject);
+            if (string.IsNullOrEmpty(exportedPath))
             {
-                string type = null;
-                if (renderer.name.Contains("_"))
-                {
-                    type = Enum.GetName(typeof(CharacterPartType), _sidekickRuntime.ExtractPartType(renderer.name));
-                }
-                Mesh sharedMesh = renderer.sharedMesh;
-                string meshPath = type == null ? Path.Combine(meshDirectory, baseFilename + ".asset") : Path.Combine(meshDirectory, baseFilename + "-" + type + ".asset");
-                // If the user has chosen to overwrite the prefab, delete the existing assets to replace them.
-                if (File.Exists(meshPath))
-                {
-                    File.Delete(meshPath);
-                }
-
-                AssetDatabase.CreateAsset(sharedMesh, meshPath);
+                Debug.LogWarning("[Sidekick] FBX export failed; no model was written.");
+                return;
             }
 
-            Animator animator = rootGameObject.GetComponentInChildren<Animator>();
-            Avatar existingAvatar = animator.avatar;
-            Avatar newAvatar = Instantiate(existingAvatar);
-            animator.avatar = newAvatar;
-            string avatarPath = Path.Combine(meshDirectory, baseFilename + "-avatar.asset");
-            // If the user has chosen to overwrite the prefab, delete the existing assets to replace them.
-            if (File.Exists(avatarPath))
+            AssetDatabase.ImportAsset(fbxPath, ImportAssetOptions.ForceUpdate);
+            ModelImporter importer = (ModelImporter) AssetImporter.GetAtPath(fbxPath);
+            if (importer == null)
             {
-                File.Delete(avatarPath);
+                Debug.LogWarning("[Sidekick] Could not load the model importer for the exported FBX.");
+                return;
             }
 
-            AssetDatabase.CreateAsset(newAvatar, avatarPath);
-            AssetDatabase.SaveAssets();
-            PrefabUtility.SaveAsPrefabAsset(rootGameObject, savePath);
+            // Apply the studio-standard FBX import settings (sets animationType = Human, among others).
+            ApplyStandardFbxImportSettings(importer);
+
+            // Override the avatar setup so each model gets its own configurable Avatar sub-asset.
+            importer.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel;
+
+            // Remap the FBX material slot to the generated, textured material instead of an auto-extracted one.
+            if (characterMaterial != null)
+            {
+                importer.materialImportMode = ModelImporterMaterialImportMode.ImportStandard;
+                importer.AddRemap(
+                    new AssetImporter.SourceAssetIdentifier(typeof(Material), characterMaterial.name),
+                    characterMaterial
+                );
+            }
+
+            importer.SaveAndReimport();
+
+            // Build a plain prefab that references the imported FBX's mesh, avatar and material.
+            GameObject fbxAsset = AssetDatabase.LoadAssetAtPath<GameObject>(fbxPath);
+            if (fbxAsset == null)
+            {
+                Debug.LogWarning("[Sidekick] Could not load the imported FBX to build a prefab.");
+                return;
+            }
+
+            GameObject instance = (GameObject) PrefabUtility.InstantiatePrefab(fbxAsset);
+            try
+            {
+                // Unpack so the result is a standalone prefab (not a Prefab Variant), while its components still
+                // reference the FBX's mesh, Humanoid avatar and the remapped material.
+                PrefabUtility.UnpackPrefabInstance(instance, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+                // The FBX round-trip drops SkinnedMeshRenderer blend-shape weights, so restore the Body-tab values
+                // (and any kept facial values) from the source model onto the prefab instance before saving.
+                CopyBlendShapeWeights(rootGameObject, instance);
+                PrefabUtility.SaveAsPrefabAsset(instance, prefabPath);
+            }
+            finally
+            {
+                DestroyImmediate(instance);
+            }
+#else
+            // The FBX Exporter package (com.unity.formats.fbx) is not installed, so the model cannot be exported.
+            // SyntyPackageHelper prompts to install it; this guard simply lets the assembly compile until it is present.
+            Debug.LogError("[Sidekick] FBX export requires the FBX Exporter package (com.unity.formats.fbx). "
+                + "Install it via Synty > Package Helper > Install Packages.");
+#endif
+        }
+
+        /// <summary>
+        ///     Applies the studio-standard FBX import settings (previously captured in FBXImporter.preset) to the given
+        ///     model importer. Avatar setup and materials are applied separately by the caller so the per-character
+        ///     configurable avatar and generated material take precedence.
+        /// </summary>
+        /// <param name="importer">The model importer for the exported FBX.</param>
+        private static void ApplyStandardFbxImportSettings(ModelImporter importer)
+        {
+            // Model
+            importer.globalScale = 1f;
+            importer.useFileScale = true;
+            importer.bakeAxisConversion = false;
+            importer.importBlendShapes = true;
+            importer.importVisibility = false;
+            importer.importCameras = false;
+            importer.importLights = false;
+            importer.preserveHierarchy = false;
+            importer.sortHierarchyByName = true;
+
+            // Meshes
+            importer.meshCompression = ModelImporterMeshCompression.Off;
+            importer.isReadable = true;
+            importer.meshOptimizationFlags = (MeshOptimizationFlags) 0;
+            importer.addCollider = false;
+            importer.keepQuads = true;
+            importer.weldVertices = false;
+            importer.indexFormat = ModelImporterIndexFormat.Auto;
+            importer.swapUVChannels = false;
+            importer.generateSecondaryUV = false;
+
+            // Normals & tangents
+            importer.importNormals = ModelImporterNormals.Import;
+            importer.normalCalculationMode = ModelImporterNormalCalculationMode.AreaAndAngleWeighted;
+            importer.normalSmoothingAngle = 60f;
+            importer.importTangents = ModelImporterTangents.Import;
+            importer.importBlendShapeNormals = ModelImporterNormals.None;
+
+            // Rig / skinning
+            importer.animationType = ModelImporterAnimationType.Human;
+            importer.skinWeights = ModelImporterSkinWeights.Standard;
+            importer.maxBonesPerVertex = 4;
+            importer.minBoneWeight = 0.001f;
+            importer.optimizeBones = true;
+            importer.optimizeGameObjects = false;
+
+            // Animation
+            importer.importConstraints = false;
+            importer.importAnimation = false;
+            importer.importAnimatedCustomProperties = false;
+            importer.animationCompression = ModelImporterAnimationCompression.Optimal;
+            importer.resampleCurves = true;
+        }
+
+        /// <summary>
+        ///     Copies SkinnedMeshRenderer blend-shape weights from source to destination, matched by blend-shape name.
+        ///     Used after the FBX round-trip (which drops weight values) so the prefab keeps the Body-tab blend-shape
+        ///     settings (and any kept facial values).
+        /// </summary>
+        /// <param name="source">The model whose current blend-shape weights should be copied.</param>
+        /// <param name="destination">The model to apply the blend-shape weights to.</param>
+        private static void CopyBlendShapeWeights(GameObject source, GameObject destination)
+        {
+            Dictionary<string, float> weights = new Dictionary<string, float>();
+            foreach (SkinnedMeshRenderer smr in source.GetComponentsInChildren<SkinnedMeshRenderer>())
+            {
+                Mesh mesh = smr.sharedMesh;
+                if (mesh == null)
+                {
+                    continue;
+                }
+
+                for (int i = 0; i < mesh.blendShapeCount; i++)
+                {
+                    weights[mesh.GetBlendShapeName(i)] = smr.GetBlendShapeWeight(i);
+                }
+            }
+
+            foreach (SkinnedMeshRenderer smr in destination.GetComponentsInChildren<SkinnedMeshRenderer>())
+            {
+                Mesh mesh = smr.sharedMesh;
+                if (mesh == null)
+                {
+                    continue;
+                }
+
+                for (int i = 0; i < mesh.blendShapeCount; i++)
+                {
+                    if (weights.TryGetValue(mesh.GetBlendShapeName(i), out float weight))
+                    {
+                        smr.SetBlendShapeWeight(i, weight);
+                    }
+                }
+            }
         }
 
         /// <summary>

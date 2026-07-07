@@ -50,6 +50,13 @@ public class RangerInjectorProjectile : MonoBehaviour
     [SerializeField] private float explosionDamageMultiplier = 0.75f;
     [SerializeField] private GameObject explosionEffectPrefab;
 
+    [Header("Volatile Reaction")]
+    [SerializeField] private bool canTriggerVolatileReaction = true;
+    [SerializeField] private float poisonCloudDetectionRadius = 0.75f;
+    [SerializeField] private LayerMask poisonCloudLayer = ~0;
+    [SerializeField] private bool destroyProjectileOnVolatileReaction = true;
+    [SerializeField] private bool logVolatileReactionChecks = false;
+
     [Header("Hit Reaction")]
     [SerializeField] private float staggerDuration = 0.2f;
     [SerializeField] private float knockbackStrength = 1f;
@@ -85,13 +92,16 @@ public class RangerInjectorProjectile : MonoBehaviour
 
         if (Time.time - spawnTime >= armTime)
         {
+            if (TryTriggerVolatileReaction(transform.position))
+                return;
+
             RaycastHit[] hits = Physics.SphereCastAll(
                 transform.position,
                 hitRadius,
                 travelDirection,
                 moveDistance,
                 hitLayers,
-                QueryTriggerInteraction.Ignore
+                QueryTriggerInteraction.Collide
             );
 
             if (hits != null && hits.Length > 0)
@@ -100,6 +110,9 @@ public class RangerInjectorProjectile : MonoBehaviour
 
                 foreach (RaycastHit hit in hits)
                 {
+                    if (TryTriggerVolatileReaction(hit.point))
+                        return;
+
                     bool shouldStop = HandleHit(hit);
 
                     if (shouldStop)
@@ -109,6 +122,56 @@ public class RangerInjectorProjectile : MonoBehaviour
         }
 
         transform.position += travelDirection * moveDistance;
+    }
+
+    private bool TryTriggerVolatileReaction(Vector3 checkPoint)
+    {
+        if (!explosive || !canTriggerVolatileReaction)
+            return false;
+
+        Collider[] cloudHits = Physics.OverlapSphere(
+            checkPoint,
+            poisonCloudDetectionRadius,
+            poisonCloudLayer,
+            QueryTriggerInteraction.Collide
+        );
+
+        foreach (Collider cloudHit in cloudHits)
+        {
+            PoisonCloudZone cloud =
+                cloudHit.GetComponentInParent<PoisonCloudZone>();
+
+            if (cloud == null || cloud.HasReacted)
+                continue;
+
+            if (logVolatileReactionChecks)
+                Debug.Log("[RangerInjectorProjectile] Explosive Shot triggered Volatile Reaction.");
+
+            SpawnReactionImpactEffects(checkPoint);
+            TriggerImpactCameraShake();
+            TriggerHitStop(true);
+
+            cloud.TriggerVolatileReaction();
+
+            if (destroyProjectileOnVolatileReaction)
+                Destroy(gameObject);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private void SpawnReactionImpactEffects(Vector3 point)
+    {
+        if (impactEffectPrefab != null)
+            Instantiate(impactEffectPrefab, point, Quaternion.identity);
+
+        if (explosionEffectPrefab != null)
+            Instantiate(explosionEffectPrefab, point, Quaternion.identity);
+
+        if (impactSound != null)
+            AudioSource.PlayClipAtPoint(impactSound, point, impactVolume);
     }
 
     private bool HandleHit(RaycastHit hit)

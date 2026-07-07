@@ -57,6 +57,11 @@ public class GuardianShieldAbility : MonoBehaviour
 
         nextShieldTime = Time.time + cooldown;
 
+        AbilityWeaveManager.Instance?.RecordAbilityUsed(
+            CombatClassType.Guardian,
+            AbilitySlotType.Persistent
+        );
+
         Debug.Log("[GuardianShieldAbility] Guardian Shield activated.");
     }
 

@@ -98,6 +98,11 @@ public class GuardianSunderAxeAbility : MonoBehaviour
         else
             Debug.LogWarning("[GuardianSunderAxeAbility] Missing Ability HUD reference.");
 
+        AbilityWeaveManager.Instance?.RecordAbilityUsed(
+            CombatClassType.Guardian,
+            AbilitySlotType.Signature
+        );
+
         StartCoroutine(SunderRoutine());
     }
 

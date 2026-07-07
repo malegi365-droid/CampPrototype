@@ -113,6 +113,11 @@ public class ToxicologistPoisonCloudAbility : MonoBehaviour
 
         nextCloudTime = Time.time + cooldown;
 
+        AbilityWeaveManager.Instance?.RecordAbilityUsed(
+            CombatClassType.Toxicologist,
+            AbilitySlotType.Signature
+        );
+
         Debug.Log(
             $"[ToxicologistPoisonCloudAbility] Poison cloud deployed. " +
             $"Duration={finalCloudDuration}, PoisonDuration={finalPoisonDuration}, " +

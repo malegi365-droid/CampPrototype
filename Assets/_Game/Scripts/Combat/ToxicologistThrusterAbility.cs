@@ -127,6 +127,13 @@ public class ToxicologistThrusterAbility : MonoBehaviour
 
         if (abilityHUD != null)
             abilityHUD.TriggerMobilityCooldown();
+        else
+            Debug.LogWarning("[ToxicologistThrusterAbility] Missing Ability HUD reference.");
+
+        AbilityWeaveManager.Instance?.RecordAbilityUsed(
+            CombatClassType.Toxicologist,
+            AbilitySlotType.Movement
+        );
 
         Debug.Log($"[ToxicologistThrusterAbility] Toxic Thrusters activated. Cooldown={currentCooldown}");
     }

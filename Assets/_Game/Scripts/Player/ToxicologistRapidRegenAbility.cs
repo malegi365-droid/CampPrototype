@@ -71,6 +71,11 @@ public class ToxicologistRapidRegenAbility : MonoBehaviour
 
         nextUseTime = Time.time + cooldown;
 
+        AbilityWeaveManager.Instance?.RecordAbilityUsed(
+            CombatClassType.Toxicologist,
+            AbilitySlotType.Persistent
+        );
+
         Debug.Log(
             $"[ToxicologistRapidRegenAbility] Rapid Regen activated. Heal={finalHealPerTick}, TickInterval={finalTickInterval}"
         );

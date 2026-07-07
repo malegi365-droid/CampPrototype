@@ -74,8 +74,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8832387531288768741}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6, y: 1, z: 0}
+  m_LocalRotation: {x: 0, y: 1, z: -0, w: -0}
+  m_LocalPosition: {x: 6.10795, y: 1, z: -0.4178301}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -152,6 +152,7 @@ MonoBehaviour:
   deathShakeDuration: 0.08
   deathShakeStrength: 0.08
   temporaryCritThreshold: 20
+  showHealingNumbers: 1
   enablePlayerDamageFeedback: 1
   logPlayerDamageFeedback: 1
 --- !u!114 &2739322189747320220
@@ -161,7 +162,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8832387531288768741}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 15375c63d079bd84ab511a0cd843a0c5, type: 3}
   m_Name: 
@@ -188,7 +189,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8832387531288768741}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 292b945cfd6c6474ba19439b9e32ee01, type: 3}
   m_Name: 
@@ -250,7 +251,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8832387531288768741}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ff30a549269ade4e812db31ad7f90bf, type: 3}
   m_Name: 
@@ -388,6 +389,44 @@ MonoBehaviour:
   knockbackDuration: 0.12
   knockbackSpeed: 8
   knockbackResistance: 0
+  launchDuration: 0.34
+  launchHorizontalSpeed: 4.5
+  launchHeight: 2
+  launchHeightCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: -0.0009613037
+      inSlope: 1.0009613
+      outSlope: 1.0009613
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.34644717
+      value: 0.3458189
+      inSlope: 0.24595746
+      outSlope: 0.24595746
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0.013130188
+      inSlope: -0.5090464
+      outSlope: -0.5090464
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  launchResistance: 0
+  immuneToLaunch: 0
   defaultStaggerDuration: 0.18
   staggerResistance: 0
   immuneToStagger: 0
@@ -467,6 +506,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PoisonStatusEffect
   tickInterval: 0.5
+  poisonTintColor: {r: 0.2, g: 1, b: 0.2, a: 1}
+  tintDuration: 0.12
+  poisonTickEffectPrefab: {fileID: 0}
+  logPoisonTicks: 1
 --- !u!1001 &2818937320421741505
 PrefabInstance:
   m_ObjectHideFlags: 0

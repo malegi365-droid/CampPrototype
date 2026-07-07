@@ -87,6 +87,11 @@ public class RangerOverwatchAbility : MonoBehaviour
             Debug.LogWarning("[RangerOverwatchAbility] Missing Ability HUD reference.");
         }
 
+        AbilityWeaveManager.Instance?.RecordAbilityUsed(
+            CombatClassType.Ranger,
+            AbilitySlotType.Persistent
+        );
+
         Invoke(nameof(EndOverwatchHUDState), duration);
 
         Debug.Log("[RangerOverwatchAbility] Overwatch drone activated.");

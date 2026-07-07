@@ -21,9 +21,9 @@ public class PlayerMovementController : MonoBehaviour
     [Header("HUD")]
     [SerializeField] private RangerAbilityHUDController abilityHUD;
 
-    [Header("Dash")]
+    [Header("Dash / Combat Roll")]
     [SerializeField] private float dashDistance = 5f;
-    [SerializeField] private float dashDuration = 0.16f;
+    [SerializeField] private float dashDuration = 0.32f;
     [SerializeField] private float dashCooldown = 2.5f;
     [SerializeField] private bool allowDash = true;
 
@@ -33,7 +33,7 @@ public class PlayerMovementController : MonoBehaviour
     [SerializeField] private string moveXParameterName = "MoveX";
     [SerializeField] private string moveYParameterName = "MoveY";
     [SerializeField] private float animationDampTime = 0.1f;
-    [SerializeField] private string dashTriggerName = "Dash";
+    [SerializeField] private string dashTriggerName = "CombatRoll";
 
     [Header("Aiming")]
     [SerializeField] private Camera aimCamera;
@@ -220,15 +220,9 @@ public class PlayerMovementController : MonoBehaviour
 
         if (kb.leftShiftKey.wasPressedThisFrame && Time.time >= nextDashTime)
         {
-            Vector3 dashDirection = GetMovementInput();
+            Vector3 dashDirection = GetVisualFacingDirection();
 
-            if (dashDirection.sqrMagnitude > 1f)
-                dashDirection.Normalize();
-
-            if (dashDirection.sqrMagnitude <= 0.001f)
-                dashDirection = lastMoveDirection;
-
-            StartCoroutine(DashRoutine(dashDirection.normalized));
+            StartCoroutine(DashRoutine(dashDirection));
 
             nextDashTime = Time.time + dashCooldown;
 
@@ -236,7 +230,30 @@ public class PlayerMovementController : MonoBehaviour
                 abilityHUD.TriggerMobilityCooldown();
             else
                 Debug.LogWarning("[PlayerMovementController] Missing Ability HUD reference.");
+
+            AbilityWeaveManager.Instance?.RecordAbilityUsed(
+                CombatClassType.Ranger,
+                AbilitySlotType.Movement
+            );
         }
+    }
+
+    private Vector3 GetVisualFacingDirection()
+    {
+        Transform reference = visualRoot != null ? visualRoot : transform;
+
+        Vector3 direction = reference.forward;
+        direction.y = 0f;
+
+        if (direction.sqrMagnitude <= 0.001f)
+            direction = transform.forward;
+
+        direction.y = 0f;
+
+        if (direction.sqrMagnitude <= 0.001f)
+            return Vector3.forward;
+
+        return direction.normalized;
     }
 
     private IEnumerator DashRoutine(Vector3 dashDirection)
@@ -274,5 +291,29 @@ public class PlayerMovementController : MonoBehaviour
         }
 
         return null;
+    }
+    public void ForceDashForShowcase(Vector3 dashDirection)
+    {
+        if (!allowDash || isDashing)
+            return;
+
+        dashDirection.y = 0f;
+
+        if (dashDirection.sqrMagnitude <= 0.001f)
+            dashDirection = GetVisualFacingDirection();
+
+        dashDirection.Normalize();
+
+        StartCoroutine(DashRoutine(dashDirection));
+
+        nextDashTime = Time.time + dashCooldown;
+
+        if (abilityHUD != null)
+            abilityHUD.TriggerMobilityCooldown();
+
+        AbilityWeaveManager.Instance?.RecordAbilityUsed(
+            CombatClassType.Ranger,
+            AbilitySlotType.Movement
+        );
     }
 }

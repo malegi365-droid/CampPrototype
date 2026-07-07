@@ -135,6 +135,11 @@ public class GuardianBulwarkChargeAbility : MonoBehaviour
         else
             Debug.LogWarning("[GuardianBulwarkChargeAbility] Missing Ability HUD reference.");
 
+        AbilityWeaveManager.Instance?.RecordAbilityUsed(
+            CombatClassType.Guardian,
+            AbilitySlotType.Movement
+        );
+
         Debug.Log("[GuardianBulwarkChargeAbility] Bulwark Charge started.");
     }
 

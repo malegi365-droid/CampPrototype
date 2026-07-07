@@ -124,7 +124,7 @@ public class RangerProjectileFireController : MonoBehaviour
                         ? overchargeProjectilePrefab
                         : piercingProjectilePrefab;
 
-                FireProjectile(
+                bool fired = FireProjectile(
                     selectedOverchargeProjectile,
                     mousePosition,
                     overchargeFireSound != null ? overchargeFireSound : piercingFireSound,
@@ -132,7 +132,8 @@ public class RangerProjectileFireController : MonoBehaviour
                     overchargeShakeStrength
                 );
 
-                nextFireTime = Time.time + overchargeFireRate;
+                if (fired)
+                    nextFireTime = Time.time + overchargeFireRate;
             }
 
             return;
@@ -140,7 +141,7 @@ public class RangerProjectileFireController : MonoBehaviour
 
         if (mouse.leftButton.wasPressedThisFrame && Time.time >= nextFireTime)
         {
-            FireProjectile(
+            bool fired = FireProjectile(
                 projectilePrefab,
                 mousePosition,
                 fireAudioSource != null ? fireAudioSource.clip : null,
@@ -148,30 +149,20 @@ public class RangerProjectileFireController : MonoBehaviour
                 shakeStrength
             );
 
-            nextFireTime = Time.time + fireCooldown;
-        }
+            if (fired)
+            {
+                nextFireTime = Time.time + fireCooldown;
 
-        // Piercing Shot intentionally disabled for now.
-        // Q is currently reserved for Ranger Overwatch Drone.
-        /*
-        if (keyboard != null && keyboard.qKey.wasPressedThisFrame && Time.time >= nextPiercingTime)
-        {
-            FireProjectile(
-                piercingProjectilePrefab,
-                mousePosition,
-                piercingFireSound != null ? piercingFireSound : fireAudioSource != null ? fireAudioSource.clip : null,
-                piercingShakeDuration,
-                piercingShakeStrength
-            );
-
-            nextPiercingTime = Time.time + piercingCooldown;
-            abilityHUD?.TriggerPiercingCooldown();
+                AbilityWeaveManager.Instance?.RecordAbilityUsed(
+                    CombatClassType.Ranger,
+                    AbilitySlotType.Basic
+                );
+            }
         }
-        */
 
         if (keyboard != null && keyboard.eKey.wasPressedThisFrame && Time.time >= nextExplosiveTime)
         {
-            FireProjectile(
+            bool fired = FireProjectile(
                 explosiveProjectilePrefab,
                 mousePosition,
                 explosiveFireSound != null ? explosiveFireSound : fireAudioSource != null ? fireAudioSource.clip : null,
@@ -179,8 +170,16 @@ public class RangerProjectileFireController : MonoBehaviour
                 explosiveShakeStrength
             );
 
-            nextExplosiveTime = Time.time + explosiveCooldown;
-            abilityHUD?.TriggerExplosiveCooldown();
+            if (fired)
+            {
+                nextExplosiveTime = Time.time + explosiveCooldown;
+                abilityHUD?.TriggerExplosiveCooldown();
+
+                AbilityWeaveManager.Instance?.RecordAbilityUsed(
+                    CombatClassType.Ranger,
+                    AbilitySlotType.Signature
+                );
+            }
         }
     }
 
@@ -214,6 +213,11 @@ public class RangerProjectileFireController : MonoBehaviour
         abilityHUD?.SetOverchargeState(true);
         overchargeVisuals?.EnableOverchargeVisuals();
 
+        AbilityWeaveManager.Instance?.RecordAbilityUsed(
+            CombatClassType.Ranger,
+            AbilitySlotType.Ultimate
+        );
+
         Debug.Log("Overcharge activated.");
     }
 
@@ -222,7 +226,7 @@ public class RangerProjectileFireController : MonoBehaviour
         return overchargeActive;
     }
 
-    private void FireProjectile(
+    private bool FireProjectile(
         GameObject selectedProjectilePrefab,
         Vector2 mouseScreenPosition,
         AudioClip fireSound,
@@ -233,7 +237,7 @@ public class RangerProjectileFireController : MonoBehaviour
         if (selectedProjectilePrefab == null || projectileSpawnPoint == null)
         {
             Debug.LogWarning("[RangerProjectileFireController] Missing projectile prefab or spawn point.");
-            return;
+            return false;
         }
 
         PlayFireAnimation();
@@ -275,6 +279,8 @@ public class RangerProjectileFireController : MonoBehaviour
         {
             Debug.LogWarning("[RangerProjectileFireController] Spawned projectile is missing RangerInjectorProjectile.");
         }
+
+        return true;
     }
 
     private void PlayFireAnimation()
@@ -330,5 +336,29 @@ public class RangerProjectileFireController : MonoBehaviour
         );
 
         Destroy(flash, 1f);
+    }
+    public void ForceBasicFireForShowcase(Vector3 worldTargetPoint)
+    {
+        if (Time.time < nextFireTime)
+            nextFireTime = 0f;
+
+        Vector2 fakeScreenPosition = Vector2.zero;
+
+        if (aimCamera == null)
+            aimCamera = Camera.main;
+
+        if (aimCamera != null)
+            fakeScreenPosition = aimCamera.WorldToScreenPoint(worldTargetPoint);
+
+        bool fired = FireProjectile(
+            projectilePrefab,
+            fakeScreenPosition,
+            fireAudioSource != null ? fireAudioSource.clip : null,
+            shakeDuration,
+            shakeStrength
+        );
+
+        if (fired)
+            nextFireTime = Time.time + fireCooldown;
     }
 }
