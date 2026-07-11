@@ -177,6 +177,27 @@ public class RangerInjectorProjectile : MonoBehaviour
     private bool HandleHit(RaycastHit hit)
     {
         Debug.Log($"Projectile hit: {hit.collider.name}");
+        if (explosive && canTriggerVolatileReaction)
+        {
+            PoisonCloudZone directCloudHit =
+                hit.collider.GetComponentInParent<PoisonCloudZone>();
+
+            if (directCloudHit != null && !directCloudHit.HasReacted)
+            {
+                Debug.Log("[RangerInjectorProjectile] Direct cloud hit triggered Volatile Reaction.");
+
+                SpawnReactionImpactEffects(hit.point);
+                TriggerImpactCameraShake();
+                TriggerHitStop(true);
+
+                directCloudHit.TriggerVolatileReaction();
+
+                if (destroyProjectileOnVolatileReaction)
+                    Destroy(gameObject);
+
+                return true;
+            }
+        }
 
         Transform enemyRoot = GetEnemyRoot(hit.collider.transform);
 

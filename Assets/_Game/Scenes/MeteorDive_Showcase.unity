@@ -12057,7 +12057,7 @@ MonoBehaviour:
   projectilePrefab: {fileID: 1750164435413093665, guid: fa0171bb62cd7bf418f21726c307646b, type: 3}
   projectileSpawnPoint: {fileID: 2035793072}
   piercingProjectilePrefab: {fileID: 1750164435413093665, guid: 9f6e05471f9d5a0478241d7be9d6642c, type: 3}
-  explosiveProjectilePrefab: {fileID: 1750164435413093665, guid: fa0171bb62cd7bf418f21726c307646b, type: 3}
+  explosiveProjectilePrefab: {fileID: 1750164435413093665, guid: 58ca0f20f2c81ee4bac7a1e4436f937c, type: 3}
   overchargeProjectilePrefab: {fileID: 1750164435413093665, guid: 1ae806d7d58f05a498e715621f08efaa, type: 3}
   muzzleFlashPrefab: {fileID: 2356583063401529875, guid: 4d97ee2a15261354c908ecac3c535235, type: 3}
   fireAudioSource: {fileID: 0}
