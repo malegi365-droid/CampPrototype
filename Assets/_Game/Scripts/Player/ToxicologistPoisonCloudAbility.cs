@@ -36,9 +36,12 @@ public class ToxicologistPoisonCloudAbility : MonoBehaviour
     private float nextCloudTime;
     private ToxicologistContainmentFailureAbility containmentFailure;
 
+    public PoisonCloudZone LastSpawnedCloud { get; private set; }
+
     private void Awake()
     {
-        containmentFailure = GetComponent<ToxicologistContainmentFailureAbility>();
+        containmentFailure =
+            GetComponent<ToxicologistContainmentFailureAbility>();
 
         if (aimCamera == null)
             aimCamera = Camera.main;
@@ -58,16 +61,39 @@ public class ToxicologistPoisonCloudAbility : MonoBehaviour
         if (Time.time < nextCloudTime)
             return;
 
-        if (poisonCloudPrefab == null)
+        if (!TryGetClickWorldPoint(out Vector3 spawnPosition))
         {
-            Debug.LogWarning("[ToxicologistPoisonCloudAbility] Missing poison cloud prefab.");
+            Debug.LogWarning(
+                "[ToxicologistPoisonCloudAbility] Could not find valid click location."
+            );
+
             return;
         }
 
-        if (!TryGetClickWorldPoint(out Vector3 spawnPosition))
+        SpawnCloud(spawnPosition, true);
+    }
+
+    public bool ForceSpawnCloudForShowcase(Vector3 worldPosition)
+    {
+        worldPosition.y = 0f;
+
+        nextCloudTime = 0f;
+
+        return SpawnCloud(worldPosition, true);
+    }
+
+    private bool SpawnCloud(
+        Vector3 spawnPosition,
+        bool recordAbilityUse
+    )
+    {
+        if (poisonCloudPrefab == null)
         {
-            Debug.LogWarning("[ToxicologistPoisonCloudAbility] Could not find valid click location.");
-            return;
+            Debug.LogWarning(
+                "[ToxicologistPoisonCloudAbility] Missing poison cloud prefab."
+            );
+
+            return false;
         }
 
         float finalCloudDuration = cloudDuration;
@@ -77,10 +103,17 @@ public class ToxicologistPoisonCloudAbility : MonoBehaviour
 
         if (IsContainmentFailureActive())
         {
-            finalCloudDuration *= containmentCloudDurationMultiplier;
-            finalPoisonDuration *= containmentPoisonDurationMultiplier;
-            finalPoisonDamagePerTick *= containmentDamageMultiplier;
-            finalScaleMultiplier = containmentScaleMultiplier;
+            finalCloudDuration *=
+                containmentCloudDurationMultiplier;
+
+            finalPoisonDuration *=
+                containmentPoisonDurationMultiplier;
+
+            finalPoisonDamagePerTick *=
+                containmentDamageMultiplier;
+
+            finalScaleMultiplier =
+                containmentScaleMultiplier;
         }
 
         GameObject cloudObject = Instantiate(
@@ -90,12 +123,30 @@ public class ToxicologistPoisonCloudAbility : MonoBehaviour
         );
 
         if (finalScaleMultiplier != 1f)
-            cloudObject.transform.localScale *= finalScaleMultiplier;
+        {
+            cloudObject.transform.localScale *=
+                finalScaleMultiplier;
+        }
 
         PoisonCloudZone cloudZone =
             cloudObject.GetComponent<PoisonCloudZone>();
 
-        if (cloudZone != null)
+        if (cloudZone == null)
+        {
+            cloudZone =
+                cloudObject.GetComponentInChildren<PoisonCloudZone>();
+        }
+
+        LastSpawnedCloud = cloudZone;
+
+        if (cloudZone == null)
+        {
+            Debug.LogWarning(
+                "[ToxicologistPoisonCloudAbility] " +
+                "Spawned cloud is missing PoisonCloudZone."
+            );
+        }
+        else
         {
             cloudZone.Initialize(
                 finalCloudDuration,
@@ -107,25 +158,42 @@ public class ToxicologistPoisonCloudAbility : MonoBehaviour
         }
 
         if (abilityHUD != null)
+        {
             abilityHUD.TriggerSignatureCooldown();
+        }
         else
-            Debug.LogWarning("[ToxicologistPoisonCloudAbility] Missing Ability HUD reference.");
+        {
+            Debug.LogWarning(
+                "[ToxicologistPoisonCloudAbility] " +
+                "Missing Ability HUD reference."
+            );
+        }
 
         nextCloudTime = Time.time + cooldown;
 
-        AbilityWeaveManager.Instance?.RecordAbilityUsed(
-            CombatClassType.Toxicologist,
-            AbilitySlotType.Signature
-        );
+        if (recordAbilityUse)
+        {
+            AbilityWeaveManager.Instance?.RecordAbilityUsed(
+                CombatClassType.Toxicologist,
+                AbilitySlotType.Signature
+            );
+        }
 
         Debug.Log(
-            $"[ToxicologistPoisonCloudAbility] Poison cloud deployed. " +
-            $"Duration={finalCloudDuration}, PoisonDuration={finalPoisonDuration}, " +
-            $"Damage={finalPoisonDamagePerTick}, Scale={finalScaleMultiplier}"
+            "[ToxicologistPoisonCloudAbility] Poison cloud deployed. " +
+            $"Duration={finalCloudDuration}, " +
+            $"PoisonDuration={finalPoisonDuration}, " +
+            $"Damage={finalPoisonDamagePerTick}, " +
+            $"Scale={finalScaleMultiplier}, " +
+            $"CloudFound={LastSpawnedCloud != null}"
         );
+
+        return LastSpawnedCloud != null;
     }
 
-    private bool TryGetClickWorldPoint(out Vector3 worldPoint)
+    private bool TryGetClickWorldPoint(
+        out Vector3 worldPoint
+    )
     {
         worldPoint = transform.position;
 
@@ -135,22 +203,37 @@ public class ToxicologistPoisonCloudAbility : MonoBehaviour
         if (aimCamera == null)
             return false;
 
-        Ray ray = aimCamera.ScreenPointToRay(Input.mousePosition);
+        Ray ray =
+            aimCamera.ScreenPointToRay(Input.mousePosition);
 
-        if (Physics.Raycast(ray, out RaycastHit hit, 100f, groundLayer))
+        if (Physics.Raycast(
+            ray,
+            out RaycastHit hit,
+            100f,
+            groundLayer
+        ))
         {
             worldPoint = hit.point;
             worldPoint.y = 0f;
 
             if (limitCastDistance)
             {
-                Vector3 fromCaster = worldPoint - transform.position;
+                Vector3 fromCaster =
+                    worldPoint - transform.position;
+
                 fromCaster.y = 0f;
 
-                if (fromCaster.magnitude > maxCastDistance)
+                if (fromCaster.magnitude >
+                    maxCastDistance)
                 {
-                    fromCaster = fromCaster.normalized * maxCastDistance;
-                    worldPoint = transform.position + fromCaster;
+                    fromCaster =
+                        fromCaster.normalized *
+                        maxCastDistance;
+
+                    worldPoint =
+                        transform.position +
+                        fromCaster;
+
                     worldPoint.y = 0f;
                 }
             }
@@ -164,17 +247,22 @@ public class ToxicologistPoisonCloudAbility : MonoBehaviour
     private bool IsContainmentFailureActive()
     {
         return containmentFailure != null &&
-               containmentFailure.IsContainmentFailureActive;
+               containmentFailure
+                   .IsContainmentFailureActive;
     }
 
-    private RangerAbilityHUDController FindHUDByName(string hudName)
+    private RangerAbilityHUDController FindHUDByName(
+        string hudName
+    )
     {
         RangerAbilityHUDController[] huds =
             FindObjectsByType<RangerAbilityHUDController>(
                 FindObjectsInactive.Include
             );
 
-        foreach (RangerAbilityHUDController hud in huds)
+        foreach (
+            RangerAbilityHUDController hud in huds
+        )
         {
             if (hud.gameObject.name == hudName)
                 return hud;

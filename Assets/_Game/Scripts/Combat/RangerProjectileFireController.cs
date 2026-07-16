@@ -71,7 +71,7 @@ public class RangerProjectileFireController : MonoBehaviour
     private float nextOverchargeTime;
     private float overchargeEndTime;
 
-    private bool overchargeActive = false;
+    private bool overchargeActive;
 
     private UnitStats shooterStats;
     private TargetingController shooterTargeting;
@@ -88,19 +88,24 @@ public class RangerProjectileFireController : MonoBehaviour
             aimCamera = Camera.main;
 
         if (abilityHUD == null)
-            abilityHUD = FindAnyObjectByType<RangerAbilityHUDController>();
+            abilityHUD =
+                FindAnyObjectByType<RangerAbilityHUDController>();
 
         if (overchargeVisuals == null)
-            overchargeVisuals = GetComponent<OverchargeVisualController>();
+            overchargeVisuals =
+                GetComponent<OverchargeVisualController>();
 
         if (animationBridge == null)
-            animationBridge = GetComponentInChildren<PlayerAnimationBridge>();
+            animationBridge =
+                GetComponentInChildren<PlayerAnimationBridge>();
 
         if (characterAnimator == null)
-            characterAnimator = GetComponentInChildren<Animator>();
+            characterAnimator =
+                GetComponentInChildren<Animator>();
 
         if (cameraShake == null)
-            cameraShake = FindAnyObjectByType<CameraShakeController>();
+            cameraShake =
+                FindAnyObjectByType<CameraShakeController>();
     }
 
     private void Update()
@@ -111,13 +116,15 @@ public class RangerProjectileFireController : MonoBehaviour
         if (mouse == null)
             return;
 
-        Vector2 mousePosition = mouse.position.ReadValue();
+        Vector2 mousePosition =
+            mouse.position.ReadValue();
 
         HandleOverchargeState(keyboard);
 
         if (overchargeActive)
         {
-            if (mouse.leftButton.isPressed && Time.time >= nextFireTime)
+            if (mouse.leftButton.isPressed &&
+                Time.time >= nextFireTime)
             {
                 GameObject selectedOverchargeProjectile =
                     overchargeProjectilePrefab != null
@@ -127,31 +134,41 @@ public class RangerProjectileFireController : MonoBehaviour
                 bool fired = FireProjectile(
                     selectedOverchargeProjectile,
                     mousePosition,
-                    overchargeFireSound != null ? overchargeFireSound : piercingFireSound,
+                    overchargeFireSound != null
+                        ? overchargeFireSound
+                        : piercingFireSound,
                     overchargeShakeDuration,
                     overchargeShakeStrength
                 );
 
                 if (fired)
-                    nextFireTime = Time.time + overchargeFireRate;
+                {
+                    nextFireTime =
+                        Time.time +
+                        overchargeFireRate;
+                }
             }
 
             return;
         }
 
-        if (mouse.leftButton.wasPressedThisFrame && Time.time >= nextFireTime)
+        if (mouse.leftButton.wasPressedThisFrame &&
+            Time.time >= nextFireTime)
         {
             bool fired = FireProjectile(
                 projectilePrefab,
                 mousePosition,
-                fireAudioSource != null ? fireAudioSource.clip : null,
+                fireAudioSource != null
+                    ? fireAudioSource.clip
+                    : null,
                 shakeDuration,
                 shakeStrength
             );
 
             if (fired)
             {
-                nextFireTime = Time.time + fireCooldown;
+                nextFireTime =
+                    Time.time + fireCooldown;
 
                 AbilityWeaveManager.Instance?.RecordAbilityUsed(
                     CombatClassType.Ranger,
@@ -160,19 +177,28 @@ public class RangerProjectileFireController : MonoBehaviour
             }
         }
 
-        if (keyboard != null && keyboard.eKey.wasPressedThisFrame && Time.time >= nextExplosiveTime)
+        if (keyboard != null &&
+            keyboard.eKey.wasPressedThisFrame &&
+            Time.time >= nextExplosiveTime)
         {
             bool fired = FireProjectile(
                 explosiveProjectilePrefab,
                 mousePosition,
-                explosiveFireSound != null ? explosiveFireSound : fireAudioSource != null ? fireAudioSource.clip : null,
+                explosiveFireSound != null
+                    ? explosiveFireSound
+                    : fireAudioSource != null
+                        ? fireAudioSource.clip
+                        : null,
                 explosiveShakeDuration,
                 explosiveShakeStrength
             );
 
             if (fired)
             {
-                nextExplosiveTime = Time.time + explosiveCooldown;
+                nextExplosiveTime =
+                    Time.time +
+                    explosiveCooldown;
+
                 abilityHUD?.TriggerExplosiveCooldown();
 
                 AbilityWeaveManager.Instance?.RecordAbilityUsed(
@@ -183,31 +209,45 @@ public class RangerProjectileFireController : MonoBehaviour
         }
     }
 
-    private void HandleOverchargeState(Keyboard keyboard)
+    private void HandleOverchargeState(
+        Keyboard keyboard
+    )
     {
         if (!allowOvercharge)
             return;
 
-        if (overchargeActive && Time.time >= overchargeEndTime)
+        if (overchargeActive &&
+            Time.time >= overchargeEndTime)
         {
             overchargeActive = false;
+
             abilityHUD?.SetOverchargeState(false);
             overchargeVisuals?.DisableOverchargeVisuals();
+
             Debug.Log("Overcharge ended.");
         }
 
         if (keyboard == null)
             return;
 
-        if (keyboard.rKey.wasPressedThisFrame && Time.time >= nextOverchargeTime)
+        if (keyboard.rKey.wasPressedThisFrame &&
+            Time.time >= nextOverchargeTime)
+        {
             ActivateOvercharge();
+        }
     }
 
     private void ActivateOvercharge()
     {
         overchargeActive = true;
-        overchargeEndTime = Time.time + overchargeDuration;
-        nextOverchargeTime = Time.time + overchargeCooldown;
+
+        overchargeEndTime =
+            Time.time +
+            overchargeDuration;
+
+        nextOverchargeTime =
+            Time.time +
+            overchargeCooldown;
 
         abilityHUD?.TriggerOverchargeCooldown();
         abilityHUD?.SetOverchargeState(true);
@@ -226,6 +266,73 @@ public class RangerProjectileFireController : MonoBehaviour
         return overchargeActive;
     }
 
+    public bool ForceBasicFireForShowcase(
+        Vector3 worldTargetPoint
+    )
+    {
+        nextFireTime = 0f;
+
+        bool fired =
+            FireProjectileAtWorldPoint(
+                projectilePrefab,
+                worldTargetPoint,
+                fireAudioSource != null
+                    ? fireAudioSource.clip
+                    : null,
+                shakeDuration,
+                shakeStrength
+            );
+
+        if (fired)
+        {
+            nextFireTime =
+                Time.time + fireCooldown;
+
+            AbilityWeaveManager.Instance?.RecordAbilityUsed(
+                CombatClassType.Ranger,
+                AbilitySlotType.Basic
+            );
+        }
+
+        return fired;
+    }
+
+    public bool ForceExplosiveFireForShowcase(
+        Vector3 worldTargetPoint
+    )
+    {
+        nextExplosiveTime = 0f;
+
+        bool fired =
+            FireProjectileAtWorldPoint(
+                explosiveProjectilePrefab,
+                worldTargetPoint,
+                explosiveFireSound != null
+                    ? explosiveFireSound
+                    : fireAudioSource != null
+                        ? fireAudioSource.clip
+                        : null,
+                explosiveShakeDuration,
+                explosiveShakeStrength
+            );
+
+        if (fired)
+        {
+            nextExplosiveTime =
+                Time.time +
+                explosiveCooldown;
+
+            abilityHUD?.TriggerExplosiveCooldown();
+
+            AbilityWeaveManager.Instance?.RecordAbilityUsed(
+                CombatClassType.Ranger,
+                AbilitySlotType.Signature
+            );
+        }
+
+        return fired;
+    }
+
     private bool FireProjectile(
         GameObject selectedProjectilePrefab,
         Vector2 mouseScreenPosition,
@@ -234,30 +341,69 @@ public class RangerProjectileFireController : MonoBehaviour
         float selectedShakeStrength
     )
     {
-        if (selectedProjectilePrefab == null || projectileSpawnPoint == null)
+        Vector3 targetPoint =
+            GetAimPoint(mouseScreenPosition);
+
+        return FireProjectileAtWorldPoint(
+            selectedProjectilePrefab,
+            targetPoint,
+            fireSound,
+            selectedShakeDuration,
+            selectedShakeStrength
+        );
+    }
+
+    private bool FireProjectileAtWorldPoint(
+        GameObject selectedProjectilePrefab,
+        Vector3 targetPoint,
+        AudioClip fireSound,
+        float selectedShakeDuration,
+        float selectedShakeStrength
+    )
+    {
+        if (selectedProjectilePrefab == null ||
+            projectileSpawnPoint == null)
         {
-            Debug.LogWarning("[RangerProjectileFireController] Missing projectile prefab or spawn point.");
+            Debug.LogWarning(
+                "[RangerProjectileFireController] " +
+                "Missing projectile prefab or spawn point."
+            );
+
             return false;
         }
 
         PlayFireAnimation();
 
-        if (fireAudioSource != null && fireSound != null)
+        if (fireAudioSource != null &&
+            fireSound != null)
+        {
             fireAudioSource.PlayOneShot(fireSound);
+        }
 
-        cameraShake?.Shake(selectedShakeDuration, selectedShakeStrength);
+        cameraShake?.Shake(
+            selectedShakeDuration,
+            selectedShakeStrength
+        );
 
-        Vector3 targetPoint = GetAimPoint(mouseScreenPosition);
+        Vector3 fireDirection =
+            targetPoint -
+            projectileSpawnPoint.position;
 
-        Vector3 fireDirection = targetPoint - projectileSpawnPoint.position;
         fireDirection.y = 0f;
 
         if (fireDirection.sqrMagnitude <= 0.001f)
-            fireDirection = projectileSpawnPoint.forward;
+        {
+            fireDirection =
+                projectileSpawnPoint.forward;
+        }
 
         fireDirection.Normalize();
 
-        Quaternion fireRotation = Quaternion.LookRotation(fireDirection, Vector3.up);
+        Quaternion fireRotation =
+            Quaternion.LookRotation(
+                fireDirection,
+                Vector3.up
+            );
 
         SpawnMuzzleFlash(fireRotation);
 
@@ -268,16 +414,29 @@ public class RangerProjectileFireController : MonoBehaviour
         );
 
         RangerInjectorProjectile projectile =
-            projectileObject.GetComponentInChildren<RangerInjectorProjectile>();
+            projectileObject.GetComponentInChildren<
+                RangerInjectorProjectile
+            >();
 
         if (projectile != null)
         {
-            Debug.Log($"[RangerProjectileFireController] Initializing projectile. Direction={fireDirection}");
-            projectile.Initialize(fireDirection, shooterStats, shooterTargeting);
+            Debug.Log(
+                "[RangerProjectileFireController] " +
+                $"Initializing projectile. Direction={fireDirection}"
+            );
+
+            projectile.Initialize(
+                fireDirection,
+                shooterStats,
+                shooterTargeting
+            );
         }
         else
         {
-            Debug.LogWarning("[RangerProjectileFireController] Spawned projectile is missing RangerInjectorProjectile.");
+            Debug.LogWarning(
+                "[RangerProjectileFireController] " +
+                "Spawned projectile is missing RangerInjectorProjectile."
+            );
         }
 
         return true;
@@ -288,14 +447,23 @@ public class RangerProjectileFireController : MonoBehaviour
         if (animationBridge != null)
             animationBridge.PlayAttack();
 
-        if (!string.IsNullOrWhiteSpace(fireTriggerName))
+        if (!string.IsNullOrWhiteSpace(
+            fireTriggerName
+        ))
         {
-            characterAnimator?.SetTrigger(fireTriggerName);
-            bowAnimator?.SetTrigger(fireTriggerName);
+            characterAnimator?.SetTrigger(
+                fireTriggerName
+            );
+
+            bowAnimator?.SetTrigger(
+                fireTriggerName
+            );
         }
     }
 
-    private Vector3 GetAimPoint(Vector2 mouseScreenPosition)
+    private Vector3 GetAimPoint(
+        Vector2 mouseScreenPosition
+    )
     {
         if (aimCamera == null)
             aimCamera = Camera.main;
@@ -306,15 +474,30 @@ public class RangerProjectileFireController : MonoBehaviour
 
         if (aimCamera != null)
         {
-            Ray ray = aimCamera.ScreenPointToRay(mouseScreenPosition);
-            Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+            Ray ray =
+                aimCamera.ScreenPointToRay(
+                    mouseScreenPosition
+                );
 
-            if (groundPlane.Raycast(ray, out float enter))
+            Plane groundPlane =
+                new Plane(
+                    Vector3.up,
+                    Vector3.zero
+                );
+
+            if (groundPlane.Raycast(
+                ray,
+                out float enter
+            ))
             {
-                cursorWorldPoint = ray.GetPoint(enter);
+                cursorWorldPoint =
+                    ray.GetPoint(enter);
 
                 if (aimDebugMarker != null)
-                    aimDebugMarker.position = cursorWorldPoint;
+                {
+                    aimDebugMarker.position =
+                        cursorWorldPoint;
+                }
             }
         }
 
@@ -324,7 +507,9 @@ public class RangerProjectileFireController : MonoBehaviour
         return cursorWorldPoint;
     }
 
-    private void SpawnMuzzleFlash(Quaternion fireRotation)
+    private void SpawnMuzzleFlash(
+        Quaternion fireRotation
+    )
     {
         if (muzzleFlashPrefab == null)
             return;
@@ -336,29 +521,5 @@ public class RangerProjectileFireController : MonoBehaviour
         );
 
         Destroy(flash, 1f);
-    }
-    public void ForceBasicFireForShowcase(Vector3 worldTargetPoint)
-    {
-        if (Time.time < nextFireTime)
-            nextFireTime = 0f;
-
-        Vector2 fakeScreenPosition = Vector2.zero;
-
-        if (aimCamera == null)
-            aimCamera = Camera.main;
-
-        if (aimCamera != null)
-            fakeScreenPosition = aimCamera.WorldToScreenPoint(worldTargetPoint);
-
-        bool fired = FireProjectile(
-            projectilePrefab,
-            fakeScreenPosition,
-            fireAudioSource != null ? fireAudioSource.clip : null,
-            shakeDuration,
-            shakeStrength
-        );
-
-        if (fired)
-            nextFireTime = Time.time + fireCooldown;
     }
 }

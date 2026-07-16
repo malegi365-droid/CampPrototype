@@ -5,7 +5,11 @@ using UnityEngine.UI;
 
 public class TechniqueDiscoveryPresentation : MonoBehaviour
 {
-    public static TechniqueDiscoveryPresentation Instance { get; private set; }
+    public static TechniqueDiscoveryPresentation Instance
+    {
+        get;
+        private set;
+    }
 
     [Header("Root")]
     [SerializeField] private CanvasGroup presentationGroup;
@@ -60,11 +64,39 @@ public class TechniqueDiscoveryPresentation : MonoBehaviour
     [SerializeField] private float holdTime = 0.75f;
     [SerializeField] private float fadeOutTime = 0.28f;
 
-    [Header("Default Text")]
-    [SerializeField] private string defaultAnalysisText = "SIMULATION ANALYSIS...";
-    [SerializeField] private string defaultPatternText = "Pattern divergence detected.";
-    [SerializeField] private string defaultCreativityText = "Creativity threshold exceeded.";
-    [SerializeField] private string defaultCataloguedText = "Combat Signature Archived";
+    [Header("Default Discovery Text")]
+    [SerializeField]
+    private string defaultAnalysisText =
+        "SIMULATION ANALYSIS...";
+
+    [SerializeField]
+    private string defaultPatternText =
+        "Pattern divergence detected.";
+
+    [SerializeField]
+    private string defaultCreativityText =
+        "Creativity threshold exceeded.";
+
+    [SerializeField]
+    private string defaultCataloguedText =
+        "Combat Signature Archived";
+
+    [Header("Volatile Reaction Text")]
+    [SerializeField]
+    private string volatileAnalysisText =
+        "CHEMICAL ANALYSIS...";
+
+    [SerializeField]
+    private string volatilePatternText =
+        "Volatile compound detected.";
+
+    [SerializeField]
+    private string volatileCreativityText =
+        "Cross-class reaction confirmed.";
+
+    [SerializeField]
+    private string volatileCataloguedText =
+        "Combat Signature Archived";
 
     [Header("Testing")]
     [SerializeField] private KeyCode testKey = KeyCode.T;
@@ -88,7 +120,10 @@ public class TechniqueDiscoveryPresentation : MonoBehaviour
             joltRoot = transform as RectTransform;
 
         if (joltRoot != null)
-            joltOriginalPosition = joltRoot.anchoredPosition;
+        {
+            joltOriginalPosition =
+                joltRoot.anchoredPosition;
+        }
 
         if (audioSource == null)
             audioSource = GetComponent<AudioSource>();
@@ -102,18 +137,95 @@ public class TechniqueDiscoveryPresentation : MonoBehaviour
             return;
 
         if (Input.GetKeyDown(testKey))
-            ShowTechniqueDiscovery("Meteor Dive");
+        {
+            ShowTechniqueDiscovery(
+                "Meteor Dive"
+            );
+        }
     }
 
-    public void ShowTechniqueDiscovery(string techniqueName)
+    public void ShowTechniqueDiscovery(
+        string techniqueName
+    )
+    {
+        DiscoveryTextSet selectedText =
+            GetTextSetForTechnique(
+                techniqueName
+            );
+
+        ShowTechniqueDiscovery(
+            techniqueName,
+            selectedText.analysis,
+            selectedText.pattern,
+            selectedText.creativity,
+            selectedText.catalogued
+        );
+    }
+
+    public void ShowTechniqueDiscovery(
+        string techniqueName,
+        string analysisLine,
+        string patternLine,
+        string creativityLine,
+        string cataloguedLine
+    )
     {
         if (activeRoutine != null)
+        {
             StopCoroutine(activeRoutine);
+            Time.timeScale = previousTimeScale;
+        }
 
-        activeRoutine = StartCoroutine(ShowRoutine(techniqueName));
+        activeRoutine = StartCoroutine(
+            ShowRoutine(
+                techniqueName,
+                analysisLine,
+                patternLine,
+                creativityLine,
+                cataloguedLine
+            )
+        );
     }
 
-    private IEnumerator ShowRoutine(string techniqueName)
+    private DiscoveryTextSet GetTextSetForTechnique(
+        string techniqueName
+    )
+    {
+        bool isVolatileReaction =
+            !string.IsNullOrWhiteSpace(
+                techniqueName
+            ) &&
+            techniqueName.Trim().Equals(
+                "Volatile Reaction",
+                System.StringComparison
+                    .OrdinalIgnoreCase
+            );
+
+        if (isVolatileReaction)
+        {
+            return new DiscoveryTextSet(
+                volatileAnalysisText,
+                volatilePatternText,
+                volatileCreativityText,
+                volatileCataloguedText
+            );
+        }
+
+        return new DiscoveryTextSet(
+            defaultAnalysisText,
+            defaultPatternText,
+            defaultCreativityText,
+            defaultCataloguedText
+        );
+    }
+
+    private IEnumerator ShowRoutine(
+        string techniqueName,
+        string analysisLine,
+        string patternLine,
+        string creativityLine,
+        string cataloguedLine
+    )
     {
         previousTimeScale = Time.timeScale;
 
@@ -124,44 +236,116 @@ public class TechniqueDiscoveryPresentation : MonoBehaviour
             presentationGroup.alpha = 1f;
 
         if (screenPulse != null)
-            StartCoroutine(FadeImageAlpha(screenPulse, 0f, pulseMaxAlpha, pulseInTime));
+        {
+            StartCoroutine(
+                FadeImageAlpha(
+                    screenPulse,
+                    0f,
+                    pulseMaxAlpha,
+                    pulseInTime
+                )
+            );
+        }
 
         Time.timeScale = freezeTimeScale;
 
         PlaySound(aiSystemInterrupt);
+
         yield return JoltRoutine();
 
-        yield return new WaitForSecondsRealtime(freezeRealSeconds);
+        yield return new WaitForSecondsRealtime(
+            freezeRealSeconds
+        );
 
         Time.timeScale = previousTimeScale;
 
-        yield return new WaitForSecondsRealtime(postJoltPause);
+        yield return new WaitForSecondsRealtime(
+            postJoltPause
+        );
 
-        yield return TypeLine(analysisGroup, analysisText, defaultAnalysisText);
-        yield return new WaitForSecondsRealtime(analysisPause);
+        yield return TypeLine(
+            analysisGroup,
+            analysisText,
+            analysisLine
+        );
 
-        yield return TypeLine(patternGroup, patternText, defaultPatternText);
-        yield return new WaitForSecondsRealtime(quickLinePause);
+        yield return new WaitForSecondsRealtime(
+            analysisPause
+        );
 
-        yield return TypeLine(creativityGroup, creativityText, defaultCreativityText);
-        yield return new WaitForSecondsRealtime(quickLinePause);
+        yield return TypeLine(
+            patternGroup,
+            patternText,
+            patternLine
+        );
 
-        yield return TypeLine(cataloguedGroup, cataloguedText, defaultCataloguedText);
-        yield return new WaitForSecondsRealtime(preNamePause);
+        yield return new WaitForSecondsRealtime(
+            quickLinePause
+        );
+
+        yield return TypeLine(
+            creativityGroup,
+            creativityText,
+            creativityLine
+        );
+
+        yield return new WaitForSecondsRealtime(
+            quickLinePause
+        );
+
+        yield return TypeLine(
+            cataloguedGroup,
+            cataloguedText,
+            cataloguedLine
+        );
+
+        yield return new WaitForSecondsRealtime(
+            preNamePause
+        );
 
         PlaySound(aiSystemArchive);
 
         if (techniqueNameText != null)
-            techniqueNameText.text = techniqueName.ToUpper();
+        {
+            techniqueNameText.text =
+                string.IsNullOrWhiteSpace(
+                    techniqueName
+                )
+                    ? string.Empty
+                    : techniqueName.ToUpper();
+        }
 
-        yield return FadeCanvasGroup(techniqueNameGroup, 0f, 1f, techniqueNameFadeInTime, 0f);
+        yield return FadeCanvasGroup(
+            techniqueNameGroup,
+            0f,
+            1f,
+            techniqueNameFadeInTime,
+            0f
+        );
 
-        yield return new WaitForSecondsRealtime(holdTime);
+        yield return new WaitForSecondsRealtime(
+            holdTime
+        );
 
         if (screenPulse != null)
-            StartCoroutine(FadeImageAlpha(screenPulse, pulseMaxAlpha, 0f, pulseOutTime));
+        {
+            StartCoroutine(
+                FadeImageAlpha(
+                    screenPulse,
+                    pulseMaxAlpha,
+                    0f,
+                    pulseOutTime
+                )
+            );
+        }
 
-        yield return FadeCanvasGroup(presentationGroup, 1f, 0f, fadeOutTime, 0f);
+        yield return FadeCanvasGroup(
+            presentationGroup,
+            1f,
+            0f,
+            fadeOutTime,
+            0f
+        );
 
         HideImmediate();
 
@@ -170,56 +354,110 @@ public class TechniqueDiscoveryPresentation : MonoBehaviour
 
     private IEnumerator JoltRoutine()
     {
-        if (joltRoot == null || joltAmount <= 0f)
+        if (joltRoot == null ||
+            joltAmount <= 0f)
+        {
             yield break;
+        }
 
-        Vector2 original = joltRoot.anchoredPosition;
+        Vector2 original =
+            joltRoot.anchoredPosition;
 
-        joltRoot.anchoredPosition = original - Vector2.right * joltAmount;
+        joltRoot.anchoredPosition =
+            original -
+            Vector2.right * joltAmount;
+
         yield return null;
 
-        joltRoot.anchoredPosition = original + Vector2.right * joltAmount;
+        joltRoot.anchoredPosition =
+            original +
+            Vector2.right * joltAmount;
+
         yield return null;
 
-        joltRoot.anchoredPosition = original;
+        joltRoot.anchoredPosition =
+            original;
     }
 
-    private IEnumerator TypeLine(CanvasGroup group, TMP_Text textField, string fullText)
+    private IEnumerator TypeLine(
+        CanvasGroup group,
+        TMP_Text textField,
+        string fullText
+    )
     {
-        if (group == null || textField == null)
+        if (group == null ||
+            textField == null)
+        {
             yield break;
+        }
+
+        if (fullText == null)
+            fullText = string.Empty;
 
         group.alpha = 1f;
         textField.text = cursor;
 
-        for (int i = 0; i <= fullText.Length; i++)
+        for (
+            int i = 0;
+            i <= fullText.Length;
+            i++
+        )
         {
-            textField.text = fullText.Substring(0, i) + cursor;
+            textField.text =
+                fullText.Substring(0, i) +
+                cursor;
 
-            if (i > 0 && typingSoundEveryCharacters > 0 && i % typingSoundEveryCharacters == 0)
-                PlaySound(aiTypingTick, typingTickVolume);
+            if (i > 0 &&
+                typingSoundEveryCharacters > 0 &&
+                i % typingSoundEveryCharacters == 0)
+            {
+                PlaySound(
+                    aiTypingTick,
+                    typingTickVolume
+                );
+            }
 
-            yield return new WaitForSecondsRealtime(characterDelay);
+            yield return new WaitForSecondsRealtime(
+                characterDelay
+            );
         }
 
         textField.text = fullText;
     }
 
-    private void PlaySound(AudioClip clip, float volume = 1f)
+    private void PlaySound(
+        AudioClip clip,
+        float volume = 1f
+    )
     {
-        if (audioSource == null || clip == null)
+        if (audioSource == null ||
+            clip == null)
+        {
             return;
+        }
 
-        audioSource.PlayOneShot(clip, volume);
+        audioSource.PlayOneShot(
+            clip,
+            volume
+        );
     }
 
     private void ClearText()
     {
-        if (analysisText != null) analysisText.text = "";
-        if (patternText != null) patternText.text = "";
-        if (creativityText != null) creativityText.text = "";
-        if (cataloguedText != null) cataloguedText.text = "";
-        if (techniqueNameText != null) techniqueNameText.text = "";
+        if (analysisText != null)
+            analysisText.text = "";
+
+        if (patternText != null)
+            patternText.text = "";
+
+        if (creativityText != null)
+            creativityText.text = "";
+
+        if (cataloguedText != null)
+            cataloguedText.text = "";
+
+        if (techniqueNameText != null)
+            techniqueNameText.text = "";
     }
 
     private void HideImmediate()
@@ -240,25 +478,47 @@ public class TechniqueDiscoveryPresentation : MonoBehaviour
         }
 
         if (joltRoot != null)
-            joltRoot.anchoredPosition = joltOriginalPosition;
+        {
+            joltRoot.anchoredPosition =
+                joltOriginalPosition;
+        }
     }
 
     private void SetAllAlpha(float alpha)
     {
-        if (analysisGroup != null) analysisGroup.alpha = alpha;
-        if (patternGroup != null) patternGroup.alpha = alpha;
-        if (creativityGroup != null) creativityGroup.alpha = alpha;
-        if (cataloguedGroup != null) cataloguedGroup.alpha = alpha;
-        if (techniqueNameGroup != null) techniqueNameGroup.alpha = alpha;
+        if (analysisGroup != null)
+            analysisGroup.alpha = alpha;
+
+        if (patternGroup != null)
+            patternGroup.alpha = alpha;
+
+        if (creativityGroup != null)
+            creativityGroup.alpha = alpha;
+
+        if (cataloguedGroup != null)
+            cataloguedGroup.alpha = alpha;
+
+        if (techniqueNameGroup != null)
+            techniqueNameGroup.alpha = alpha;
     }
 
-    private IEnumerator FadeCanvasGroup(CanvasGroup group, float from, float to, float duration, float delay)
+    private IEnumerator FadeCanvasGroup(
+        CanvasGroup group,
+        float from,
+        float to,
+        float duration,
+        float delay
+    )
     {
         if (group == null)
             yield break;
 
         if (delay > 0f)
-            yield return new WaitForSecondsRealtime(delay);
+        {
+            yield return new WaitForSecondsRealtime(
+                delay
+            );
+        }
 
         float elapsed = 0f;
         group.alpha = from;
@@ -266,20 +526,39 @@ public class TechniqueDiscoveryPresentation : MonoBehaviour
         while (elapsed < duration)
         {
             elapsed += Time.unscaledDeltaTime;
-            float t = duration <= 0f ? 1f : Mathf.Clamp01(elapsed / duration);
-            group.alpha = Mathf.Lerp(from, to, t);
+
+            float t =
+                duration <= 0f
+                    ? 1f
+                    : Mathf.Clamp01(
+                        elapsed / duration
+                    );
+
+            group.alpha =
+                Mathf.Lerp(
+                    from,
+                    to,
+                    t
+                );
+
             yield return null;
         }
 
         group.alpha = to;
     }
 
-    private IEnumerator FadeImageAlpha(Image image, float from, float to, float duration)
+    private IEnumerator FadeImageAlpha(
+        Image image,
+        float from,
+        float to,
+        float duration
+    )
     {
         if (image == null)
             yield break;
 
         float elapsed = 0f;
+
         Color color = image.color;
         color.a = from;
         image.color = color;
@@ -287,13 +566,48 @@ public class TechniqueDiscoveryPresentation : MonoBehaviour
         while (elapsed < duration)
         {
             elapsed += Time.unscaledDeltaTime;
-            float t = duration <= 0f ? 1f : Mathf.Clamp01(elapsed / duration);
-            color.a = Mathf.Lerp(from, to, t);
+
+            float t =
+                duration <= 0f
+                    ? 1f
+                    : Mathf.Clamp01(
+                        elapsed / duration
+                    );
+
+            color.a =
+                Mathf.Lerp(
+                    from,
+                    to,
+                    t
+                );
+
             image.color = color;
+
             yield return null;
         }
 
         color.a = to;
         image.color = color;
+    }
+
+    private readonly struct DiscoveryTextSet
+    {
+        public readonly string analysis;
+        public readonly string pattern;
+        public readonly string creativity;
+        public readonly string catalogued;
+
+        public DiscoveryTextSet(
+            string analysis,
+            string pattern,
+            string creativity,
+            string catalogued
+        )
+        {
+            this.analysis = analysis;
+            this.pattern = pattern;
+            this.creativity = creativity;
+            this.catalogued = catalogued;
+        }
     }
 }

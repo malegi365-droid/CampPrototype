@@ -4972,7 +4972,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4972370075732805622}
-  - component: {fileID: 7536526821108106257}
   - component: {fileID: 5619016915570850485}
   - component: {fileID: 6862083297387214058}
   - component: {fileID: 7153182359595763272}
@@ -5003,53 +5002,6 @@ Transform:
   - {fileID: 474719694504277140}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7536526821108106257
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1750164435413093665}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 015e6fa3f075f1a41b415cb5099e6d77, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DPSInjectorProjectile
-  speed: 8
-  lifetime: 3
-  hitRadius: 0.2
-  hitLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  armTime: 0.1
-  damageMultiplier: 1
-  overchargeProjectile: 0
-  impactEffectPrefab: {fileID: 6731236443730300185, guid: 3469330221830ad48ad88a113db8d35e, type: 3}
-  hitSparkEffectPrefab: {fileID: 2075061897180629668, guid: 3b9c45268e4cea442a4948c022dbf42b, type: 3}
-  impactSound: {fileID: 8300000, guid: 5ca3183ad1ff1374a8e6bb54d91d2abb, type: 3}
-  impactVolume: 1
-  enableImpactCameraShake: 1
-  impactShakeDuration: 0.05
-  impactShakeStrength: 0.05
-  explosiveImpactShakeDuration: 0.12
-  explosiveImpactShakeStrength: 0.12
-  overchargeImpactShakeDuration: 0.08
-  overchargeImpactShakeStrength: 0.08
-  enableHitStop: 1
-  normalHitStopDuration: 0.025
-  overchargeHitStopDuration: 0.045
-  explosiveHitStopDuration: 0.04
-  piercing: 0
-  maxPierceHits: 3
-  piercingDamageFalloff: 0.85
-  explosive: 0
-  explosionRadius: 4
-  explosionDamageMultiplier: 0.75
-  explosionEffectPrefab: {fileID: 0}
-  staggerDuration: 0.12
-  knockbackStrength: 0.35
-  explosiveStaggerMultiplier: 1.5
-  explosiveKnockbackMultiplier: 2
 --- !u!136 &5619016915570850485
 CapsuleCollider:
   m_ObjectHideFlags: 0

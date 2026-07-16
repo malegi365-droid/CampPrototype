@@ -33,7 +33,15 @@ public class PartyControlManager : MonoBehaviour
     [Header("Switch Screen FX")]
     [SerializeField] private ClassSwitchScreenFX classSwitchScreenFX;
 
-    public PartyMemberControlBridge CurrentMember { get; private set; }
+    public PartyMemberControlBridge CurrentMember
+    {
+        get;
+        private set;
+    }
+
+    public PartyMemberControlBridge RangerMember => ranger;
+    public PartyMemberControlBridge ToxicologistMember => toxicologist;
+    public PartyMemberControlBridge GuardianMember => guardian;
 
     private void Start()
     {
@@ -55,32 +63,88 @@ public class PartyControlManager : MonoBehaviour
             ActivateOnly(toxicologist, false);
     }
 
-    public void ActivateOnly(PartyMemberControlBridge newMember, bool snapCamera)
+    public void ActivateOnly(
+        PartyMemberControlBridge newMember,
+        bool snapCamera
+    )
     {
-        ActivateOnly(newMember, snapCamera, false);
+        ActivateOnly(
+            newMember,
+            snapCamera,
+            false
+        );
     }
 
-    private void ActivateOnly(PartyMemberControlBridge newMember, bool snapCamera, bool bypassUnlockCheck)
+    public void ActivateRangerForShowcase(
+        bool snapCamera = false
+    )
+    {
+        ActivateOnly(
+            ranger,
+            snapCamera,
+            true
+        );
+    }
+
+    public void ActivateToxicologistForShowcase(
+        bool snapCamera = false
+    )
+    {
+        ActivateOnly(
+            toxicologist,
+            snapCamera,
+            true
+        );
+    }
+
+    public void ActivateGuardianForShowcase(
+        bool snapCamera = false
+    )
+    {
+        ActivateOnly(
+            guardian,
+            snapCamera,
+            true
+        );
+    }
+
+    private void ActivateOnly(
+        PartyMemberControlBridge newMember,
+        bool snapCamera,
+        bool bypassUnlockCheck
+    )
     {
         if (newMember == null)
         {
-            Debug.LogWarning("[PartyControlManager] Tried to activate null member.");
+            Debug.LogWarning(
+                "[PartyControlManager] Tried to activate null member."
+            );
+
             return;
         }
 
-        PlayerClassType requestedClass = GetClassTypeForMember(newMember);
+        PlayerClassType requestedClass =
+            GetClassTypeForMember(newMember);
 
         if (!bypassUnlockCheck)
         {
             if (ClassUnlockManager.Instance == null)
             {
-                Debug.LogWarning("[PartyControlManager] No ClassUnlockManager found in scene.");
+                Debug.LogWarning(
+                    "[PartyControlManager] " +
+                    "No ClassUnlockManager found in scene."
+                );
+
                 return;
             }
 
-            if (!ClassUnlockManager.Instance.IsClassUnlocked(requestedClass))
+            if (!ClassUnlockManager.Instance
+                .IsClassUnlocked(requestedClass))
             {
-                Debug.Log($"[PartyControlManager] {requestedClass} is locked.");
+                Debug.Log(
+                    $"[PartyControlManager] {requestedClass} is locked."
+                );
+
                 return;
             }
         }
@@ -90,32 +154,50 @@ public class PartyControlManager : MonoBehaviour
             if (classHUDManager != null)
                 classHUDManager.ShowHUD(requestedClass);
 
+            UpdateCameraTarget(snapCamera);
             return;
         }
 
-        Vector3 switchPosition = newMember.transform.position;
-        Quaternion switchRotation = newMember.transform.rotation;
+        Vector3 switchPosition =
+            newMember.transform.position;
+
+        Quaternion switchRotation =
+            newMember.transform.rotation;
+
         Transform previousTarget = null;
 
         if (CurrentMember != null)
         {
-            switchPosition = CurrentMember.transform.position;
-            switchRotation = CurrentMember.transform.rotation;
+            switchPosition =
+                CurrentMember.transform.position;
+
+            switchRotation =
+                CurrentMember.transform.rotation;
 
             if (spawnVFXBeforeSwitch)
                 SpawnClassSwitchVFX(switchPosition);
 
-            TargetingController oldTargeting = CurrentMember.GetComponent<TargetingController>();
+            TargetingController oldTargeting =
+                CurrentMember.GetComponent<
+                    TargetingController
+                >();
+
             if (oldTargeting != null)
-                previousTarget = oldTargeting.GetCurrentTarget();
+            {
+                previousTarget =
+                    oldTargeting.GetCurrentTarget();
+            }
         }
 
         DeactivateMember(guardian);
         DeactivateMember(ranger);
         DeactivateMember(toxicologist);
 
-        newMember.transform.position = switchPosition;
-        newMember.transform.rotation = switchRotation;
+        newMember.transform.position =
+            switchPosition;
+
+        newMember.transform.rotation =
+            switchRotation;
 
         newMember.gameObject.SetActive(true);
         newMember.SetPlayerControlled(true);
@@ -124,9 +206,14 @@ public class PartyControlManager : MonoBehaviour
         if (spawnVFXAfterSwitch)
             SpawnClassSwitchVFX(switchPosition);
 
-        if (transferTargetOnSwitch && previousTarget != null)
+        if (transferTargetOnSwitch &&
+            previousTarget != null)
         {
-            TargetingController newTargeting = newMember.GetComponent<TargetingController>();
+            TargetingController newTargeting =
+                newMember.GetComponent<
+                    TargetingController
+                >();
+
             if (newTargeting != null)
                 newTargeting.SetTarget(previousTarget);
         }
@@ -141,26 +228,44 @@ public class PartyControlManager : MonoBehaviour
         if (classSwitchScreenFX != null)
             classSwitchScreenFX.PlaySwitchPulse();
 
-        Debug.Log($"[PartyControlManager] Active class: {CurrentMember.RoleName}");
+        Debug.Log(
+            $"[PartyControlManager] Active class: " +
+            $"{CurrentMember.RoleName}"
+        );
     }
 
     private void UpdateCameraTarget(bool snapCamera)
     {
-        if (cameraFollowProxy == null || CurrentMember == null)
+        if (cameraFollowProxy == null ||
+            CurrentMember == null)
+        {
             return;
+        }
 
-        Transform followTarget = CurrentMember.CameraFollowTarget;
+        Transform followTarget =
+            CurrentMember.CameraFollowTarget;
 
         if (followTarget == null)
         {
-            followTarget = CurrentMember.transform;
-            Debug.LogWarning($"[PartyControlManager] {CurrentMember.RoleName} has no CameraFollowTarget. Falling back to root transform.");
+            followTarget =
+                CurrentMember.transform;
+
+            Debug.LogWarning(
+                $"[PartyControlManager] " +
+                $"{CurrentMember.RoleName} has no CameraFollowTarget. " +
+                "Falling back to root transform."
+            );
         }
 
-        cameraFollowProxy.SetTarget(followTarget, snapCamera);
+        cameraFollowProxy.SetTarget(
+            followTarget,
+            snapCamera
+        );
     }
 
-    private void SpawnClassSwitchVFX(Vector3 position)
+    private void SpawnClassSwitchVFX(
+        Vector3 position
+    )
     {
         if (classSwitchVFXPrefab == null)
             return;
@@ -174,7 +279,9 @@ public class PartyControlManager : MonoBehaviour
         Destroy(effect, switchVFXLifetime);
     }
 
-    private PlayerClassType GetClassTypeForMember(PartyMemberControlBridge member)
+    private PlayerClassType GetClassTypeForMember(
+        PartyMemberControlBridge member
+    )
     {
         if (member == guardian)
             return PlayerClassType.Tank;
@@ -185,7 +292,9 @@ public class PartyControlManager : MonoBehaviour
         return PlayerClassType.DPS;
     }
 
-    private void DeactivateMember(PartyMemberControlBridge member)
+    private void DeactivateMember(
+        PartyMemberControlBridge member
+    )
     {
         if (member == null)
             return;
@@ -193,11 +302,19 @@ public class PartyControlManager : MonoBehaviour
         member.SetPlayerControlled(false);
         member.ForceRefreshState();
 
-        TargetingController targeting = member.GetComponent<TargetingController>();
+        TargetingController targeting =
+            member.GetComponent<
+                TargetingController
+            >();
+
         if (targeting != null)
             targeting.ClearTarget();
 
-        AutoAttackController autoAttack = member.GetComponent<AutoAttackController>();
+        AutoAttackController autoAttack =
+            member.GetComponent<
+                AutoAttackController
+            >();
+
         if (autoAttack != null)
             autoAttack.SetTarget(null);
 
